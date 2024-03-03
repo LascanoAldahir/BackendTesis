@@ -21,9 +21,6 @@ if(!req.headers.authorization) return res.status(404).json({msg:"Lo sentimos, de
     // Capturar errores
     try {
 
-        
-
-
         // verificar el token recuperado con el almacenado 
         const {id,rol} = jwt.verify(authorization.split(' ')[1],process.env.JWT_SECRET)
         
