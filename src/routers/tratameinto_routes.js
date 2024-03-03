@@ -18,8 +18,10 @@ router.post('/tratamiento/registro',verificarAutenticacion,registrarTratamiento)
 // Ruta para ver el detalle del tratamiento
 router.get('/tratamiento/:id',verificarAutenticacion,detalleTratamiento)
 
+// // Ruta para actualizar el tratamiento
+// router.put('/tratamiento/:id',verificarAutenticacion,actualizarTratamiento)
 // Ruta para actualizar el tratamiento
-router.put('/tratamiento/:id',verificarAutenticacion,actualizarTratamiento)
+router.put('/tratamiento/estado/:id',verificarAutenticacion,actualizarTratamiento)
 
 // Ruta para eliminar el tratamiento
 router.delete('/tratamiento/:id',verificarAutenticacion,eliminarTratamiento)
