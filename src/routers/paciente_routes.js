@@ -28,5 +28,4 @@ router.delete("/paciente/eliminar/:id", verificarAutenticacion,eliminarPaciente)
 
 
 
-
 export default router
