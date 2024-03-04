@@ -6,7 +6,6 @@ import Veterinario from "../models/Veterinario.js"
 import mongoose from "mongoose";
 
 
-
 // Método para el login
 const login = async(req,res)=>{
     const {email,password} = req.body
@@ -36,7 +35,7 @@ const login = async(req,res)=>{
         telefono,
         _id,
         email:veterinarioBDD.email,
-        rol:"veterinario",
+        rol:"veterinario"
     })
 }
 
