@@ -55,6 +55,14 @@ Se utiliza Apache JMeter para realizar pruebas de rendimiento.
 
 ![pruebas1](https://github.com/4lanPz/AW_BACKEND_VET_2023B/assets/117743495/0595037d-6daf-4977-8934-807ecbd9a3e6)
 
+### Locust
+
+![WhatsApp Image 2024-03-04 at 10 34 05](https://github.com/4lanPz/AW_BACKEND_VET_2023B/assets/117743495/01dd1c7d-5856-4f2c-860a-bd5cc27d1357)
+
+![WhatsApp Image 2024-03-04 at 10 41 12](https://github.com/4lanPz/AW_BACKEND_VET_2023B/assets/117743495/263640e2-778f-4371-87dd-4f0f06f07b51)
+
+![WhatsApp Image 2024-03-04 at 10 42 11](https://github.com/4lanPz/AW_BACKEND_VET_2023B/assets/117743495/c26873d0-ef41-472c-88d1-be36482c9f37)
+
 ## Documentación
 Archivo de documentación para revisión de todas las rutas, modelos, etc.
 
