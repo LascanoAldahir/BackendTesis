@@ -63,6 +63,10 @@ Se utiliza Apache JMeter para realizar pruebas de rendimiento.
 
 ![WhatsApp Image 2024-03-04 at 10 42 11](https://github.com/4lanPz/AW_BACKEND_VET_2023B/assets/117743495/c26873d0-ef41-472c-88d1-be36482c9f37)
 
+Cypress
+
+![WhatsApp Image 2024-03-04 at 13 05 53](https://github.com/4lanPz/AW_BACKEND_VET_2023B/assets/117743495/2337c1f4-7f8c-4699-a2c5-57bc893ef032)
+
 ## Documentación
 Archivo de documentación para revisión de todas las rutas, modelos, etc.
 
