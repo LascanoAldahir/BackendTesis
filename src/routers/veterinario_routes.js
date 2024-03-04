@@ -64,3 +64,9 @@ router.put("/veterinario/:id", verificarAutenticacion, actualizarPerfil);
 
 // Exportar la variable router
 export default router
+
+
+
+
+
+
