@@ -1,56 +1,39 @@
-
 // Importar JWT y el Modelo
-import jwt from 'jsonwebtoken'
-import Veterinario from '../models/Veterinario.js'
-import Paciente from '../models/Paciente.js'
-
-
-
+import jwt from 'jsonwebtoken';
+import Veterinario from '../models/Veterinario.js';
+import Paciente from '../models/Paciente.js';
 
 // Método para proteger rutas
-const verificarAutenticacion = async (req,res,next)=>{
+const verificarAutenticacion = async (req, res, next) => {
+    // Validar si se está enviando el token
+    if (!req.headers.authorization) return res.status(404).json({ msg: "Lo sentimos, debes proporcionar un token" });
 
-    // Validación si se está enviando el token
-if(!req.headers.authorization) return res.status(404).json({msg:"Lo sentimos, debes proprocionar un token"})  
-
-    // Desestructurar el token pero del headers
-    const {authorization} = req.headers
-
-
+    // Desestructurar el token del encabezado
+    const { authorization } = req.headers;
 
     // Capturar errores
     try {
+        // Verificar el token recuperado con el almacenado
+        const { id, rol } = jwt.verify(authorization.split(' ')[1], process.env.JWT_SECRET);
 
-        // verificar el token recuperado con el almacenado 
-        const {id,rol} = jwt.verify(authorization.split(' ')[1],process.env.JWT_SECRET)
-        
         // Verificar el rol
-        if (rol==="veterinario"){
-            // Obtener el usuario 
-            req.veterinarioBDD = await Veterinario.findById(id).lean().select("-password")
-            // Continue el proceso
-            next()
+        if (rol === "veterinario") {
+            // Obtener el usuario veterinario
+            req.veterinarioBDD = await Veterinario.findById(id).lean().select("-password");
+            // Continuar el proceso
+            next();
+        } else {
+            // Obtener el usuario paciente
+            req.pacienteBDD = await Paciente.findById(id).lean().select("-password");
+            // Continuar el proceso
+            next();
         }
-        else{
-            console.log(id,rol);
-            req.pacienteBDD = await Paciente.findById(id).lean().select("-password")
-            console.log(req.pacienteBDD);
-            next()
-        }
-
-
-
     } catch (error) {
         // Capturar errores y presentarlos
-        const e = new Error("Formato del token no válido")
-        return res.status(404).json({msg:e.message})
+        const e = new Error("Formato del token no válido");
+        return res.status(404).json({ msg: e.message });
     }
-
-}
-
-
-
-
+};
 
 // Exportar el método
-export default verificarAutenticacion
+export default verificarAutenticacion;
