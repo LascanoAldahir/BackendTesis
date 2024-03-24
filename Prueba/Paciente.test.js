@@ -1,17 +1,21 @@
+// Importa el módulo mongoose para interactuar con la base de datos MongoDB
 import mongoose from 'mongoose';
+// Importa el modelo Paciente desde el archivo Paciente.js ubicado en la carpeta models
 import Paciente from "../models/Paciente.js"; // Asegúrate de que la ruta sea correcta
+// Importa el modelo Veterinario desde el archivo Veterinario.js ubicado en la carpeta models
 import Veterinario from "../models/Veterinario.js"; // Asegúrate de que la ruta sea correcta
 
+// Importa las funciones del controlador de pacientes desde el archivo paciente_controller.js ubicado en la carpeta controllers
 import {
     listarPacientes,
     detallePaciente,
     registrarPaciente,
     actualizarPaciente,
     eliminarPaciente
-
 } from "../controllers/paciente_controller.js";
 
 // Configuración de Jest
+// Configura una función que se ejecutará antes de todas las pruebas para establecer la conexión con la base de datos de prueba
 beforeAll(async () => {
     await mongoose.connect('mongodb://0.0.0.0:27017/testdb', {
         useNewUrlParser: true,
@@ -19,19 +23,23 @@ beforeAll(async () => {
     });
 });
 
+// Configura una función que se ejecutará después de cada prueba para borrar todos los registros de Veterinario y Paciente
 afterEach(async () => {
     await Veterinario.deleteMany({});
     await Paciente.deleteMany({});
 });
 
+// Configura una función que se ejecutará después de todas las pruebas para cerrar la conexión con la base de datos
 afterAll(async () => {
     await mongoose.connection.close();
 });
 
 
+// Describe el conjunto de pruebas para el controlador de pacientes
 describe('Controlador de Pacientes', () => {
+    // Prueba para verificar si se listan correctamente los pacientes
     it('Debería listar pacientes correctamente', async () => {
-        // Crear un paciente de prueba en la base de datos
+        // Crea un paciente de prueba en la base de datos
         const nuevoPaciente = new Paciente({
             nombre: 'Paciente de prueba',
             propietario: 'Propietario de prueba',
@@ -40,24 +48,27 @@ describe('Controlador de Pacientes', () => {
             convencional: '987654321',
             ingreso: new Date(),
             sintomas: 'Síntomas de prueba',
-            veterinario: new mongoose.Types.ObjectId(),
+            veterinario: new mongoose.Types.ObjectId(), // Simula el ID de un veterinario existente
             estado: true,
         });
         await nuevoPaciente.save();
 
+        // Simula una solicitud HTTP con la variable veterinarianBDD
         const req = {
             veterinarianBDD: nuevoPaciente.veterinario, // Simula la variable de veterinarioBDD en la solicitud
         };
+        // Simula una respuesta HTTP con las funciones status y json
         const res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
+            status: jest.fn().mockReturnThis(), // Simula la función status de Express
+            json: jest.fn(), // Simula la función json de Express
         };
 
+        // Llama a la función listarPacientes del controlador con la solicitud y la respuesta simuladas
         await listarPacientes(req, res);
 
+        // Verifica si la función status se llamó con el código 200 y la función json se llamó
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalled();
-
     });
 
     it('Debería obtener el detalle de un paciente', async () => {
