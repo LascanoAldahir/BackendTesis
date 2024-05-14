@@ -52,19 +52,19 @@ const sendMailToRecoveryPassword = async (userMail, token) => {
 }
 
 // Función para enviar un correo electrónico de bienvenida al cliente
-const sendMailToCliente = async (userMail, password) => {
+const sendMailToCliente = async(userMail, cedula, password)=>{
     let info = await transporter.sendMail({
-        from: 'admin@vet.com',
-        to: userMail,
-        subject: "Correo de bienvenida",
-        html: `
-        <h1>Sistema de gestión (VET-ESFOT 🐶 😺)</h1>
-        <hr>
-        <p>Contraseña de acceso: ${password}</p>
-        <a href=${process.env.URL_BACKEND}/paciente/login>Clic para iniciar sesión</a>
-        <hr>
-        <footer>Electronica Zurita te dá la bienvenida!</footer>
-        `
+    from: 'electronica_zurita@admin.com',
+    to: userMail,
+    subject: "Correo de bienvenida",
+    html: `
+    <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
+    <hr>
+    <p>Usuario de acceso: ${cedula}</p>
+    <p>Contraseña de acceso: ${password}</p>
+    <hr>
+    <footer>Te damo la Bienvenida!</footer>
+    `
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
