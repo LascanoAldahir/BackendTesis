@@ -2,14 +2,14 @@
 import { check, validationResult } from 'express-validator';
 
 // Array de middleware de validación para la entidad de veterinario
-export const validacionVeterinario = [
+export const validacionTecnico = [
     // Validar que los campos nombre, apellido, dirección, teléfono, email y password existan en la solicitud
-    check(["nombre", "apellido", "direccion", "telefono", "email", "password"])
+    check(["nombre", "apellido", "ruc", "telefono", "email", "password"])
         .exists()
-        .withMessage('Los campos "nombre", "apellido", "dirección", "teléfono", "email" y/o "password" son obligatorios')
+        .withMessage('Los campos "nombre", "apellido", "ruc", "teléfono", "email" y/o "password" son obligatorios')
         // Validar que los campos no estén vacíos
         .notEmpty()
-        .withMessage('Los campos "nombre", "apellido", "dirección", "teléfono", "email" y/o "password" no pueden estar vacíos')
+        .withMessage('Los campos "nombre", "apellido", "ruc", "teléfono", "email" y/o "password" no pueden estar vacíos')
         // Eliminar los espacios en blanco del valor de los campos
         .customSanitizer(value => value?.trim()),
 
@@ -23,9 +23,9 @@ export const validacionVeterinario = [
         .customSanitizer(value => value?.trim()),
 
     // Validar el campo dirección para asegurar que tenga entre 3 y 20 caracteres
-    check("direccion")
+    check("ruc")
         .isLength({ min: 3, max: 20 })
-        .withMessage('El campo "dirección" debe tener entre 3 y 20 caracteres')
+        .withMessage('El campo "ruc" debe tener entre 3 y 20 caracteres')
         // Eliminar los espacios en blanco del valor del campo
         .customSanitizer(value => value?.trim()),
 
@@ -41,7 +41,7 @@ export const validacionVeterinario = [
     // Validar el campo email para asegurar que tenga un formato de correo electrónico válido
     check("email")
         .isEmail()
-        .withMessage('El campo "email" no es correcto')
+          .withMessage('El campo "email" no es correcto')
         // Eliminar los espacios en blanco del valor del campo
         .customSanitizer(value => value?.trim()),
 

@@ -26,5 +26,5 @@ io.on("connection", (socket) => {
 
 // Escucha las conexiones entrantes en el puerto configurado en la aplicación express
 app.listen(app.get("port"), () => {
-  console.log(`https://frontgrupo5.netlify.app/`); // Imprime un mensaje indicando la dirección del servidor
+  console.log(`http://tesistest.netlify.app`); // Imprime un mensaje indicando la dirección del servidor
 });

@@ -3,14 +3,14 @@ import express from 'express'; // Importa el módulo 'express' para crear y conf
 import dotenv from 'dotenv'; // Importa el módulo 'dotenv' para cargar variables de entorno desde un archivo '.env'
 import cors from 'cors'; // Importa el módulo 'cors' para permitir solicitudes de diferentes orígenes en el servidor
 
-// Importar la variable routerVeterinarios
-import routerVeterinarios from './routers/veterinario_routes.js'; // Importa el enrutador definido para las rutas relacionadas con veterinarios
+// Importar la variable routerTecnicos
+import routerTecnicos from './routers/tecnico_routes.js'; // Importa el enrutador definido para las rutas relacionadas con tecnicos
 
 // Importar la variable routerPacientes
-import routerPacientes from './routers/paciente_routes.js'; // Importa el enrutador definido para las rutas relacionadas con pacientes
+import routerClientes from './routers/cliente_routes.js'; // Importa el enrutador definido para las rutas relacionadas con clientes
 
 // Importar la variable routerTratamientos
-import routerTratamientos from './routers/tratameinto_routes.js'; // Importa el enrutador definido para las rutas relacionadas con tratamientos
+import routerEquipos from './routers/equipo_routes.js'; // Importa el enrutador definido para las rutas relacionadas con equipos
 
 // Inicializaciones
 const app = express(); // Crea una instancia de la aplicación express
@@ -24,9 +24,9 @@ app.use(cors()); // Usa el middleware cors para permitir solicitudes de diferent
 app.use(express.json()); // Usa el middleware integrado de express para analizar las solicitudes entrantes con formato JSON
 
 // Rutas 
-app.use('/api', routerVeterinarios); // Usa el enrutador de veterinarios en la ruta '/api'
-app.use('/api', routerPacientes); // Usa el enrutador de pacientes en la ruta '/api'
-app.use('/api', routerTratamientos); // Usa el enrutador de tratamientos en la ruta '/api'
+app.use('/api', routerTecnicos); // Usa el enrutador de veterinarios en la ruta '/api'
+app.use('/api', routerClientes); // Usa el enrutador de pacientes en la ruta '/api'
+app.use('/api', routerEquipos); // Usa el enrutador de tratamientos en la ruta '/api'
 
 // Manejo de una ruta que no sea encontrada
 app.use((req, res) => res.status(404).send("Endpoint no encontrado - 404")); // Maneja las solicitudes a rutas no encontradas y responde con un mensaje de error 404

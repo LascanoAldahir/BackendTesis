@@ -13,19 +13,21 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+const URL_FRONTEND = "http://tesistest.netlify.app"
+
 // Función para enviar un correo electrónico de verificación al usuario
 const sendMailToUser = async (userMail, token) => {
     // let es una variable que ouede cambiar por eso no es const
     let info = await transporter.sendMail({
-        from: 'admin@vet.com', // Dirección de correo electrónico del remitente
+        from: 'info@electronica_zurita.com', // Dirección de correo electrónico del remitente
         to: userMail, // Dirección de correo electrónico del destinatario
         subject: "Verifica tu cuenta de correo electrónico", // Asunto del correo electrónico
         html: `
-        <h1>Sistema de gestión (VET-ESFOT 🐶 😺)</h1>
+        <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
         <hr>
-        <a href=${process.env.URL_FRONTEND}/confirmar/${token}>Clic para confirmar tu cuenta</a>
+        <a href=${process.env.URL_FRONTEND || URL_FRONTEND}/confirmar/${token}>Clic para confirmar tu cuenta</a>
         <hr>
-        <footer>Grandote te da la Bienvenida!</footer>
+        <footer>Electronica Zurita te dá la bienvenida!</footer>
         `
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId); // Imprime el ID del mensaje enviado satisfactoriamente en consola
@@ -34,22 +36,22 @@ const sendMailToUser = async (userMail, token) => {
 // Función para enviar un correo electrónico de recuperación de contraseña al usuario
 const sendMailToRecoveryPassword = async (userMail, token) => {
     let info = await transporter.sendMail({
-        from: 'admin@vet.com',
+        from: 'electronica_zurita@admin.com',
         to: userMail,
         subject: "Correo para reestablecer tu contraseña",
         html: `
-        <h1>Sistema de gestión (VET-ESFOT 🐶 😺)</h1>
+        <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
         <hr>
         <a href=${process.env.URL_FRONTEND}/recuperar-password/${token}>Clic para reestablecer tu contraseña</a>
         <hr>
-        <footer>Grandote te da la Bienvenida!</footer>
+        <footer>Electronica Zurita te dá la bienvenida!</footer>
         `
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
-// Función para enviar un correo electrónico de bienvenida al paciente
-const sendMailToPaciente = async (userMail, password) => {
+// Función para enviar un correo electrónico de bienvenida al cliente
+const sendMailToCliente = async (userMail, password) => {
     let info = await transporter.sendMail({
         from: 'admin@vet.com',
         to: userMail,
@@ -60,7 +62,7 @@ const sendMailToPaciente = async (userMail, password) => {
         <p>Contraseña de acceso: ${password}</p>
         <a href=${process.env.URL_BACKEND}/paciente/login>Clic para iniciar sesión</a>
         <hr>
-        <footer>Grandote te da la Bienvenida!</footer>
+        <footer>Electronica Zurita te dá la bienvenida!</footer>
         `
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
@@ -70,5 +72,5 @@ const sendMailToPaciente = async (userMail, password) => {
 export {
     sendMailToUser,
     sendMailToRecoveryPassword,
-    sendMailToPaciente
+    sendMailToCliente
 }

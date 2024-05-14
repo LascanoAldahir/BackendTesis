@@ -2,7 +2,7 @@
 import mongoose, { Schema, model } from 'mongoose';
 
 // Definir el esquema del tratamiento
-const tratamientoSchema = new Schema({
+const equipoSchema = new Schema({
     // Campo para el nombre del tratamiento
     nombre: {
         type: String,   // Tipo de dato: String
@@ -28,13 +28,13 @@ const tratamientoSchema = new Schema({
         enum: ['Baja', 'Media', 'Alta'] // Solo se permite uno de estos valores
     },
     // Campo para referenciar el paciente al que se aplica el tratamiento
-    paciente: {
+    cliente: {
         type: mongoose.Schema.Types.ObjectId, // Tipo de dato: ObjectId de MongoDB
-        ref: 'Paciente'                       // Referencia al modelo 'Paciente'
+        ref: 'Cliente'                       // Referencia al modelo 'Paciente'
     }
 }, {
     timestamps: true // Agregar timestamps de creación y modificación automáticamente
 });
 
-// Exportar el modelo 'Tratamiento' basado en el esquema 'tratamientoSchema'
-export default model('Tratamiento', tratamientoSchema);
+// Exportar el modelo 'Equipo' basado en el esquema 'equipoSchema'
+export default model('Equipo', equipoSchema);

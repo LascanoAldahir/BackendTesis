@@ -2,7 +2,7 @@ import mongoose, { Schema, model } from 'mongoose'; // Importa mongoose para la 
 import bcrypt from "bcryptjs"; // Importa bcrypt para el cifrado de contraseñas
 
 // Define el esquema del paciente
-const pacienteSchema = new Schema({
+const clienteSchema = new Schema({
     nombre: {
         type: String,
         required: true, // El campo es obligatorio
@@ -38,7 +38,7 @@ const pacienteSchema = new Schema({
         trim: true,
         default: Date.now() // Valor por defecto: fecha y hora actual
     },
-    sintomas: {
+    estado: {
         type: String,
         required: true,
         trim: true
@@ -53,25 +53,25 @@ const pacienteSchema = new Schema({
         type: Boolean,
         default: true // Valor por defecto: true
     },
-    veterinario: {
+    tecnico: {
         type: mongoose.Schema.Types.ObjectId, // Tipo de dato: ObjectId
-        ref: 'Veterinario' // Referencia al modelo de datos del veterinario
+        ref: 'Tecnico' // Referencia al modelo de datos del tecnico
     }
 }, {
     timestamps: true // Añade timestamps automáticos de creación y actualización
 });
 
 // Método para cifrar la contraseña del paciente antes de guardarla en la base de datos
-pacienteSchema.methods.encryptPassword = async function(password) {
+clienteSchema.methods.encryptPassword = async function(password) {
     const salt = await bcrypt.genSalt(10); // Genera un salt (valor aleatorio)
     const encryptedPassword = await bcrypt.hash(password, salt); // Aplica el cifrado bcrypt a la contraseña
     return encryptedPassword; // Retorna la contraseña cifrada
 };
 
 // Método para verificar si la contraseña ingresada coincide con la almacenada en la base de datos
-pacienteSchema.methods.matchPassword = async function(password) {
+clienteSchema.methods.matchPassword = async function(password) {
     const result = await bcrypt.compare(password, this.password); // Compara las contraseñas
     return result; // Retorna true si coinciden, false en caso contrario
 };
 
-export default model('Paciente', pacienteSchema); // Exporta el modelo de datos del paciente
+export default model('Cliente', clienteSchema); // Exporta el modelo de datos del paciente

@@ -10,35 +10,35 @@ import {
     perfil,
     registro,
     confirmEmail,
-    listarVeterinarios,
-    detalleVeterinario,
+    listarTecnicos,
+    detalleTecnico,
     actualizarPerfil,
     actualizarPassword,
     recuperarPassword,
     comprobarTokenPasword,
     nuevoPassword,
-} from "../controllers/veterinario_controller.js";
+} from "../controllers/tecnico_controller.js";
 
 // Importar middleware de autenticación
 import verificarAutenticacion from '../middlewares/autenticacion.js';
 
 // Importar middleware de validación
-import { validacionVeterinario } from '../middlewares/validacionVeterinario.js';
+import { validacionTecnico } from '../middlewares/validacionTecnico.js';
 
 // Rutas públicas
 router.post("/login", login);
-router.post("/registro", validacionVeterinario, registro);
+router.post("/registro", validacionTecnico, registro);
 router.get("/confirmar/:token", confirmEmail);
-router.get("/veterinarios", listarVeterinarios);
+router.get("/tecnicos", listarTecnicos);
 router.post("/recuperar-password", recuperarPassword);
 router.get("/recuperar-password/:token", comprobarTokenPasword);
 router.post("/nuevo-password/:token", nuevoPassword);
 
 // Rutas privadas
 router.get("/perfil", verificarAutenticacion, perfil);
-router.put('/veterinario/actualizarpassword', verificarAutenticacion, actualizarPassword);
-router.get("/veterinario/:id", verificarAutenticacion, detalleVeterinario);
-router.put("/veterinario/:id", verificarAutenticacion, actualizarPerfil);
+router.put('/tecnico/actualizarpassword', verificarAutenticacion, actualizarPassword);
+router.get("/tecnico/:id", verificarAutenticacion, detalleTecnico);
+router.put("/tecnico/:id", verificarAutenticacion, actualizarPerfil);
 
 // Exportar la variable router
 export default router;

@@ -1,7 +1,7 @@
 // Importar JWT y los modelos de Veterinario y Paciente
 import jwt from 'jsonwebtoken';
-import Veterinario from '../models/Veterinario.js';
-import Paciente from '../models/Paciente.js';
+import Tecnico from '../models/Tecnico.js';
+import Cliente from '../models/Cliente.js';
 
 // Método para proteger rutas
 const verificarAutenticacion = async (req, res, next) => {
@@ -17,14 +17,14 @@ const verificarAutenticacion = async (req, res, next) => {
         const { id, rol } = jwt.verify(authorization.split(' ')[1], process.env.JWT_SECRET);
 
         // Verificar el rol
-        if (rol === "veterinario") {
-            // Obtener el usuario veterinario de la base de datos y excluir el campo de la contraseña
-            req.veterinarioBDD = await Veterinario.findById(id).lean().select("-password");
+        if (rol === "tecnico") {
+            // Obtener el usuario tecnicoo de la base de datos y excluir el campo de la contraseña
+            req.tecnicoBDD = await Tecnico.findById(id).lean().select("-password");
             // Continuar el proceso
             next();
         } else {
             // Obtener el usuario paciente de la base de datos y excluir el campo de la contraseña
-            req.pacienteBDD = await Paciente.findById(id).lean().select("-password");
+            req.tecnicoBDD = await Tecnico.findById(id).lean().select("-password");
             // Continuar el proceso
             next();
         }

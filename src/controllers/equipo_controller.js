@@ -1,19 +1,19 @@
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
-import Tratamiento from "../models/Tratamiento.js"; // Importa el modelo Tratamiento para interactuar con la colección de tratamientos en la base de datos
+import ELquipo from "../models/Equipo.js"; // Importa el modelo Tratamiento para interactuar con la colección de tratamientos en la base de datos
 
 // Método para ver el detalle del tratamiento
-const detalleTratamiento = async(req,res)=>{
+const detalleEquipo = async(req,res)=>{
     const {id} = req.params // Extrae el ID del tratamiento de los parámetros de la solicitud
     // Verifica si el ID del tratamiento es válido
-    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe ese tratamiento`});
-    // Busca el tratamiento por su ID y lo popula con la información del paciente asociado
-    const tratamiento = await Tratamiento.findById(id).populate('paciente','_id nombre')
-    // Responde con el detalle del tratamiento
-    res.status(200).json(tratamiento)
+    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe ese equipo`});
+    // Busca el equipo por su ID y lo popula con la información del paciente asociado
+    const equipo = await Equipo.findById(id).populate('cliente','_id nombre')
+    // Responde con el detalle del equipo
+    res.status(200).json(equipo)
 }
 
-// Método para crear el tratamiento
-const registrarTratamiento = async (req,res)=>{
+// Método para crear el equipo
+const registrarEquipo = async (req,res)=>{
     const {paciente} = req.body // Extrae el ID del paciente del cuerpo de la solicitud
     // Verifica si el ID del paciente es válido
     if( !mongoose.Types.ObjectId.isValid(paciente) ) return res.status(404).json({msg:`Lo sentimos, debe ser un id válido`});
@@ -24,7 +24,7 @@ const registrarTratamiento = async (req,res)=>{
 }
 
 // Método para actualizar el tratamiento
-const actualizarTratamiento = async(req,res)=>{
+const actualizarEquipo = async(req,res)=>{
     const {id} = req.params // Extrae el ID del tratamiento de los parámetros de la solicitud
     // Verifica si algún campo del cuerpo de la solicitud está vacío
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
@@ -37,7 +37,7 @@ const actualizarTratamiento = async(req,res)=>{
 }
 
 // Método para eliminar el tratamiento
-const eliminarTratamiento = async(req,res)=>{
+const eliminarEquipo = async(req,res)=>{
     const {id} = req.params // Extrae el ID del tratamiento de los parámetros de la solicitud
     // Verifica si algún campo del cuerpo de la solicitud está vacío
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
@@ -59,9 +59,9 @@ const cambiarEstado = async(req,res)=>{
 
 // Exporta los métodos de la API relacionados con la gestión de tratamientos
 export {
-    detalleTratamiento,
-    registrarTratamiento,
-    actualizarTratamiento,
-    eliminarTratamiento,
+    detalleEquipo,
+    registrarEquipo,
+    actualizarEquipo,
+    eliminarEquipo,
     cambiarEstado
 }
