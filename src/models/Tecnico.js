@@ -19,7 +19,7 @@ const tecnicoSchema = new Schema({
     },
     // Campo para la ruc del tecnico
     ruc: {
-        type: String,
+        type: Number,
         trim: true,
         default: null
     },

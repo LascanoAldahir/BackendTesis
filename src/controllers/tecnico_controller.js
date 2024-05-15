@@ -1,8 +1,7 @@
 // Importar el modelo 
 import { sendMailToUser, sendMailToRecoveryPassword } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 import generarJWT from "../helpers/crearJWT.js"; // Importa la función para generar tokens JWT
-import Tecnico from "../models/Tecnico.js";
-import tecnico from "../models/Tecnico.js"; // Importa el modelo de Veterinario para interactuar con la colección de veterinarios en la base de datos
+import Tecnico from "../models/Tecnico.js"; // Importa el modelo de Veterinario para interactuar con la colección de veterinarios en la base de datos
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 
 // Método para el login
@@ -14,7 +13,7 @@ const login = async(req,res)=>{
     const tecnicoBDD = await Tecnico.findOne({email}).select("-status -__v -token -updatedAt -createdAt")
     // Verifica si el email del tecnico no ha sido confirmado
     if(tecnicoBDD?.confirmEmail===false) return res.status(403).json({msg:"Lo sentimos, debe verificar su cuenta"})
-    // Verifica si no se encontró ningún veterinario con el email proporcionado
+    // Verifica si no se encontró ningún tecnico con el email proporcionado
     if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
     // Verifica si la contraseña proporcionada no coincide con la almacenada en la base de datos
     const verificarPassword = await tecnicoBDD.matchPassword(password)
@@ -64,28 +63,37 @@ const registro = async (req,res)=>{
     nuevoTecnico.password = await nuevoTecnico.encrypPassword(password)
     // Crea un token para el nuevo tecnico
     const token = nuevoTecnico.crearToken()
+    console.log("Token creado exitosamente");
+    
     // Envía un correo electrónico al nuevo veterinario para confirmar su cuenta
     await sendMailToUser(email,token)
     // Guarda el nuevo veterinario en la base de datos
     await nuevoTecnico.save()
     // Responde con un mensaje indicando que revise su correo electrónico para confirmar la cuenta
     res.status(200).json({msg:"Revisa tu correo electrónico para confirmar tu cuenta"})
+    console.log("Controller de registro terminada");
 }
 
 // Método para confirmar el token
+
 const confirmEmail = async(req,res)=>{
+    console.log("comenzando confirmacion de token");
     // Verifica si no se proporcionó un token en los parámetros de la solicitud
+    console.log("verificando si no se creo token")
     if(!(req.params.token)) return res.status(400).json({msg:"Lo sentimos, no se puede validar la cuenta"})
     // Busca un tecnico en la base de datos por el token proporcionado
     const tecnicoBDD = await Tecnico.findOne({token:req.params.token})
+    console.log("Buscando tecnico mediante token ")
     // Verifica si no se encontró ningún veterinario con el token proporcionado
     if(!tecnicoBDD?.token) return res.status(404).json({msg:"La cuenta ya ha sido confirmada"})
     // Actualiza el token y el estado de confirmación de la cuenta del veterinario
     tecnicoBDD.token = null
     tecnicoBDD.confirmEmail=true
     await tecnicoBDD.save()
+    console.log("Confirmacion modificada en BDD ")
     // Responde con un mensaje indicando que el token ha sido confirmado
     res.status(200).json({msg:"Token confirmado, ya puedes iniciar sesión"}) 
+    console.log("token confirmado")
 }
 
 // Método para listar veterinarios
