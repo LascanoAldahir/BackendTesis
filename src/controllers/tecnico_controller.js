@@ -64,7 +64,6 @@ const registro = async (req,res)=>{
     // Crea un token para el nuevo tecnico
     const token = nuevoTecnico.crearToken()
     console.log("Token creado exitosamente");
-    
     // Envía un correo electrónico al nuevo veterinario para confirmar su cuenta
     await sendMailToUser(email,token)
     // Guarda el nuevo veterinario en la base de datos

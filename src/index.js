@@ -16,15 +16,7 @@ const io = new Server(server, { // Crea una instancia del servidor de WebSockets
   },
 });
 
-// Maneja la conexión de un cliente a través de WebSockets
-io.on("connection", (socket) => {
-  console.log("Usuario conectado"); // Imprime un mensaje cuando un usuario se conecta al servidor WebSocket
-  socket.on('enviar-mensaje-fron-back',(payload)=>{ // Maneja el evento 'enviar-mensaje-fron-back' desde el cliente
-    socket.broadcast.emit('enviar-mensaje-fron-back',payload) // Emite el evento 'enviar-mensaje-fron-back' a todos los clientes conectados excepto al emisor
-  })
-});
-
 // Escucha las conexiones entrantes en el puerto configurado en la aplicación express
 app.listen(app.get("port"), () => {
-  console.log(`http://tesistest.netlify.app`); // Imprime un mensaje indicando la dirección del servidor
+  console.log(`https://tesistest.netlify.app`); // Imprime un mensaje indicando la dirección del servidor
 });
