@@ -43,11 +43,3 @@ router.put("/tecnico/:id", verificarAutenticacion, actualizarPerfil);
 // Exportar la variable router
 export default router;
 
-
-/*
-Este código define las rutas para manejar las solicitudes relacionadas con los veterinarios. 
-Las rutas públicas no requieren autenticación y permiten al usuario realizar acciones como iniciar sesión, 
-registrarse, confirmar correo electrónico, listar veterinarios, recuperar contraseña y cambiar contraseña. 
-Las rutas privadas requieren autenticación y permiten al usuario acceder a su perfil, actualizar su contraseña y actualizar su perfil.
-Cada ruta está asociada a un controlador específico que maneja la lógica de negocio correspondiente. Las solicitudes HTTP POST, GET y PUT se utilizan para realizar estas operaciones.
-*/

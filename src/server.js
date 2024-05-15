@@ -5,10 +5,8 @@ import cors from 'cors'; // Importa el módulo 'cors' para permitir solicitudes 
 
 // Importar la variable routerTecnicos
 import routerTecnicos from './routers/tecnico_routes.js'; // Importa el enrutador definido para las rutas relacionadas con tecnicos
-
 // Importar la variable routerPacientes
 import routerClientes from './routers/cliente_routes.js'; // Importa el enrutador definido para las rutas relacionadas con clientes
-
 // Importar la variable routerTratamientos
 import routerEquipos from './routers/equipo_routes.js'; // Importa el enrutador definido para las rutas relacionadas con equipos
 
