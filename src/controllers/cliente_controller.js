@@ -31,16 +31,18 @@ const loginCliente = async(req,res)=>{
     const token = generarJWT(clienteBDD._id,"cliente")
 
     // Extrae algunos datos específicos del cliente para incluir en la respuesta
-	const {nombre,propietario,correo:correolP,celular,convencional,_id} = clienteBDD
+	const {nombre,propietario,correo:correolP,celular,frecuente,_id} = clienteBDD
 
     // Responde con un objeto JSON que contiene el token JWT y otros datos del paciente
     res.status(200).json({
         token,
         nombre,
+        correolP,
         propietario,
         correoP,
         celular,
-        convencional,
+        telefono,
+        frecuente,
         rol:"cliente",
         _id
     })
@@ -63,7 +65,7 @@ const perfilCliente =(req,res)=>{
 
 // Método para listar pacientes
 const listarClientes = async (req,res)=>{
-    // Verifica si la solicitud contiene datos de clienteBDD
+    // Verifica si la solicitud coniene datos de clienteBDD
     if (req.clienteBDD && "propietario" in req.clienteBDD){
         // Si el pacienteBDD existe y es propietario, busca pacientes asociados a ese propietario
         const clientes = await Cliente.find(req.clienteBDD._id).select("-salida -createdAt -updatedAt -__v").populate('tecnico','_id nombre apellido')

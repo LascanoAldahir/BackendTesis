@@ -37,7 +37,20 @@ const equipoSchema = new Schema({
         type: String,
         required: true,
         enum: ['Revision','Mantenimiento','Reparacion']
-    }
+    },
+        //frecuente, apellido, frecuente(booleano)
+        ingreso: {
+            type: Date,
+            required: true,
+            trim: true,
+            default: Date.now() // Valor por defecto: fecha y hora actual
+        },
+        salida: {
+            type: Date,
+            required: true,
+            trim: true,
+            default: Date.now() // Valor por defecto: fecha y hora actual
+        },
 }, {
     timestamps: true // Agregar timestamps de creación y modificación automáticamente
 });
