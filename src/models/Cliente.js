@@ -35,6 +35,10 @@ const clienteSchema = new Schema({
         type: Boolean,
         require: true,
         default: false
+    },
+    tecnico: {
+        type: Schema.Types.ObjectId,
+        ref: 'Tecnico' // Nombre del modelo Tecnico
     }
 }, 
 );
