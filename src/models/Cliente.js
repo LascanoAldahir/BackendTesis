@@ -1,5 +1,4 @@
 import mongoose, { Schema, model } from 'mongoose'; // Importa mongoose para la definición del esquema y el modelo
-import bcrypt from "bcryptjs"; // Importa bcrypt para el cifrado de contraseñas
 
 // Define el esquema del paciente
 const clienteSchema = new Schema({
@@ -8,12 +7,21 @@ const clienteSchema = new Schema({
         required: true, // El campo es obligatorio
         trim: true // Elimina espacios en blanco al inicio y al final
     },
-    propietario: {
-        type: String,
+    cedula: {//elimine propietario
+        type: Number,
         required: true,
         trim: true
     },
-    email: {
+    telefono: {
+        type: Number,
+        required: true,
+        trim: true
+    },
+    direccion: {
+        type: String,
+        required: true
+    },
+    correo: {
         type: String,
         required: true,
         trim: true
@@ -22,56 +30,14 @@ const clienteSchema = new Schema({
         type: String,
         required: true
     },
-    celular: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    convencional: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    ingreso: {
-        type: Date,
-        required: true,
-        trim: true,
-        default: Date.now() // Valor por defecto: fecha y hora actual
-    },
-    estado: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    salida: {
-        type: Date,
-        required: true,
-        trim: true,
-        default: Date.now() // Valor por defecto: fecha y hora actual
-    },
-    estado: {
+    frecuente: {
         type: Boolean,
-        default: true // Valor por defecto: true
-    },
-    tecnico: {
-        type: mongoose.Schema.Types.ObjectId, // Tipo de dato: ObjectId
-        ref: 'Tecnico' // Referencia al modelo de datos del tecnico
+        require: true,
+        default: false
     }
-}, {
-    timestamps: true // Añade timestamps automáticos de creación y actualización
-});
 
-// Método para cifrar la contraseña del paciente antes de guardarla en la base de datos
-clienteSchema.methods.encryptPassword = async function(password) {
-    const salt = await bcrypt.genSalt(10); // Genera un salt (valor aleatorio)
-    const encryptedPassword = await bcrypt.hash(password, salt); // Aplica el cifrado bcrypt a la contraseña
-    return encryptedPassword; // Retorna la contraseña cifrada
-};
 
-// Método para verificar si la contraseña ingresada coincide con la almacenada en la base de datos
-clienteSchema.methods.matchPassword = async function(password) {
-    const result = await bcrypt.compare(password, this.password); // Compara las contraseñas
-    return result; // Retorna true si coinciden, false en caso contrario
-};
+}, 
+); 
 
 export default model('Cliente', clienteSchema); // Exporta el modelo de datos del paciente
