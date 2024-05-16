@@ -10,15 +10,15 @@ import generarJWT from "../helpers/crearJWT.js"; // Importa la función generarJ
 
 // Método para el proceso de login
 const loginCliente = async(req,res)=>{
-    const {email,password} = req.body // Extrae el email y la contraseña del cuerpo de la solicitud
+    const {correo,password} = req.body // Extrae el correo y la contraseña del cuerpo de la solicitud
 
     // Verifica si algún campo del cuerpo de la solicitud está vacío
     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
 
-    // Busca un paciente en la base de datos por su email
-    const clienteBDD = await Cliente.findOne({email})
+    // Busca un paciente en la base de datos por su correo
+    const clienteBDD = await Cliente.findOne({correo})
 
-    // Si no se encuentra ningún paciente con el email proporcionado, responde con un mensaje de error
+    // Si no se encuentra ningún paciente con el correo proporcionado, responde con un mensaje de error
     if(!clienteBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
 
     // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el paciente en la base de datos
@@ -31,14 +31,14 @@ const loginCliente = async(req,res)=>{
     const token = generarJWT(clienteBDD._id,"cliente")
 
     // Extrae algunos datos específicos del cliente para incluir en la respuesta
-	const {nombre,propietario,email:emailP,celular,convencional,_id} = clienteBDD
+	const {nombre,propietario,correo:correolP,celular,convencional,_id} = clienteBDD
 
     // Responde con un objeto JSON que contiene el token JWT y otros datos del paciente
     res.status(200).json({
         token,
         nombre,
         propietario,
-        emailP,
+        correoP,
         celular,
         convencional,
         rol:"cliente",
@@ -93,22 +93,23 @@ const detalleCliente = async(req,res)=>{
 
 // Método para registrar un paciente
 const registrarCliente = async(req,res)=>{
-    // desestructura el email
-    const {email} = req.body
+    // desestructura el correo
+    const {correo} = req.body
     // Valida todos los campos del cuerpo de la solicitud
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
-    // Busca si el email ya está registrado en la base de datos
-    const verificarEmailBDD = await Cliente.findOne({email})
-    // Si el email ya está registrado, responde con un mensaje de error
-    if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
+    // Busca si el correo ya está registrado en la base de datos
+    const verificarCorreoBDD = await Cliente.findOne({correo})
+    // Si el correo ya está registrado, responde con un mensaje de error
+    if(verificarCorreoBDD) return res.status(400).json({msg:"Lo sentimos, el correo ya se encuentra registrado"})
     // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
     const nuevoCliente = new Cliente(req.body)
+
     // Genera una contraseña aleatoria
     const password = Math.random().toString(36).slice(2)
     // Encripta la contraseña
     nuevoCliente.password = await nuevoCliente.encrypPassword("tec"+password)
     // Envía un correo electrónico al paciente con la contraseña
-    await sendMailToCliente(email,"tec"+password)
+    await sendMailToCliente(correo,"tec"+password)
     // Asocia el paciente con el tecnico que hizo la solicitud
     nuevoCliente.tecnico=req.tecnicoBDD._id
     // Guarda el cliente en la base de datos
@@ -116,7 +117,6 @@ const registrarCliente = async(req,res)=>{
     // Responde con un mensaje de éxito
     res.status(200).json({msg:"Registro exitoso del cliente y correo enviado"})
 }
-
 
 
 // Método para actualizar un paciente
@@ -135,18 +135,13 @@ const actualizarCliente = async(req,res)=>{
 // Método para eliminar(dar de baja) un paciente
 const eliminarCliente = async (req,res)=>{
     const {id} = req.params // Extrae el ID del paciente de los parámetros de la solicitud
-
     // Verifica si algún campo del cuerpo de la solicitud está vacío
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
-
     // Verifica si el ID del paciente es válido
     if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el paciente ${id}`})
-
     const {salida} = req.body // Extrae la fecha de salida del cuerpo de la solicitud
-
     // Actualiza el paciente en la base de datos, estableciendo la fecha de salida y el estado en false
     await Cliente.findByIdAndUpdate(req.params.id,{salida:Date.parse(salida),estado:false})
-    
     // Responde con un mensaje de éxito
     res.status(200).json({msg:"Fecha de salida del cliente registrada exitosamente"})
 }

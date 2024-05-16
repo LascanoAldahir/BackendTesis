@@ -1,22 +1,24 @@
-// Importar mongoose para la gestión de esquemas y modelos en MongoDB
-import mongoose, { Schema, model } from 'mongoose';
+// Importar el Schema y el modelo de mongoose
+import { Schema, model } from 'mongoose';
+// Importar bcrypt para cifrar las contraseñas
+import bcrypt from "bcryptjs";
 
 // Definir el esquema del tratamiento
-const equipoSchema = new Schema({
+const proformaSchema = new Schema({
     // Campo para el nombre del tratamiento
-    tipo: {
+    ordenN: {
         type: String,   // Tipo de dato: String
         required: true, // Campo obligatorio
         trim: true      // Se eliminan espacios en blanco al inicio y al final
     },
     // Campo para la descripción del tratamiento
-    marca: {
+    equipo: {
         type: String,   // Tipo de dato: String
         required: true, // Campo obligatorio
         trim: true      // Se eliminan espacios en blanco al inicio y al final
     },
     // Campo para el estado del tratamiento (activo o inactivo)
-    modelo : {
+    cliente : {
         type: String,  
         required: true, // Campo obligatorio
         default: true   // Valor por defecto: true
@@ -25,22 +27,28 @@ const equipoSchema = new Schema({
     serie: {
         type: String,  
         required: true, // Campo obligatorio
-        default: true  
+        default: true   // Valor por defecto: true
     },
     // Campo para referenciar el paciente al que se aplica el tratamiento
-    color: {
+    componente: {
         type: String,
         required: true, // Campo obligatorio
         default: true   // Valor por defecto: true
     },
-    tipoServicio: {
+    modelo: {
         type: String,
         required: true,
         enum: ['Revision','Mantenimiento','Reparacion']
-    }
+    },
+    precio:{
+        type: Number,
+        required: true,
+        min: 0,
+        default: 0
+    },
 }, {
     timestamps: true // Agregar timestamps de creación y modificación automáticamente
 });
 
 // Exportar el modelo 'Equipo' basado en el esquema 'equipoSchema'
-export default model('Equipo', equipoSchema);
+export default model('Proforma', proformaSchema);
