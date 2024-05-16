@@ -105,11 +105,10 @@ const registrarCliente = async(req,res)=>{
     if(verificarCorreoBDD) return res.status(400).json({msg:"Lo sentimos, el correo ya se encuentra registrado"})
     // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
     const nuevoCliente = new Cliente(req.body)
-
     // Genera una contraseña aleatoria
     const password = Math.random().toString(36).slice(2)
     // Encripta la contraseña
-    nuevoCliente.password = await nuevoCliente.encrypPassword("tec"+password)
+    nuevoCliente.password = await nuevoCliente.encryptPassword("tec"+password)
     // Envía un correo electrónico al paciente con la contraseña
     await sendMailToCliente(correo,"tec"+password)
     // Asocia el paciente con el tecnico que hizo la solicitud

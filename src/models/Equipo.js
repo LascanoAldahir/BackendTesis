@@ -1,5 +1,7 @@
 // Importar mongoose para la gestión de esquemas y modelos en MongoDB
 import mongoose, { Schema, model } from 'mongoose';
+// Importar bcrypt para cifrar las contraseñas
+import bcrypt from "bcryptjs";
 
 // Definir el esquema del tratamiento
 const equipoSchema = new Schema({
