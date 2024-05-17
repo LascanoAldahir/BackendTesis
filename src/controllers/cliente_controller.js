@@ -14,27 +14,21 @@ const loginCliente = async (req, res) => {
 
   // Verifica si algún campo del cuerpo de la solicitud está vacío
   if (Object.values(req.body).includes(""))
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
 
   // Busca un paciente en la base de datos por su correo
   const clienteBDD = await Cliente.findOne({ correo });
 
   // Si no se encuentra ningún paciente con el correo proporcionado, responde con un mensaje de error
   if (!clienteBDD)
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
+    return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
 
   // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el paciente en la base de datos
   const verificarPassword = await clienteBDD.matchPassword(password);
 
   // Si la contraseña no coincide, responde con un mensaje de error
   if (!verificarPassword)
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, el password no es el correcto" });
+    return res.status(404).json({ msg: "Lo sentimos, el password no es el correcto" });
 
   // Genera un token JWT para el cliente
   const token = generarJWT(clienteBDD._id, "cliente");
@@ -104,9 +98,7 @@ const detalleCliente = async (req, res) => {
   const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
   // Verifica si el ID es válido
   if (!mongoose.Types.ObjectId.isValid(id))
-    return res
-      .status(404)
-      .json({ msg: 'Lo sentimos, no existe el cliente ${id}' });
+    return res.status(404).json({ msg: 'Lo sentimos, no existe el cliente ${id}' });
   // Busca al cliente por su ID y lo popula con la información del tecnico asociado y los equipos asociados
   const cliente = await Cliente.findById(id)
     .select("")
@@ -124,16 +116,12 @@ const registrarCliente = async (req, res) => {
   const { correo } = req.body;
   // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes(""))
-    return res
-      .status(400)
-      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
   // Busca si el correo ya está registrado en la base de datos
   const verificarCorreoBDD = await Cliente.findOne({ correo });
   // Si el correo ya está registrado, responde con un mensaje de error
   if (verificarCorreoBDD)
-    return res
-      .status(400)
-      .json({ msg: "Lo sentimos, el correo ya se encuentra registrado" });
+    return res.status(400).json({ msg: "Lo sentimos, el correo ya se encuentra registrado" });
   // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
   const nuevoCliente = new Cliente(req.body);
   // Genera una contraseña aleatoria
@@ -147,9 +135,7 @@ const registrarCliente = async (req, res) => {
   // Guarda el cliente en la base de datos
   await nuevoCliente.save();
   // Responde con un mensaje de éxito
-  res
-    .status(200)
-    .json({ msg: "Registro exitoso del cliente y correo enviado" });
+  res.status(200).json({ msg: "Registro exitoso del cliente y correo enviado" });
 };
 
 // Método para actualizar un paciente
@@ -157,14 +143,10 @@ const actualizarCliente = async (req, res) => {
   const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
   // Verifica si algún campo del cuerpo de la solicitud está vacío
   if (Object.values(req.body).includes(""))
-    return res
-      .status(400)
-      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
   // Verifica si el ID del paciente es válido
   if (!mongoose.Types.ObjectId.isValid(id))
-    return res
-      .status(404)
-      .json({ msg: 'Lo sentimos, no existe el cliente ${id}' });
+    return res.status(404).json({ msg: 'Lo sentimos, no existe el cliente ${id}' });
   // Busca y actualiza el paciente en la base de datos utilizando el ID proporcionado
   await Cliente.findByIdAndUpdate(req.params.id, req.body);
   // Responde con un mensaje de éxito
@@ -177,9 +159,7 @@ const eliminarCliente = async (req, res) => {
   try {
     // Verifica si el ID del cliente es válido
     if (!mongoose.Types.ObjectId.isValid(id))
-      return res
-        .status(404)
-        .json({ msg: 'Lo sentimos, no existe el cliente ${id}' });
+      return res.status(404).json({ msg: 'Lo sentimos, no existe el cliente ${id}' });
     // Elimina el cliente de la base de datos
     await Cliente.findByIdAndDelete(id);
     // Responde con un mensaje de éxito
@@ -187,9 +167,7 @@ const eliminarCliente = async (req, res) => {
   } catch (error) {
     // Si ocurre un error, responde con un mensaje de error
     console.error(error);
-    res
-      .status(500)
-      .json({ msg: "Ocurrió un error al intentar eliminar al cliente" });
+    res.status(500).json({ msg: "Ocurrió un error al intentar eliminar al cliente" });
   }
 };
 
