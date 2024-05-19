@@ -153,6 +153,20 @@ const actualizarCliente = async (req, res) => {
   res.status(200).json({ msg: "Actualización exitosa del cliente" });
 };
 
+// Buscar cliente por cedula
+const buscarClientePorCedula = async (req, res) => {
+  const { cedula } = req.params;
+  try {
+    const cliente = await Cliente.findOne({ cedula });
+    if (!cliente) {
+      return res.status(404).json({ mensaje: "Cliente no encontrado" });
+    }
+    res.json(cliente);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al buscar el cliente" });
+  }
+};
+
 // Método para eliminar(dar de baja) un paciente
 const eliminarCliente = async (req, res) => {
   const { id } = req.params; // Extrae el ID del cliente de los parámetros de la solicitud
@@ -179,5 +193,6 @@ export {
   detalleCliente,
   registrarCliente,
   actualizarCliente,
+  buscarClientePorCedula,
   eliminarCliente,
 };
