@@ -185,6 +185,8 @@ const eliminarCliente = async (req, res) => {
   }
 };
 
+//modelo de orden (no borrar sino poner finalizado)
+
 // Exporta los métodos de la API relacionados con la gestión de pacientes
 export {
   loginCliente,
