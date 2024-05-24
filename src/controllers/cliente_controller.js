@@ -1,6 +1,6 @@
 // IMPORTAR EL MODELO
 import Cliente from "../models/Cliente.js"; // Importa el modelo Cliente para interactuar con la colección de pacientes en la base de datos
-import Equipo from "../models/Equipo.js"; // Importa el modelo Equipo para interactuar con la colección de tratamientos en la base de datos
+import ordentrabajo from "../models/ordentrabajo.js"; // Importa el modelo Equipo para interactuar con la colección de tratamientos en la base de datos
 
 // IMPORTAR EL MÉTODO sendMailToPaciente
 import { sendMailToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
@@ -153,19 +153,7 @@ const actualizarCliente = async (req, res) => {
   res.status(200).json({ msg: "Actualización exitosa del cliente" });
 };
 
-// Buscar cliente por cedula
-const buscarClientePorCedula = async (req, res) => {
-  const { cedula } = req.params;
-  try {
-    const cliente = await Cliente.findOne({ cedula });
-    if (!cliente) {
-      return res.status(404).json({ mensaje: "Cliente no encontrado" });
-    }
-    res.json(cliente);
-  } catch (error) {
-    res.status(500).json({ mensaje: "Error al buscar el cliente" });
-  }
-};
+
 
 // Método para eliminar(dar de baja) un paciente
 const eliminarCliente = async (req, res) => {
@@ -195,6 +183,5 @@ export {
   detalleCliente,
   registrarCliente,
   actualizarCliente,
-  buscarClientePorCedula,
   eliminarCliente,
 };

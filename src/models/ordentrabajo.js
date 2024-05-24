@@ -4,30 +4,41 @@ import mongoose, { Schema, model } from 'mongoose';
 import bcrypt from "bcryptjs";
 
 // Definir el esquema del tratamiento
-const equipoSchema = new Schema({
+const ordentrabajoSchema = new Schema({
     // Campo para el nombre del tratamiento
-    tipo: {
+    numOrden:{
+        type:String,
+        required: true,
+    },
+    cliente:{
+        type: String,
+        required:true,
+        trim: true
+    },
+    equipo: {
         type: String,   // Tipo de dato: String
         required: true, // Campo obligatorio
         trim: true      // Se eliminan espacios en blanco al inicio y al final
     },
     // Campo para la descripción del tratamiento
-    marca: {
+    modelo: {
         type: String,   // Tipo de dato: String
         required: true, // Campo obligatorio
         trim: true      // Se eliminan espacios en blanco al inicio y al final
     },
     // Campo para el estado del tratamiento (activo o inactivo)
-    modelo : {
+    marca: {
         type: String,  
         required: true, // Campo obligatorio
-        default: true   // Valor por defecto: true
+        default: true,
+        trim: true
     },
     // Campo para la prioridad del tratamiento (Baja, Media, Alta)
     serie: {
         type: String,  
         required: true, // Campo obligatorio
-        default: true  
+        default: true,
+        trim: true  
     },
     // Campo para referenciar el paciente al que se aplica el tratamiento
     color: {
@@ -35,24 +46,40 @@ const equipoSchema = new Schema({
         required: true, // Campo obligatorio
         default: true   // Valor por defecto: true
     },
-    tipoServicio: {
-        type: String,
-        required: true,
-        enum: ['Revision','Mantenimiento','Reparacion']
+    ingreso: {
+            type: Date,
+            required: true,
+            trim: true,
+            default: Date.now() // Valor por defecto: fecha y hora actual
+   },
+   razon:{
+    type: String,
+        required: [true, 'La razón es obligatoria'],
+        minlength: [10, 'La razón debe tener al menos 10 caracteres'],
+        maxlength: [500, 'La razón no puede exceder los 500 caracteres']
     },
-        //frecuente, apellido, frecuente(booleano)
-        ingreso: {
+    fechaSalida:{
             type: Date,
             required: true,
             trim: true,
-            default: Date.now() // Valor por defecto: fecha y hora actual
-        },
-        salida: {
-            type: Date,
-            required: true,
-            trim: true,
-            default: Date.now() // Valor por defecto: fecha y hora actual
-        },
+            default: Date.now() // Valor por defecto: fecha y hora actual    
+    },
+    servicio: {
+        type: [String],
+        required: true,
+        enum: {
+            values: ['mantenimiento', 'revisión', 'reparación'],
+            message: '{VALUE} no es un servicio válido'
+        }
+    },
+    estado:{
+        type:String,
+        required: true
+    },
+    tecnico: {
+            type: Schema.Types.ObjectId,
+            ref: 'Tecnico' // Nombre del modelo Tecnico
+    }
 }, {
     timestamps: true // Agregar timestamps de creación y modificación automáticamente
 });

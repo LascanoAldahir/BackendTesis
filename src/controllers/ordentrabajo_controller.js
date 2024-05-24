@@ -1,6 +1,47 @@
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
-import ELquipo from "../models/Equipo.js"; // Importa el modelo Tratamiento para interactuar con la colección de tratamientos en la base de datos
-import Equipo from "../models/Equipo.js";
+import ordentrabajo from "../models/ordentrabajo.js";
+
+// Buscar cliente por cedula
+const buscarClientePorCedula = async (req, res) => {
+    const { cedula } = req.params;
+    try {
+      const cliente = await Cliente.findOne({ cedula });
+      if (!cliente) {
+        return res.status(404).json({ mensaje: "Cliente no encontrado" });
+      }
+      res.json(cliente);
+    } catch (error) {
+      res.status(500).json({ mensaje: "Error al buscar el cliente" });
+    }
+  };
+
+  const verificarEstadoYMostrarModal = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Buscar el equipo por su ID
+        const equipo = await Equipo.findById(id);
+
+        if (!equipo) {
+            return res.status(404).json({ message: 'Equipo no encontrado' });
+        }
+
+        // Verificar el estado del servicio
+        if (equipo.servicio === 'reparación') {
+            // Aquí puedes implementar la lógica para mostrar el modal de proforma
+            // En un entorno de backend puro, esto podría implicar devolver una respuesta
+            // que indique al frontend que debe mostrar el modal
+
+            // Ejemplo de respuesta JSON que indica que se debe mostrar el modal
+            return res.status(200).json({ mostrarModal: true, message: 'Mostrar modal de proforma' });
+        } else {
+            return res.status(200).json({ mostrarModal: false, message: 'No es necesario mostrar el modal de proforma' });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error del servidor' });
+    }
+};
 
 // Método para ver el detalle del tratamiento
 const detalleEquipo = async(req,res)=>{
@@ -96,6 +137,7 @@ export {
     registrarEquipo,
     actualizarEquipo,
     eliminarEquipo,
+    buscarClientePorCedula,
     cambiarEstado,
     tipoServicio
 }
