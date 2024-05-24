@@ -10,7 +10,7 @@ import {
   registrarCliente,
   loginCliente,
   perfilCliente,
-  buscarClientePorCedula
+  
 } from "../controllers/cliente_controller.js";
 
 // Importar middleware de autenticación
@@ -28,6 +28,6 @@ router.post("/cliente/registro", verificarAutenticacion, registrarCliente); // R
 router.put("/cliente/actualizar/:id", verificarAutenticacion, actualizarCliente); // Ruta para actualizar los datos de un paciente
 router.delete("/cliente/eliminar/:id", verificarAutenticacion, eliminarCliente); // Ruta para eliminar un paciente
 
-router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCedula);
+
 
 export default router; // Exportar el enrutador

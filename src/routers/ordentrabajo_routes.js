@@ -9,6 +9,7 @@ import {
     detalleEquipo,
     registrarEquipo,
     actualizarEquipo,
+    buscarClientePorCedula,
     eliminarEquipo,
     cambiarEstado,
     tipoServicio 
@@ -23,6 +24,8 @@ router.post('/equipo/registro', verificarAutenticacion, registrarEquipo);
 
 // Ruta para obtener el detalle de un tratamiento específico
 router.get('/equipo/:id', verificarAutenticacion, detalleEquipo);
+
+router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCedula);
 
 // Ruta para actualizar el estado de un equipo
 // router.put('/tratamiento/:id',verificarAutenticacion,actualizarTratamiento)
