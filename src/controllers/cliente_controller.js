@@ -8,6 +8,20 @@ import { sendMailToCliente } from "../config/nodemailer.js"; // Importa la funci
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import generarJWT from "../helpers/crearJWT.js"; // Importa la función generarJWT desde el archivo crearJWT.js para generar tokens JWT
 
+// Buscar cliente por cedula
+const buscarClientePorCedula = async (req, res) => {
+  const { cedula } = req.params;
+  try {
+    const cliente = await Cliente.findOne({ cedula });
+    if (!cliente) {
+      return res.status(404).json({ mensaje: "Cliente no encontrado" });
+    }
+    res.json(cliente);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al buscar el cliente" });
+  }
+};
+
 // Método para el proceso de login
 const loginCliente = async (req, res) => {
   const { correo, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
@@ -179,6 +193,7 @@ const eliminarCliente = async (req, res) => {
 export {
   loginCliente,
   perfilCliente,
+  buscarClientePorCedula,
   listarClientes,
   detalleCliente,
   registrarCliente,

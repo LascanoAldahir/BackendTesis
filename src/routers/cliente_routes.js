@@ -1,4 +1,6 @@
 import { Router } from 'express';
+// Importar controladores de tratamientos
+
 const router = Router();
 
 // Importar controladores de clientes
@@ -9,9 +11,12 @@ import {
   listarClientes,
   registrarCliente,
   loginCliente,
+  buscarClientePorCedula,
   perfilCliente,
   
 } from "../controllers/cliente_controller.js";
+
+
 
 // Importar middleware de autenticación
 import verificarAutenticacion from "../middlewares/autenticacion.js";
@@ -24,7 +29,7 @@ router.get("/clientes", verificarAutenticacion, listarClientes); // Ruta para li
 router.get("/cliente/:id", verificarAutenticacion, detalleCliente); // Ruta para obtener detalles de un paciente específico
 
 router.post("/cliente/registro", verificarAutenticacion, registrarCliente); // Ruta para registrar un nuevo paciente
-
+router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCedula);
 router.put("/cliente/actualizar/:id", verificarAutenticacion, actualizarCliente); // Ruta para actualizar los datos de un paciente
 router.delete("/cliente/eliminar/:id", verificarAutenticacion, eliminarCliente); // Ruta para eliminar un paciente
 
