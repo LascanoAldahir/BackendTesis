@@ -2,7 +2,7 @@
 import app from "./server.js";
 import http from "http"; // Importa el módulo 'http' para crear el servidor HTTP
 import { Server } from "socket.io"; // Importa la clase 'Server' de socket.io para crear el servidor de WebSockets
-import ordenesRoutes from './routes/ordenes.js';
+import ordenesRoutes from './routes/ordentrabajo_routes.js';
 
 // Importar la función connection()
 import connection from "./database.js"; // Importa la función 'connection' desde el archivo "database.js" para establecer la conexión con la base de datos
