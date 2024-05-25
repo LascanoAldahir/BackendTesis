@@ -122,36 +122,31 @@ const detalleCliente = async (req, res) => {
   });
 };
 
-const registrarCliente = async (req, res) => {
-  try {
-      // Desestructurar los datos recibidos
-      const { correo, cedula } = req.body; // Extraemos correo y cédula
-
-      // Generar una contraseña aleatoria
-      const password = Math.random().toString(36).slice(2); // Generamos la contraseña aleatoria
-      
-      // Crear una nueva instancia de Cliente con la cédula y correo
-      const nuevoCliente = new Cliente({ cedula, correo });
-
-      // Encriptar el password
-      nuevoCliente.password = await nuevoCliente.encrypPassword("tec" + password);
-      
-      // Guardar el cliente en la base de datos
-      await nuevoCliente.save();
-
-      // Enviar el correo electrónico al cliente con la cédula y la contraseña
-      await sendMailToCliente(correo, cedula, password); // Se usa el correo para enviar el mensaje
-      
-      // Asociar el cliente con el técnico
-      nuevoCliente.tecnico = req.tecnicoBDD._id;
-
-      // Responder con éxito
-      res.status(200).json({ msg: "Registro exitoso del cliente y correo enviado" });
-  } catch (error) {
-      console.error("Error al registrar cliente: ", error);
-      res.status(500).json({ msg: "Error al registrar cliente" });
-  }
-};
+// Método para registrar un paciente
+const registrarCliente = async(req,res)=>{
+  // desestructura el email
+  const {cedula} = req.body
+  // Valida todos los campos del cuerpo de la solicitud
+  if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
+  // Busca si el email ya está registrado en la base de datos
+  const verificarEmailBDD = await Cliente.findOne({cedula})
+  // Si el email ya está registrado, responde con un mensaje de error
+  if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
+  // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
+  const nuevoCliente = new Cliente(req.body)
+  // Genera una contraseña aleatoria
+  const password = Math.random().toString(8).slice(2)
+  // Encripta la contraseña
+  nuevoCliente.password = await nuevoCliente.encryptPassword("tec"+password)
+  // Envía un correo electrónico al paciente con la contraseña
+  await sendMailToCliente(email,"vet"+password)
+  // Asocia el paciente con el tecnico que hizo la solicitud
+  nuevoCliente.tecnico=req.tecnicoBDD._id
+  // Guarda el cliente en la base de datos
+  await nuevoCliente.save()
+  // Responde con un mensaje de éxito
+  res.status(200).json({msg:"Registro exitoso del paciente y correo enviado"})
+}
 
 
 
