@@ -25,29 +25,22 @@ const buscarClientePorCedula = async (req, res) => {
 // Método para el proceso de login
 const loginCliente = async (req, res) => {
   const { correo, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
-
   // Verifica si algún campo del cuerpo de la solicitud está vacío
   if (Object.values(req.body).includes(""))
     return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
-
   // Busca un paciente en la base de datos por su correo
   const clienteBDD = await Cliente.findOne({ correo });
-
   // Si no se encuentra ningún paciente con el correo proporcionado, responde con un mensaje de error
   if (!clienteBDD)
     return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
-
   // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el paciente en la base de datos
   const verificarPassword = await clienteBDD.matchPassword(password);
-
   // Si la contraseña no coincide, responde con un mensaje de error
   if (!verificarPassword)
     return res.status(404).json({ msg: "Lo sentimos, el password no es el correcto" });
-
   // Genera un token JWT para el cliente
   const token = generarJWT(clienteBDD._id, "cliente");
-
-  // Extrae algunos datos específicos del cliente para incluir en la respuesta
+  // Extrae algunos datos específicos del cliente para incluir en la respuest
   const {
     nombre,
     propietario,
@@ -57,7 +50,7 @@ const loginCliente = async (req, res) => {
     _id,
   } = clienteBDD;
 
-  // Responde con un objeto JSON que contiene el token JWT y otros datos del paciente
+  // Responde con un objeto JSON que contiene el token JWT y otros datos del cliente
   res.status(200).json({
     token,
     nombre,
@@ -132,19 +125,21 @@ const registrarCliente = async (req, res) => {
   // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes(""))
     return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
-  // Busca si el correo ya está registrado en la base de datos
-  const verificarCorreoBDD = await Cliente.findOne({ correo });
+  // Busca si el cedula ya está registrado en la base de datos
+  const verificarCedulaBDD = await Cliente.findOne({ cedula });
   // Si el correo ya está registrado, responde con un mensaje de error
-  if (verificarCorreoBDD)
+  if (verificarCedulaBDD)
     return res.status(400).json({ msg: "Lo sentimos, el correo ya se encuentra registrado" });
   // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
   const nuevoCliente = new Cliente(req.body);
   // Genera una contraseña aleatoria
-  const password = Math.random().toString(36).slice(2);
+  const password = Math.random().toString(8).slice(2);
+  console.log("Contraseña generada");
   // Encripta la contraseña
   nuevoCliente.password = await nuevoCliente.encryptPassword("tec" + password);
   // Envía un correo electrónico al paciente con la contraseña
-  await sendMailToCliente(correo, "tec" + password);
+  await sendMailToCliente(cedula, "tec" + password, );
+  console.log("Correo y contraseña enviada");
   // Asocia el paciente con el tecnico que hizo la solicitud
   nuevoCliente.tecnico = req.tecnicoBDD._id;
   // Guarda el cliente en la base de datos
