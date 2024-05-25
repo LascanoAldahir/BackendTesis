@@ -43,7 +43,7 @@ const clienteSchema = new Schema({
 }, 
 );
 
-// Método para cifrar el password del paciente
+// Método para cifrar el password del cliente
 clienteSchema.methods.encryptPassword = async function(password){
     const salt = await bcrypt.genSalt(10)
     const passwordEncryp = await bcrypt.hash(password,salt)
