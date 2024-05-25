@@ -28,12 +28,12 @@ const buscarClientePorCedula = async (req, res) => {
 
 // Método para el proceso de login
 const loginCliente = async (req, res) => {
-  const { correo, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
+  const { cedula, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
   // Verifica si algún campo del cuerpo de la solicitud está vacío
   if (Object.values(req.body).includes(""))
     return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
   // Busca un paciente en la base de datos por su correo
-  const clienteBDD = await Cliente.findOne({ correo });
+  const clienteBDD = await Cliente.findOne({ cedula });
   // Si no se encuentra ningún paciente con el correo proporcionado, responde con un mensaje de error
   if (!clienteBDD)
     return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
@@ -142,7 +142,7 @@ const registrarCliente = async (req, res) => {
   // Encripta la contraseña
   nuevoCliente.password = await nuevoCliente.encryptPassword(password);
   // Envía un correo electrónico al paciente con la contraseña
-  await sendMailToCliente(userMail,cedula,password);
+  await sendMailToCliente(cedula, "tec"+password);
   console.log("Correo y contraseña enviada");
   // Asocia el paciente con el tecnico que hizo la solicitud
   nuevoCliente.tecnico = req.tecnicoBDD._id;
@@ -166,7 +166,6 @@ const actualizarCliente = async (req, res) => {
   // Responde con un mensaje de éxito
   res.status(200).json({ msg: "Actualización exitosa del cliente" });
 };
-
 
 
 // Método para eliminar(dar de baja) un paciente
