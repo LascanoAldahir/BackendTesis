@@ -7,6 +7,7 @@ import { sendMailToCliente } from "../config/nodemailer.js"; // Importa la funci
 
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import generarJWT from "../helpers/crearJWT.js"; // Importa la función generarJWT desde el archivo crearJWT.js para generar tokens JWT
+import Tecnico from "../models/Tecnico.js";
 
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
@@ -121,7 +122,7 @@ const detalleCliente = async (req, res) => {
 // Método para registrar un paciente
 const registrarCliente = async (req, res) => {
   // desestructura el correo
-  const { correo } = req.body;
+  const { cedula } = req.body;
   // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes(""))
     return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
@@ -183,6 +184,30 @@ const eliminarCliente = async (req, res) => {
   }
 };
 
+// Método para recuperar el password
+const recuperarPasswordCli = async(req,res)=>{
+  const {cedula} = req.body
+  if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
+  const clienteBDD = await Cliente.findOne({cedula})
+  if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
+  const token = tecnicoBDD.crearToken()
+  tecnicoBDD.token=token
+  await sendMailToRecoveryPassword(cedula,token)
+  await tecnicoBDD.save()
+  res.status(200).json({msg:"Revisa tu correo electrónico para reestablecer tu cuenta"})
+}
+
+
+// Método para comprobar el token
+const comprobarTokenPaswordCli = async (req,res)=>{
+  if(!(req.params.token)) return res.status(404).json({msg:"Lo sentimos, no se puede validar la cuenta"})
+  const tecnicoBDD = await Tecnico.findOne({token:req.params.token})
+  if(tecnicoBDD?.token !== req.params.token) return res.status(404).json({msg:"Lo sentimos, no se puede validar la cuenta"})
+  await tecnicoBDD.save()
+  res.status(200).json({msg:"Token confirmado, ya puedes crear tu nuevo password"}) 
+}
+
+
 //modelo de orden (no borrar sino poner finalizado)
 
 // Exporta los métodos de la API relacionados con la gestión de pacientes
@@ -195,4 +220,6 @@ export {
   registrarCliente,
   actualizarCliente,
   eliminarCliente,
+  recuperarPasswordCli,
+  comprobarTokenPaswordCli
 };
