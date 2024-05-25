@@ -2,6 +2,7 @@
 import app from "./server.js";
 import http from "http"; // Importa el módulo 'http' para crear el servidor HTTP
 import { Server } from "socket.io"; // Importa la clase 'Server' de socket.io para crear el servidor de WebSockets
+import ordenesRoutes from './routes/ordenes.js';
 
 // Importar la función connection()
 import connection from "./database.js"; // Importa la función 'connection' desde el archivo "database.js" para establecer la conexión con la base de datos
@@ -15,6 +16,9 @@ const io = new Server(server, { // Crea una instancia del servidor de WebSockets
     origin: "http://localhost:3000", // Configura las opciones de cors permitiendo solicitudes solo desde "http://localhost:5173"
   },
 });
+
+// Usar las rutas de órdenes de trabajo
+app.use('/api', ordenesRoutes);
 
 // Escucha las conexiones entrantes en el puerto configurado en la aplicación express
 app.listen(app.get("port"), () => {

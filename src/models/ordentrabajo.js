@@ -74,7 +74,8 @@ const ordentrabajoSchema = new Schema({
     },
     estado:{
         type:String,
-        required: true
+        required: true,
+        default: pendiente
     },
     tecnico: {
             type: Schema.Types.ObjectId,
