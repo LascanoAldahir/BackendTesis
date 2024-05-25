@@ -1,4 +1,7 @@
+
+import { sendMailToRecoveryPasswordCli } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 // IMPORTAR EL MODELO
+
 import Cliente from "../models/Cliente.js"; // Importa el modelo Cliente para interactuar con la colección de pacientes en la base de datos
 import Ordentrabajo from "../models/Ordentrabajo.js"; // Importa el modelo Equipo para interactuar con la colección de tratamientos en la base de datos
 
@@ -192,7 +195,7 @@ const recuperarPasswordCli = async(req,res)=>{
   if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
   const token = tecnicoBDD.crearToken()
   tecnicoBDD.token=token
-  await sendMailToRecoveryPassword(cedula,token)
+  await sendMailToRecoveryPasswordCli(cedula,token)
   await tecnicoBDD.save()
   res.status(200).json({msg:"Revisa tu correo electrónico para reestablecer tu cuenta"})
 }
@@ -206,7 +209,6 @@ const comprobarTokenPaswordCli = async (req,res)=>{
   await tecnicoBDD.save()
   res.status(200).json({msg:"Token confirmado, ya puedes crear tu nuevo password"}) 
 }
-
 
 //modelo de orden (no borrar sino poner finalizado)
 

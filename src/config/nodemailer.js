@@ -51,6 +51,27 @@ const sendMailToRecoveryPassword = async (userMail, token) => {
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
+/////////////////////////////////////////////////////////////
+
+// Función para enviar un correo electrónico de recuperación de contraseña al usuario
+const sendMailToRecoveryPasswordCli = async (userMail, token) => {
+    let info = await transporter.sendMail({
+        from: 'electronica_zurita@admin.com',
+        to: userMail,
+        subject: "Correo para reestablecer tu contraseña",
+        html: `
+        <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
+        <hr>
+        <a href=${process.env.URL_FRONTEND}/recuperar-password/${token}>Clic para reestablecer tu contraseña</a>
+        <hr>
+        <footer>Electronica Zurita te dá la bienvenida!</footer>
+        `
+    });
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+}
+
+
+/////////////////////////////////////////////////////////////
 // Función para enviar un correo electrónico de bienvenida al cliente
 const sendMailToCliente = async(userMail, cedula, password)=>{
     let info = await transporter.sendMail({
@@ -73,5 +94,7 @@ const sendMailToCliente = async(userMail, cedula, password)=>{
 export {
     sendMailToUser,
     sendMailToRecoveryPassword,
-    sendMailToCliente
+    sendMailToCliente,
+    sendMailToRecoveryPasswordCli
+    
 }
