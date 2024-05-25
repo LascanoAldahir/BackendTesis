@@ -136,9 +136,9 @@ const registrarCliente = async (req, res) => {
   const password = Math.random().toString(8).slice(2);
   console.log("Contraseña generada");
   // Encripta la contraseña
-  nuevoCliente.password = await nuevoCliente.encryptPassword("tec" + password);
+  nuevoCliente.password = await nuevoCliente.encryptPassword(password);
   // Envía un correo electrónico al paciente con la contraseña
-  await sendMailToCliente(cedula, "tec" + password, );
+  await sendMailToCliente(cedula, password);
   console.log("Correo y contraseña enviada");
   // Asocia el paciente con el tecnico que hizo la solicitud
   nuevoCliente.tecnico = req.tecnicoBDD._id;

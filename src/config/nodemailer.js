@@ -15,7 +15,6 @@ let transporter = nodemailer.createTransport({
 });
 
 const URL_FRONTEND = "https://tesistest.netlify.app"
-//https://tesistest.netlify.app/
 
 // Función para enviar un correo electrónico de verificación al usuario
 const sendMailToUser = async (userMail, token) => {
