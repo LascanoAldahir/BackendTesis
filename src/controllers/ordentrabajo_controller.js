@@ -1,5 +1,5 @@
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
-import ordentrabajo from "../models/ordentrabajo.js";
+import Ordentrabajo from "../models/Ordentrabajo.js";
 
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
@@ -21,7 +21,7 @@ const tipoServicio = async (req, res) => {
         const { tipoServicio } = req.body;
         const { id } = req.params;
         // Verificar si el equipo existe
-        const equipo = await Equipo.findById(id);
+        const equipo = await Ordentrabajo.findById(id);
         if (!equipo) {
             return res.status(404).json({ msg: 'Equipo no encontrado' });
         }
@@ -50,7 +50,7 @@ const buscarOrdenPorNumero = async (req, res) => {
         // Obtener el número de orden de los parámetros de la solicitud
         const { numOrden } = req.params;
         // Buscar la orden de trabajo en la base de datos por el número de orden
-        const orden = await ordentrabajo.findOne({ numOrden });
+        const orden = await Ordentrabajo.findOne({ numOrden });
         // Verificar si se encontró la orden de trabajo
         if (!orden) {
             return res.status(404).json({

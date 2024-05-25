@@ -33,6 +33,4 @@ router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCe
 router.put("/cliente/actualizar/:id", verificarAutenticacion, actualizarCliente); // Ruta para actualizar los datos de un paciente
 router.delete("/cliente/eliminar/:id", verificarAutenticacion, eliminarCliente); // Ruta para eliminar un paciente
 
-
-
 export default router; // Exportar el enrutador

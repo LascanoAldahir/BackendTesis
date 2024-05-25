@@ -86,4 +86,4 @@ const ordentrabajoSchema = new Schema({
 });
 
 // Exportar el modelo 'Equipo' basado en el esquema 'equipoSchema'
-export default model('ordentrabajo', ordentrabajoSchema);
+export default model('Ordentrabajo', ordentrabajoSchema);
