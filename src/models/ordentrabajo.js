@@ -75,7 +75,7 @@ const ordentrabajoSchema = new Schema({
     estado:{
         type:String,
         required: true,
-        default: pendiente
+        default: "pendiente"
     },
     tecnico: {
             type: Schema.Types.ObjectId,
@@ -86,4 +86,4 @@ const ordentrabajoSchema = new Schema({
 });
 
 // Exportar el modelo 'Equipo' basado en el esquema 'equipoSchema'
-export default model('Equipo', equipoSchema);
+export default model('ordentrabajo', ordentrabajoSchema);

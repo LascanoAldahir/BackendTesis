@@ -45,7 +45,7 @@ const tipoServicio = async (req, res) => {
 
 
 // Definir el controlador para buscar órdenes de trabajo por número de orden
-export const buscarOrdenPorNumero = async (req, res) => {
+const buscarOrdenPorNumero = async (req, res) => {
     try {
         // Obtener el número de orden de los parámetros de la solicitud
         const { numOrden } = req.params;

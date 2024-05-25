@@ -8,7 +8,7 @@ import routerTecnicos from './routers/tecnico_routes.js'; // Importa el enrutado
 // Importar la variable routerPacientes
 import routerClientes from './routers/cliente_routes.js'; // Importa el enrutador definido para las rutas relacionadas con clientes
 // Importar la variable routerTratamientos
-import routerEquipos from './routers/equipo_routes.js'; // Importa el enrutador definido para las rutas relacionadas con equipos
+import routerOrdentrabajo from './routers/ordentrabajo_routes.js'; // Importa el enrutador definido para las rutas relacionadas con equipos
 
 // Inicializaciones
 const app = express(); // Crea una instancia de la aplicación express
@@ -24,7 +24,7 @@ app.use(express.json()); // Usa el middleware integrado de express para analizar
 // Rutas 
 app.use('/api', routerTecnicos); // Usa el enrutador de veterinarios en la ruta '/api'
 app.use('/api', routerClientes); // Usa el enrutador de pacientes en la ruta '/api'
-app.use('/api', routerEquipos); // Usa el enrutador de tratamientos en la ruta '/api'
+app.use('/api', routerOrdentrabajo); // Usa el enrutador de tratamientos en la ruta '/api'
 
 // Manejo de una ruta que no sea encontrada
 app.use((req, res) => res.status(404).send("Endpoint no encontrado - 404")); // Maneja las solicitudes a rutas no encontradas y responde con un mensaje de error 404
