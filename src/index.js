@@ -11,6 +11,7 @@ import connection from "./database.js"; // Importa la función 'connection' desd
 connection(); // Llama a la función 'connection' para establecer la conexión con la base de datos
 
 const server = http.createServer(app); // Crea un servidor HTTP utilizando la instancia de la aplicación express
+
 const io = new Server(server, { // Crea una instancia del servidor de WebSockets y lo adjunta al servidor HTTP
   cors: {
     origin: "http://localhost:3000", // Configura las opciones de cors permitiendo solicitudes solo desde "http://localhost:5173"

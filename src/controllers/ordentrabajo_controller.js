@@ -49,17 +49,14 @@ const buscarOrdenPorNumero = async (req, res) => {
     try {
         // Obtener el número de orden de los parámetros de la solicitud
         const { numOrden } = req.params;
-
         // Buscar la orden de trabajo en la base de datos por el número de orden
-        const orden = await OrdenTrabajo.findOne({ numOrden });
-
+        const orden = await ordentrabajo.findOne({ numOrden });
         // Verificar si se encontró la orden de trabajo
         if (!orden) {
             return res.status(404).json({
                 mensaje: `No se encontró una orden de trabajo con el número de orden: ${numOrden}`
             });
         }
-
         // Devolver la orden de trabajo encontrada
         return res.status(200).json(orden);
     } catch (error) {

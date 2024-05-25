@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { buscarOrdenPorNumero } from '../controllers/ordentrabajo_controller.js';
 // Importar el modelo de equipo
-import ordentrabajo from '../models/ordentrabajo.js';
 
 const router = Router();
 
