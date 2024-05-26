@@ -1,5 +1,5 @@
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
-import Ordentrabajo from "../models/Ordentrabajo.js";
+import Ordentrabajo from "../models/ordentrabajo.js";
 
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
