@@ -1,4 +1,3 @@
-
 import { sendMailToRecoveryPasswordCli } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 // IMPORTAR EL MODELO
 
@@ -28,20 +27,30 @@ const buscarClientePorCedula = async (req, res) => {
 
 // Método para el proceso de login
 const loginCliente = async (req, res) => {
-  const { cedula, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
+  const { correo, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
   // Verifica si algún campo del cuerpo de la solicitud está vacío
+  console.log("Login: "+password)
+  
   if (Object.values(req.body).includes(""))
-    return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    return res
+      .status(404)
+      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
   // Busca un paciente en la base de datos por su correo
-  const clienteBDD = await Cliente.findOne({ cedula });
+  const clienteBDD = await Cliente.findOne({correo});
   // Si no se encuentra ningún paciente con el correo proporcionado, responde con un mensaje de error
   if (!clienteBDD)
-    return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
+    return res
+      .status(404)
+      .json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
   // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el paciente en la base de datos
   const verificarPassword = await clienteBDD.matchPassword(password);
+
+  console.log ("Verificar passord"+ verificarPassword)
   // Si la contraseña no coincide, responde con un mensaje de error
   if (!verificarPassword)
-    return res.status(404).json({ msg: "Lo sentimos, el password no es el correcto" });
+    return res
+      .status(404)
+      .json({ msg: "Lo sentimos, el password no es el correcto" });
   // Genera un token JWT para el cliente
   const token = generarJWT(clienteBDD._id, "cliente");
   // Extrae algunos datos específicos del cliente para incluir en la respuest
@@ -56,17 +65,16 @@ const loginCliente = async (req, res) => {
 
   // Responde con un objeto JSON que contiene el token JWT y otros datos del cliente
   res.status(200).json({
-    token,
+    // token,
     nombre,
-    correolP,
-    password,
-    propietario,
-    correoP,
-    celular,
-    telefono,
-    frecuente,
-    rol: "cliente",
-    _id,
+  //   correo,
+  //   password,
+  //   propietario,
+  //   celular,
+  //   telefono,
+  //   frecuente,
+  //   rol: "cliente",
+  //   _id,
   });
 };
 
@@ -91,7 +99,7 @@ const listarClientes = async (req, res) => {
   if (req.clienteBDD && "propietario" in req.clienteBDD) {
     // Si el pacienteBDD existe y es propietario, busca pacientes asociados a ese propietario
     const clientes = await Cliente.find(req.clienteBDD._id)
-      .select("nombre correo telefono cedula frecuente direccion")
+      .select("nombre correo telefono cedula frecuente direccion password")
       .populate("tecnico", "_id nombre");
     res.status(200).json(clientes);
   } else {
@@ -99,7 +107,7 @@ const listarClientes = async (req, res) => {
     const clientes = await Cliente.find({ estado: true })
       .where("tecnico")
       .equals(req.tecnicoBDD)
-      .select("nombre correo telefono cedula frecuente direccion")
+      .select("nombre correo telefono cedula frecuente direccion password")
       .populate("tecnico", "_id nombre");
     res.status(200).json(clientes);
   }
@@ -110,7 +118,9 @@ const detalleCliente = async (req, res) => {
   const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
   // Verifica si el ID es válido
   if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).json({ msg: 'Lo sentimos, no existe el cliente ${id}' });
+    return res
+      .status(404)
+      .json({ msg: "Lo sentimos, no existe el cliente ${id}" });
   // Busca al cliente por su ID y lo popula con la información del tecnico asociado y los equipos asociados
   const cliente = await Cliente.findById(id)
     .select("")
@@ -123,48 +133,60 @@ const detalleCliente = async (req, res) => {
 };
 
 // Método para registrar un paciente
-const registrarCliente = async(req,res)=>{
+const registrarCliente = async (req, res) => {
   // desestructura el email
-  const {cedula} = req.body
+  const { cedula } = req.body;
+  const { correo } = req.body;
   // Valida todos los campos del cuerpo de la solicitud
-  if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
+  if (Object.values(req.body).includes(""))
+    return res
+      .status(400)
+      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
   // Busca si el email ya está registrado en la base de datos
-  const verificarEmailBDD = await Cliente.findOne({cedula})
+  const verificarEmailBDD = await Cliente.findOne({ correo });
   // Si el email ya está registrado, responde con un mensaje de error
-  if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
+  if (verificarEmailBDD)
+    return res
+      .status(400)
+      .json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
   // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
-  const nuevoCliente = new Cliente(req.body)
+  const nuevoCliente = new Cliente(req.body);
   // Genera una contraseña aleatoria
-  const password = Math.random().toString(8).slice(2)
-  console.log("Contraseña generada ", password );
+  const password = Math.random().toString(36).slice(2);
   // Encripta la contraseña
-  nuevoCliente.password = await nuevoCliente.encryptPassword("tec"+password)
-
+  console.log("antes: " + correo, cedula, password);
+  nuevoCliente.password = await nuevoCliente.encryptPassword(password);
+  // Envía un correo electrónico al cliente con la contraseña
+  await sendMailToCliente(correo, cedula, password);
   // Asocia el paciente con el tecnico que hizo la solicitud
-  nuevoCliente.tecnico=req.tecnicoBDD._id
+  nuevoCliente.tecnico = req.tecnicoBDD._id;
   // Guarda el cliente en la base de datos
-  await nuevoCliente.save()
-// Envía un correo electrónico al cliente con la contraseña
-  await sendMailToCliente(email,"tec"+password)
+  console.log(correo, cedula, password);
+  await nuevoCliente.save();
   // Responde con un mensaje de éxito
-  res.status(200).json({msg:"Registro exitoso del paciente y correo enviado"})
-}
+  res
+    .status(200)
+    .json({ msg: "Registro exitoso del paciente y correo enviado" });
+};
 
 // Método para actualizar un paciente
 const actualizarCliente = async (req, res) => {
   const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
   // Verifica si algún campo del cuerpo de la solicitud está vacío
   if (Object.values(req.body).includes(""))
-    return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    return res
+      .status(400)
+      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
   // Verifica si el ID del paciente es válido
   if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).json({ msg: 'Lo sentimos, no existe el cliente ${id}' });
+    return res
+      .status(404)
+      .json({ msg: "Lo sentimos, no existe el cliente ${id}" });
   // Busca y actualiza el paciente en la base de datos utilizando el ID proporcionado
   await Cliente.findByIdAndUpdate(req.params.id, req.body);
   // Responde con un mensaje de éxito
   res.status(200).json({ msg: "Actualización exitosa del cliente" });
 };
-
 
 // Método para eliminar(dar de baja) un paciente
 const eliminarCliente = async (req, res) => {
@@ -172,7 +194,9 @@ const eliminarCliente = async (req, res) => {
   try {
     // Verifica si el ID del cliente es válido
     if (!mongoose.Types.ObjectId.isValid(id))
-      return res.status(404).json({ msg: 'Lo sentimos, no existe el cliente ${id}' });
+      return res
+        .status(404)
+        .json({ msg: "Lo sentimos, no existe el cliente ${id}" });
     // Elimina el cliente de la base de datos
     await Cliente.findByIdAndDelete(id);
     // Responde con un mensaje de éxito
@@ -180,32 +204,49 @@ const eliminarCliente = async (req, res) => {
   } catch (error) {
     // Si ocurre un error, responde con un mensaje de error
     console.error(error);
-    res.status(500).json({ msg: "Ocurrió un error al intentar eliminar al cliente" });
+    res
+      .status(500)
+      .json({ msg: "Ocurrió un error al intentar eliminar al cliente" });
   }
 };
 
 // Método para recuperar el password
-const recuperarPasswordCli = async(req,res)=>{
-  const {cedula} = req.body
-  if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
-  const clienteBDD = await Cliente.findOne({cedula})
-  if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
-  const token = tecnicoBDD.crearToken()
-  tecnicoBDD.token=token
-  await sendMailToRecoveryPasswordCli(cedula,token)
-  await tecnicoBDD.save()
-  res.status(200).json({msg:"Revisa tu correo electrónico para reestablecer tu cuenta"})
-}
-
+const recuperarPasswordCli = async (req, res) => {
+  const { cedula } = req.body;
+  if (Object.values(req.body).includes(""))
+    return res
+      .status(404)
+      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
+  const clienteBDD = await Cliente.findOne({ cedula });
+  if (!tecnicoBDD)
+    return res
+      .status(404)
+      .json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
+  const token = tecnicoBDD.crearToken();
+  tecnicoBDD.token = token;
+  await sendMailToRecoveryPasswordCli(cedula, token);
+  await tecnicoBDD.save();
+  res
+    .status(200)
+    .json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
+};
 
 // Método para comprobar el token
-const comprobarTokenPaswordCli = async (req,res)=>{
-  if(!(req.params.token)) return res.status(404).json({msg:"Lo sentimos, no se puede validar la cuenta"})
-  const tecnicoBDD = await Tecnico.findOne({token:req.params.token})
-  if(tecnicoBDD?.token !== req.params.token) return res.status(404).json({msg:"Lo sentimos, no se puede validar la cuenta"})
-  await tecnicoBDD.save()
-  res.status(200).json({msg:"Token confirmado, ya puedes crear tu nuevo password"}) 
-}
+const comprobarTokenPaswordCli = async (req, res) => {
+  if (!req.params.token)
+    return res
+      .status(404)
+      .json({ msg: "Lo sentimos, no se puede validar la cuenta" });
+  const tecnicoBDD = await Tecnico.findOne({ token: req.params.token });
+  if (tecnicoBDD?.token !== req.params.token)
+    return res
+      .status(404)
+      .json({ msg: "Lo sentimos, no se puede validar la cuenta" });
+  await tecnicoBDD.save();
+  res
+    .status(200)
+    .json({ msg: "Token confirmado, ya puedes crear tu nuevo password" });
+};
 
 //modelo de orden (no borrar sino poner finalizado)
 
@@ -220,5 +261,5 @@ export {
   actualizarCliente,
   eliminarCliente,
   recuperarPasswordCli,
-  comprobarTokenPaswordCli
+  comprobarTokenPaswordCli,
 };
