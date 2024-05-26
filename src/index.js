@@ -21,6 +21,9 @@ const io = new Server(server, { // Crea una instancia del servidor de WebSockets
 // Usar las rutas de órdenes de trabajo
 app.use('/api', ordenesRoutes);
 
+// Usar las rutas de ordenes de trabajo
+app.use('/api', ordenesRoutes);
+
 // Escucha las conexiones entrantes en el puerto configurado en la aplicación express
 app.listen(app.get("port"), () => {
   console.log(`https://tesistest.netlify.app`); // Imprime un mensaje indicando la dirección del servidor

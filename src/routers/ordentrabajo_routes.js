@@ -1,13 +1,15 @@
 import { Router } from 'express';
-import { buscarOrdenPorNumero } from '../controllers/ordentrabajo_controller.js';
+import { buscarOrdenPorNumero, 
+    registrarOrdenTrabajo 
+} from '../controllers/ordentrabajo_controller.js';
+
 // Importar el modelo de equipo
-
 const router = Router();
-
-// Importar middleware de autenticación
-import verificarAutenticacion from "../middlewares/autenticacion.js";
 
 // Definir la ruta para buscar órdenes de trabajo por número de orden
 router.get('/ordenes/:numOrden', buscarOrdenPorNumero);
+
+// Ruta para registrar una nueva orden de trabajo
+router.post('/ordenes', registrarOrdenTrabajo);
 
 export default router; // Exportar el enrutador
