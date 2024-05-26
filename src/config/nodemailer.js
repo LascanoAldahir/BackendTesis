@@ -82,6 +82,7 @@ const sendMailToCliente = async(userMail,cedula,password)=>{
     <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
     <hr>
     <p>Usuario de acceso: ${cedula}</p>
+    
     <p>Contraseña de acceso: ${password}</p>
     <hr>
     <footer>Te damo la Bienvenida!</footer>

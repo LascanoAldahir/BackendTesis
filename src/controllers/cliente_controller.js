@@ -136,6 +136,7 @@ const registrarCliente = async(req,res)=>{
   const nuevoCliente = new Cliente(req.body)
   // Genera una contraseña aleatoria
   const password = Math.random().toString(8).slice(2)
+  console.log("Contraseña generada ", password );
   // Encripta la contraseña
   nuevoCliente.password = await nuevoCliente.encryptPassword("tec"+password)
 
