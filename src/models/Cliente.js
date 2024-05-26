@@ -53,7 +53,6 @@ clienteSchema.methods.encryptPassword = async function(password){
 clienteSchema.methods.matchPassword = async function(password){
     
     const response = await bcrypt.compare(password,this.password)
-    console.log("comparar bcrypt: "+password+"\nencriptada: "+this.password)
     return response
 }
 
