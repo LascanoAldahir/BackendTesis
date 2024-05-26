@@ -126,26 +126,25 @@ const detalleCliente = async (req, res) => {
 const registrarCliente = async(req,res)=>{
   // desestructura el email
   const {cedula} = req.body
+  const {correo} = req.body
   // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
   // Busca si el email ya está registrado en la base de datos
-  const verificarEmailBDD = await Cliente.findOne({cedula})
+  const verificarEmailBDD = await Cliente.findOne({correo})
   // Si el email ya está registrado, responde con un mensaje de error
   if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
   // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
   const nuevoCliente = new Cliente(req.body)
   // Genera una contraseña aleatoria
   const password = Math.random().toString(8).slice(2)
-  
-  // Encripta la contraseña
-  nuevoCliente.password = await nuevoCliente.encryptPassword("tec"+password)
-
-  // Asocia el paciente con el tecnico que hizo la solicitud
+    // Asocia el paciente con el tecnico que hizo la solicitud
   nuevoCliente.tecnico=req.tecnicoBDD._id
   // Guarda el cliente en la base de datos
   await nuevoCliente.save()
-// Envía un correo electrónico al cliente con la contraseña
-  await sendMailToCliente(email,"tec"+password)
+  // Envía un correo electrónico al cliente con la contraseña
+  await sendMailToCliente(correo,"tec"+password)
+  // Encripta la contraseña
+  nuevoCliente.password = await nuevoCliente.encryptPassword("tec"+password)
   // Responde con un mensaje de éxito
   res.status(200).json({msg:"Registro exitoso del paciente y correo enviado"})
 }
