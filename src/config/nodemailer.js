@@ -72,7 +72,7 @@ const sendMailToRecoveryPasswordCli = async (userMail, token) => {
 
 /////////////////////////////////////////////////////////////
 // Función para enviar un correo electrónico de bienvenida al cliente
-const sendMailToCliente = async(userMail,cedula,password)=>{
+const sendMailToCliente = async(userMail,password)=>{
     let info = await transporter.sendMail({
     from: 'electronica_zurita@admin.com',
     to: userMail,
@@ -80,7 +80,7 @@ const sendMailToCliente = async(userMail,cedula,password)=>{
     html: `
     <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
     <hr>
-    <p>Usuario de acceso: ${cedula}</p>
+    <p>Usuario de acceso: ${userMail}</p>
     
     <p>Contraseña de acceso: ${password}</p>
     <hr>

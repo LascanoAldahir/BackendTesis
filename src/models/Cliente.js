@@ -51,7 +51,6 @@ clienteSchema.methods.encryptPassword = async function(password){
 
 // Método para verificar si el password ingresado es el mismo de la BDD
 clienteSchema.methods.matchPassword = async function(password){
-    
     const response = await bcrypt.compare(password,this.password)
     return response
 }

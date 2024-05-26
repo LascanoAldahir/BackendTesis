@@ -127,7 +127,6 @@ const detalleCliente = async (req, res) => {
 // Método para registrar un paciente
 const registrarCliente = async (req, res) => {
   // desestructura el email
-  const {cedula} = req.body
   const {correo} = req.body
   // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes(""))
@@ -144,16 +143,17 @@ const registrarCliente = async (req, res) => {
   // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
   const nuevoCliente = new Cliente(req.body);
   // Genera una contraseña aleatoria
-  const password = Math.random().toString(8).slice(2)
+  const password = Math.random().toString(36).slice(2)
     // Asocia el paciente con el tecnico que hizo la solicitud
   nuevoCliente.tecnico=req.tecnicoBDD._id
   // Guarda el cliente en la base de datos
-  await nuevoCliente.save()
+  
   // Envía un correo electrónico al cliente con la contraseña
   await sendMailToCliente(correo,password)
   // Encripta la contraseña
   nuevoCliente.password = await nuevoCliente.encryptPassword(password)
   // Responde con un mensaje de éxito
+  await nuevoCliente.save()
   res
     .status(200)
     .json({ msg: "Registro exitoso del paciente y correo enviado" });
