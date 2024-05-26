@@ -1,12 +1,10 @@
 import { sendMailToRecoveryPasswordCli } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 // IMPORTAR EL MODELO
-
 import Cliente from "../models/Cliente.js"; // Importa el modelo Cliente para interactuar con la colección de pacientes en la base de datos
 import Ordentrabajo from "../models/Ordentrabajo.js"; // Importa el modelo Equipo para interactuar con la colección de tratamientos en la base de datos
 
 // IMPORTAR EL MÉTODO sendMailToPaciente
 import { sendMailToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
-
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import generarJWT from "../helpers/crearJWT.js"; // Importa la función generarJWT desde el archivo crearJWT.js para generar tokens JWT
 import Tecnico from "../models/Tecnico.js";
@@ -56,10 +54,7 @@ const loginCliente = async (req, res) => {
   // Extrae algunos datos específicos del cliente para incluir en la respuest
   const {
     nombre,
-    propietario,
-    correo: correolP,
-    celular,
-    frecuente,
+    
     _id,
   } = clienteBDD;
 
@@ -135,15 +130,15 @@ const detalleCliente = async (req, res) => {
 // Método para registrar un paciente
 const registrarCliente = async (req, res) => {
   // desestructura el email
-  const { cedula } = req.body;
-  const { correo } = req.body;
+  const {cedula} = req.body
+  const {correo} = req.body
   // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes(""))
     return res
       .status(400)
       .json({ msg: "Lo sentimos, debes llenar todos los campos" });
   // Busca si el email ya está registrado en la base de datos
-  const verificarEmailBDD = await Cliente.findOne({ correo });
+  const verificarEmailBDD = await Cliente.findOne({correo})
   // Si el email ya está registrado, responde con un mensaje de error
   if (verificarEmailBDD)
     return res
@@ -152,17 +147,15 @@ const registrarCliente = async (req, res) => {
   // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
   const nuevoCliente = new Cliente(req.body);
   // Genera una contraseña aleatoria
-  const password = Math.random().toString(36).slice(2);
-  // Encripta la contraseña
-  console.log("antes: " + correo, cedula, password);
-  nuevoCliente.password = await nuevoCliente.encryptPassword(password);
-  // Envía un correo electrónico al cliente con la contraseña
-  await sendMailToCliente(correo, cedula, password);
-  // Asocia el paciente con el tecnico que hizo la solicitud
-  nuevoCliente.tecnico = req.tecnicoBDD._id;
+  const password = Math.random().toString(8).slice(2)
+    // Asocia el paciente con el tecnico que hizo la solicitud
+  nuevoCliente.tecnico=req.tecnicoBDD._id
   // Guarda el cliente en la base de datos
-  console.log(correo, cedula, password);
-  await nuevoCliente.save();
+  await nuevoCliente.save()
+  // Envía un correo electrónico al cliente con la contraseña
+  await sendMailToCliente(correo,password)
+  // Encripta la contraseña
+  nuevoCliente.password = await nuevoCliente.encryptPassword(password)
   // Responde con un mensaje de éxito
   res
     .status(200)
