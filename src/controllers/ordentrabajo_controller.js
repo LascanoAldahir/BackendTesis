@@ -1,4 +1,5 @@
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
+// import ordentrabajo from "../models/ordentrabajo.js";
 import Ordentrabajo from "../models/Ordentrabajo.js";
 
 // Buscar cliente por cedula

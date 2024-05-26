@@ -1,7 +1,6 @@
 import { sendMailToRecoveryPasswordCli } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 // IMPORTAR EL MODELO
 import Cliente from "../models/Cliente.js"; // Importa el modelo Cliente para interactuar con la colección de pacientes en la base de datos
-import Ordentrabajo from "../models/Ordentrabajo.js"; // Importa el modelo Equipo para interactuar con la colección de tratamientos en la base de datos
 
 // IMPORTAR EL MÉTODO sendMailToPaciente
 import { sendMailToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
