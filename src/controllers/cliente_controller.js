@@ -138,17 +138,16 @@ const registrarCliente = async(req,res)=>{
   const password = Math.random().toString(8).slice(2)
   // Encripta la contraseña
   nuevoCliente.password = await nuevoCliente.encryptPassword("tec"+password)
-  // Envía un correo electrónico al paciente con la contraseña
-  await sendMailToCliente(email,"vet"+password)
+
   // Asocia el paciente con el tecnico que hizo la solicitud
   nuevoCliente.tecnico=req.tecnicoBDD._id
   // Guarda el cliente en la base de datos
   await nuevoCliente.save()
+// Envía un correo electrónico al cliente con la contraseña
+  await sendMailToCliente(email,"tec"+password)
   // Responde con un mensaje de éxito
   res.status(200).json({msg:"Registro exitoso del paciente y correo enviado"})
 }
-
-
 
 // Método para actualizar un paciente
 const actualizarCliente = async (req, res) => {
