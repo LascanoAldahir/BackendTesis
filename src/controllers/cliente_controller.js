@@ -26,7 +26,7 @@ const buscarClientePorCedula = async (req, res) => {
 const loginCliente = async (req, res) => {
   const { correo, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
   // Verifica si algún campo del cuerpo de la solicitud está vacío
-  console.log("Login: "+password)
+  
   
   if (Object.values(req.body).includes(""))
     return res
@@ -41,8 +41,6 @@ const loginCliente = async (req, res) => {
       .json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
   // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el paciente en la base de datos
   const verificarPassword = await clienteBDD.matchPassword(password);
-
-  console.log ("Verificar passord"+ verificarPassword)
   // Si la contraseña no coincide, responde con un mensaje de error
   if (!verificarPassword)
     return res
