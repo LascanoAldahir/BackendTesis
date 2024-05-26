@@ -57,16 +57,15 @@ const loginCliente = async (req, res) => {
 
   // Responde con un objeto JSON que contiene el token JWT y otros datos del cliente
   res.status(200).json({
-    // token,
+    token,
     nombre,
-  //   correo,
-  //   password,
-  //   propietario,
-  //   celular,
-  //   telefono,
-  //   frecuente,
-  //   rol: "cliente",
-  //   _id,
+    correo,
+    // password,
+    telefono,
+    frecuente,
+    tecnico,
+    rol: "cliente",
+    _id,
   });
 };
 
