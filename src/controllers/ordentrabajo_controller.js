@@ -7,18 +7,15 @@ const registrarOrdenTrabajo = async (req, res) => {
     try {
       // Desestructurar los datos recibidos
       const { cliente, equipo, modelo, marca, serie, color, razon, servicio } = req.body;
-  
       // Validar que todos los campos estén llenos
       if (Object.values(req.body).includes("")) {
         return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
       }
-  
       // Buscar el cliente en la base de datos por su cédula
       const clienteExistente = await Cliente.findOne({ cedula: cliente });
       if (!clienteExistente) {
         return res.status(400).json({ msg: "Cliente no encontrado" });
-      }
-  
+      }  
       // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
       const nuevaOrden = new OrdenTrabajo({
         cliente: clienteExistente._id,
@@ -34,11 +31,9 @@ const registrarOrdenTrabajo = async (req, res) => {
         estado: "pendiente",
         tecnico: req.tecnicoBDD._id
       });
-  
       // Guardar la orden de trabajo en la base de datos
       await nuevaOrden.save();
-  
-      // Opcional: enviar un correo electrónico al cliente con los detalles de la orden de trabajo
+      // enviar un correo electrónico al cliente con los detalles de la orden de trabajo
       await sendMailToCliente(clienteExistente.correo, `Se ha registrado una nueva orden de trabajo con el número: ${nuevaOrden._id}`);
   
       // Responder con un mensaje de éxito
