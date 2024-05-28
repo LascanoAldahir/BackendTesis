@@ -22,6 +22,7 @@ const buscarClientePorCedula = async (req, res) => {
   }
 };
 
+//------------------------------------------------------------------------------------------------------
 // Método para el proceso de login
 const loginCliente = async (req, res) => {
   const { correo, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
@@ -45,6 +46,7 @@ const loginCliente = async (req, res) => {
 
   // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el cliente en la base de datos
   const verificarPassword = await clienteBDD.matchPassword(password);
+  
   
   // Si la contraseña no coincide, responde con un mensaje de error
   if (!verificarPassword) {
@@ -78,6 +80,8 @@ const loginCliente = async (req, res) => {
     _id
   });
 };
+
+//----------------------------------------------------------------------------------------------------
 
 
 // Método para ver el perfil
