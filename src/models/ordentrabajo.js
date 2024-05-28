@@ -10,11 +10,6 @@ const ordentrabajoSchema = new Schema({
         type:String,
         required: true,
     },
-    cliente:{
-        type: String,
-        required:true,
-        trim: true
-    },
     equipo: {
         type: String,   // Tipo de dato: String
         required: true, // Campo obligatorio
@@ -76,6 +71,10 @@ const ordentrabajoSchema = new Schema({
         type:String,
         required: true,
         default: "pendiente"
+    },
+    cliente: {
+            type: Schema.Types.ObjectId,
+            ref: 'Tecnico' // Nombre del modelo Tecnico
     },
     tecnico: {
             type: Schema.Types.ObjectId,
