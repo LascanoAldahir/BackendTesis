@@ -24,8 +24,9 @@ const buscarClientePorCedula = async (req, res) => {
 
 //------------------------------------------------------------------------------------------------------
 // Método para el proceso de login
+// Método para el proceso de login
 const loginCliente = async (req, res) => {
-  const { correo, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
+  const { cedula, password } = req.body; // Extrae la cédula y la contraseña del cuerpo de la solicitud
   
   // Verifica si algún campo del cuerpo de la solicitud está vacío
   if (Object.values(req.body).includes("")) {
@@ -34,10 +35,10 @@ const loginCliente = async (req, res) => {
       .json({ msg: "Lo sentimos, debes llenar todos los campos" });
   }
 
-  // Busca un cliente en la base de datos por su correo
-  const clienteBDD = await Cliente.findOne({ correo });
+  // Busca un cliente en la base de datos por su cédula
+  const clienteBDD = await Cliente.findOne({ cedula });
   
-  // Si no se encuentra ningún cliente con el correo proporcionado, responde con un mensaje de error
+  // Si no se encuentra ningún cliente con la cédula proporcionada, responde con un mensaje de error
   if (!clienteBDD) {
     return res
       .status(404)
@@ -46,7 +47,6 @@ const loginCliente = async (req, res) => {
 
   // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el cliente en la base de datos
   const verificarPassword = await clienteBDD.matchPassword(password);
-  
   
   // Si la contraseña no coincide, responde con un mensaje de error
   if (!verificarPassword) {
@@ -72,6 +72,7 @@ const loginCliente = async (req, res) => {
   res.status(200).json({
     token,
     nombre,
+    cedula,
     correo,
     telefono,
     frecuente,
@@ -80,6 +81,7 @@ const loginCliente = async (req, res) => {
     _id
   });
 };
+
 
 //----------------------------------------------------------------------------------------------------
 
