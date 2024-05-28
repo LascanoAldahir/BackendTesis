@@ -4,7 +4,7 @@ import { buscarOrdenPorNumero,
 } from '../controllers/ordentrabajo_controller.js';
 
 // Importar el modelo de equipo
-const router = express.Router();
+const router = Router();
 
 // Definir la ruta para buscar órdenes de trabajo por número de orden
 router.get('/ordenes/:numOrden', buscarOrdenPorNumero);

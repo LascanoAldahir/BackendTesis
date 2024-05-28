@@ -2,7 +2,7 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 import Ordentrabajo from "../models/ordentrabajo.js";
 import { sendMailToCliente } from "../config/nodemailer.js"; 
 //metodo para registro de orden de trabajo
-import Cliente from '../models/Cliente'; //Asegúrate de tener el modelo Cliente importado
+import Cliente from '../models/Cliente.js'; //Asegúrate de tener el modelo Cliente importado
 
 const registrarOrdenTrabajo = async (req, res) => {
     try {
@@ -10,16 +10,13 @@ const registrarOrdenTrabajo = async (req, res) => {
       if (Object.values(req.body).includes("")) {
         return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
       }
-  
       // Extraer los datos necesarios del cuerpo de la solicitud
       const { clienteCedula, equipo, modelo, marca, serie, color, razon, servicio } = req.body;
-  
       // Buscar al cliente por su cédula
       const clienteExistente = await Cliente.findOne({ cedula: clienteCedula });
       if (!clienteExistente) {
         return res.status(400).json({ msg: "Cliente no encontrado" });
       }
-  
       // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
       const nuevaOrden = new Ordentrabajo({
         cliente: clienteExistente._id, // Almacenar el ID del cliente
@@ -36,10 +33,8 @@ const registrarOrdenTrabajo = async (req, res) => {
         tecnico: req.tecnicoBDD._id, // Almacenar el ID del técnico
         numOrden: "0001" // Número de orden por defecto, puedes ajustar esto según sea necesario
       });
-  
       // Guardar la orden de trabajo en la base de datos
       await nuevaOrden.save();
-  
       // Opcional: enviar un correo electrónico al cliente con los detalles de la orden de trabajo
       // await sendMailToCliente(
       //   clienteExistente.correo,
