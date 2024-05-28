@@ -25,34 +25,45 @@ const buscarClientePorCedula = async (req, res) => {
 // Método para el proceso de login
 const loginCliente = async (req, res) => {
   const { correo, password } = req.body; // Extrae el correo y la contraseña del cuerpo de la solicitud
+  
   // Verifica si algún campo del cuerpo de la solicitud está vacío
-  
-  
-  if (Object.values(req.body).includes(""))
+  if (Object.values(req.body).includes("")) {
     return res
       .status(404)
       .json({ msg: "Lo sentimos, debes llenar todos los campos" });
-  // Busca un paciente en la base de datos por su correo
-  const clienteBDD = await Cliente.findOne({correo});
-  // Si no se encuentra ningún paciente con el correo proporcionado, responde con un mensaje de error
-  if (!clienteBDD)
+  }
+
+  // Busca un cliente en la base de datos por su correo
+  const clienteBDD = await Cliente.findOne({ correo });
+  
+  // Si no se encuentra ningún cliente con el correo proporcionado, responde con un mensaje de error
+  if (!clienteBDD) {
     return res
       .status(404)
       .json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
-  // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el paciente en la base de datos
+  }
+
+  // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el cliente en la base de datos
   const verificarPassword = await clienteBDD.matchPassword(password);
+  
   // Si la contraseña no coincide, responde con un mensaje de error
-  if (!verificarPassword)
+  if (!verificarPassword) {
     return res
       .status(404)
       .json({ msg: "Lo sentimos, el password no es el correcto" });
+  }
+
   // Genera un token JWT para el cliente
   const token = generarJWT(clienteBDD._id, "cliente");
-  // Extrae algunos datos específicos del cliente para incluir en la respuest
+
+  // Extrae algunos datos específicos del cliente para incluir en la respuesta
   const {
     nombre,
-    
-    _id,
+    correo,
+    telefono,
+    frecuente,
+    tecnico,
+    _id
   } = clienteBDD;
 
   // Responde con un objeto JSON que contiene el token JWT y otros datos del cliente
@@ -60,14 +71,14 @@ const loginCliente = async (req, res) => {
     token,
     nombre,
     correo,
-    // password,
     telefono,
     frecuente,
     tecnico,
     rol: "cliente",
-    _id,
+    _id
   });
 };
+
 
 // Método para ver el perfil
 const perfilCliente = (req, res) => {

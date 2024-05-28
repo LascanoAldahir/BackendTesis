@@ -10,6 +10,6 @@ const router = express.Router();
 router.get('/ordenes/:numOrden', buscarOrdenPorNumero);
 
 // Ruta para registrar una nueva orden de trabajo
-router.post('/ordenes', registrarOrdenTrabajo);
+router.post('/ordenes/registrar', registrarOrdenTrabajo);
 
 export default router; // Exportar el enrutador
