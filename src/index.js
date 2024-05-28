@@ -23,5 +23,5 @@ app.use('/api', ordenesRoutes);
 
 // Escucha las conexiones entrantes en el puerto configurado en la aplicación express
 app.listen(app.get("port"), () => {
-  console.log(`https://tesistest.netlify.app`); // Imprime un mensaje indicando la dirección del servidor
+  console.log(`Server connected to port: ${process.env.port}`); // Imprime un mensaje indicando la dirección del servidor
 });
