@@ -50,27 +50,27 @@ const registrarOrdenTrabajo = async (req, res) => {
 
 //Metodo para listar ordenes de trabajo
 const listarOrdenesTrabajo = async (req, res) => {
-  try {
-    let ordenesTrabajo;
-    if (req.clienteBDD && "propietario" in req.clienteBDD) {
-      // Si el clienteBDD existe y es propietario, buscar órdenes de trabajo asociadas a ese cliente
-      ordenesTrabajo = await Ordentrabajo.find({
-        cliente: req.clienteBDD._id,
-      }).populate("cliente", "_id nombre correo telefono cedula");
-    } else {
-      // Si no hay cliente especificado, devolver todas las órdenes de trabajo
-      ordenesTrabajo = await Ordentrabajo.find().populate(
-        "cliente",
-        "_id nombre correo telefono cedula"
-      );
+    try {
+      let ordenesTrabajo;
+      if (req.clienteBDD && "propietario" in req.clienteBDD) {
+        // Si el clienteBDD existe y es propietario, buscar órdenes de trabajo asociadas a ese cliente
+        ordenesTrabajo = await Ordentrabajo.find({
+          cliente: req.clienteBDD._id,
+        }).populate("cliente", "_id nombre correo telefono cedula");
+      } else {
+        // Si no hay cliente especificado, devolver todas las órdenes de trabajo
+        ordenesTrabajo = await Ordentrabajo.find().populate(
+          "cliente",
+          "_id nombre correo telefono cedula"
+        );
+      }
+  
+      res.status(200).json(ordenesTrabajo);
+    } catch (error) {
+      console.error("Error al listar órdenes de trabajo: ", error);
+      res.status(500).json({ msg: "Error al listar órdenes de trabajo" });
     }
-
-    res.status(200).json(ordenesTrabajo);
-  } catch (error) {
-    console.error("Error al listar órdenes de trabajo: ", error);
-    res.status(500).json({ msg: "Error al listar órdenes de trabajo" });
-  }
-};
+  };
 
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
