@@ -42,13 +42,6 @@ const ordentrabajoSchema = new Schema({
         type: Date,
         required: true,
         trim: true,
-        validate: {
-            validator: function(value) {
-                // Permitir fechas anteriores, pero no futuras
-                return value <= Date.now();
-            },
-            message: 'La fecha de ingreso debe ser igual o anterior a la fecha actual'
-        },
         default: Date.now // Valor por defecto: fecha y hora actual
     },
    razon:{
@@ -78,7 +71,7 @@ const ordentrabajoSchema = new Schema({
     },
     cliente: {
             type: Schema.Types.ObjectId,
-            ref: 'Tecnico' // Nombre del modelo Tecnico
+            ref: 'Cliente' // Nombre del modelo Tecnico
     },
     tecnico: {
             type: Schema.Types.ObjectId,

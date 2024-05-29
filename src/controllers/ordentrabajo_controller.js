@@ -9,16 +9,19 @@ const registrarOrdenTrabajo = async (req, res) => {
       if (Object.values(req.body).includes("")) {
         return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
       }
+      // Verificar si req.tecnicoBDD está definido
+    if (!req.tecnicoBDD) {
+        return res.status(400).json({ msg: "No se encontró información del técnico" });
+      }
 
       // Extraer los datos necesarios del cuerpo de la solicitud
-      const { cedula } = req.body;
+      const { clienteCedula, equipo, modelo, marca, serie, color, ingreso, razon, servicio } = req.body;
 
       // Buscar al cliente por su cédula
       const clienteExistente = await Cliente.findOne({ cedula });
       if (!clienteExistente) {
         return res.status(400).json({ msg: "Cliente no encontrado" });
       }
-
       // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
       const nuevaOrden = new Ordentrabajo({ 
         cliente: clienteExistente._id, // Almacenar el ID del cliente
@@ -32,21 +35,14 @@ const registrarOrdenTrabajo = async (req, res) => {
         fechaSalida: null, // Dejar nulo inicialmente
         servicio,
         estado: "pendiente",
-        tecnico: req.tecnicoBDD._id, // Almacenar el ID del técnico
         numOrden: "0001" // Número de orden por defecto, puedes ajustar esto según sea necesario
       });
 
       // Guardar la orden de trabajo en la base de datos
       await nuevaOrden.save();
 
-      // Opcional: enviar un correo electrónico al cliente con los detalles de la orden de trabajo
-      // await sendMailToCliente(
-      //   clienteExistente.correo,
-      //   `Se ha registrado una nueva orden de trabajo con el número: ${nuevaOrden._id}`
-      // );
-
       // Responder con un mensaje de éxito
-      res.status(200).json({ msg: "Orden de trabajo registrada exitosamente" });
+      res.status(200).json({ msg: "Orden de trabajo registrada exitosamente", clienteId: clienteExistente._id  });
     } catch (error) {
       console.error("Error al registrar orden de trabajo: ", error);
       res.status(500).json({ msg: "Error al registrar orden de trabajo" });
