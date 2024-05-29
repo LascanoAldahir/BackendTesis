@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { buscarOrdenPorNumero, 
     registrarOrdenTrabajo,
-    listarOrdenesTrabajo 
+    listarOrdenesTrabajo,
+    eliminarOrdenTrabajo 
 } from '../controllers/ordentrabajo_controller.js';
 
 // Importar el modelo de equipo
@@ -13,5 +14,7 @@ router.get('/orden/:numOrden', buscarOrdenPorNumero);
 router.post('/orden/registro', registrarOrdenTrabajo);
 // Ruta para listar las órdenes de trabajo
 router.get('/ordenes/listar', listarOrdenesTrabajo);
+//Delete
+router.delete("/ordenes/:id", eliminarOrdenTrabajo);
 
 export default router; // Exportar el enrutador

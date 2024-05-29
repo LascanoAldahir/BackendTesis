@@ -3,7 +3,6 @@ import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
 
 // Método para registro de orden de trabajo
-// Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
   try {
     // Validar que todos los campos estén llenos
@@ -31,8 +30,9 @@ const registrarOrdenTrabajo = async (req, res) => {
     const nuevaOrden = new Ordentrabajo({
       ...req.body, // Usar los valores proporcionados en req.body
       salida: null,
-      numOrden: "0001",
-      cliente:clienteId // Número de orden por defecto, puedes ajustar esto según sea necesario
+      numOrden: "0001", // Número de orden por defecto, puedes ajustar esto según sea necesario
+      cliente:clienteId
+    
     });
     console.log(nuevaOrden);
     // Guardar la orden de trabajo en la base de datos
@@ -50,27 +50,27 @@ const registrarOrdenTrabajo = async (req, res) => {
 
 //Metodo para listar ordenes de trabajo
 const listarOrdenesTrabajo = async (req, res) => {
-  try {
-    let ordenesTrabajo;
-    if (req.clienteBDD && "propietario" in req.clienteBDD) {
-      // Si el clienteBDD existe y es propietario, buscar órdenes de trabajo asociadas a ese cliente
-      ordenesTrabajo = await Ordentrabajo.find({
-        cliente: req.clienteBDD._id,
-      }).populate("cliente", "_id nombre correo telefono cedula");
-    } else {
-      // Si no hay cliente especificado, devolver todas las órdenes de trabajo
-      ordenesTrabajo = await Ordentrabajo.find().populate(
-        "cliente",
-        "_id nombre correo telefono cedula"
-      );
+    try {
+      let ordenesTrabajo;
+      if (req.clienteBDD && "propietario" in req.clienteBDD) {
+        // Si el clienteBDD existe y es propietario, buscar órdenes de trabajo asociadas a ese cliente
+        ordenesTrabajo = await Ordentrabajo.find({
+          cliente: req.clienteBDD._id,
+        }).populate("cliente", "_id nombre correo telefono cedula");
+      } else {
+        // Si no hay cliente especificado, devolver todas las órdenes de trabajo
+        ordenesTrabajo = await Ordentrabajo.find().populate(
+          "cliente",
+          "_id nombre correo telefono cedula"
+        );
+      }
+  
+      res.status(200).json(ordenesTrabajo);
+    } catch (error) {
+      console.error("Error al listar órdenes de trabajo: ", error);
+      res.status(500).json({ msg: "Error al listar órdenes de trabajo" });
     }
-
-    res.status(200).json(ordenesTrabajo);
-  } catch (error) {
-    console.error("Error al listar órdenes de trabajo: ", error);
-    res.status(500).json({ msg: "Error al listar órdenes de trabajo" });
-  }
-};
+  };
 
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
@@ -114,6 +114,29 @@ const tipoServicio = async (req, res) => {
   }
 };
 
+
+// Metodo para eliminar una ordend e trabajo
+
+const eliminarOrdenTrabajo = async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      // Buscar la orden de trabajo por su ID
+      const orden = await Ordentrabajo.findById(id);
+      if (!orden) {
+        return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
+      }
+  
+      // Eliminar la orden de trabajo
+      await orden.remove();
+  
+      res.status(200).json({ msg: "Orden de trabajo eliminada exitosamente" });
+    } catch (error) {
+      console.error("Error al eliminar la orden de trabajo: ", error);
+      res.status(500).json({ msg: "Error al eliminar la orden de trabajo" });
+    }
+  };
+
 // Definir el controlador para buscar órdenes de trabajo por número de orden
 const buscarOrdenPorNumero = async (req, res) => {
   try {
@@ -145,4 +168,5 @@ export {
   buscarOrdenPorNumero,
   registrarOrdenTrabajo,
   listarOrdenesTrabajo,
+  eliminarOrdenTrabajo
 };
