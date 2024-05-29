@@ -15,6 +15,6 @@ router.post('/orden/registro', registrarOrdenTrabajo);
 // Ruta para listar las órdenes de trabajo
 router.get('/ordenes/listar', listarOrdenesTrabajo);
 //Delete
-router.delete("/ordenes/:id", eliminarOrdenTrabajo);
+router.delete("/orden/eliminar/:id", eliminarOrdenTrabajo);
 
 export default router; // Exportar el enrutador
