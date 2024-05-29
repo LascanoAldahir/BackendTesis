@@ -17,7 +17,12 @@ const registrarOrdenTrabajo = async (req, res) => {
       if (!clienteExistente) {
         return res.status(400).json({ msg: "Cliente no encontrado" });
       }
-  
+
+      // Validar la fecha de ingreso
+        if (new Date(ingreso) > new Date()) {
+        return res.status(400).json({ msg: "La fecha de ingreso debe ser igual o anterior a la fecha actual" });
+      }
+
       // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
       const nuevaOrden = new Ordentrabajo({
         ...req.body, // Usar los valores proporcionados en req.body
