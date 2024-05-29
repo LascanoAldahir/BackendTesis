@@ -43,7 +43,7 @@ const registrarOrdenTrabajo = async (req, res) => {
       await nuevaOrden.save();
 
       // Responder con un mensaje de éxito
-      res.status(200).json({ msg: "Orden de trabajo registrada exitosamente" });
+      res.status(200).json({ msg: "Orden de trabajo registrada exitosamente", clienteId: clienteExistente._id  });
     } catch (error) {
       console.error("Error al registrar orden de trabajo: ", error);
       res.status(500).json({ msg: "Error al registrar orden de trabajo" });
