@@ -11,16 +11,16 @@ const registrarOrdenTrabajo = async (req, res) => {
       }
 
       // Extraer los datos necesarios del cuerpo de la solicitud
-      const { clienteCedula, equipo, modelo, marca, serie, color, ingreso, razon, servicio } = req.body;
+      const { cedula } = req.body;
 
       // Buscar al cliente por su cédula
-      const clienteExistente = await Cliente.findOne({ cedula: clienteCedula });
+      const clienteExistente = await Cliente.findOne({ cedula });
       if (!clienteExistente) {
         return res.status(400).json({ msg: "Cliente no encontrado" });
       }
 
       // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
-      const nuevaOrden = new Ordentrabajo({
+      const nuevaOrden = new Ordentrabajo({ 
         cliente: clienteExistente._id, // Almacenar el ID del cliente
         equipo,
         modelo,
