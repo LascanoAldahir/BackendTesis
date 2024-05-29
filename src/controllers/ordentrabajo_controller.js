@@ -119,24 +119,27 @@ const tipoServicio = async (req, res) => {
 // Metodo para eliminar una ordend e trabajo
 
 const eliminarOrdenTrabajo = async (req, res) => {
+    const { numOrden } = req.params; // Extrae el número de orden de los parámetros de la solicitud
     try {
-      const { id } = req.params;
-  
-      // Buscar la orden de trabajo por su ID
-      const orden = await Ordentrabajo.findById(id);
+      // Buscar la orden de trabajo por su número de orden y actualizar su estado a 'finalizado'
+      const orden = await Ordentrabajo.findOneAndUpdate(
+        { numOrden: numOrden },
+        { estado: "finalizado" },
+        { new: true } // Devuelve la orden de trabajo actualizada
+      );
       if (!orden) {
         return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
       }
-  
-      // Eliminar la orden de trabajo
-      await orden.remove();
-  
-      res.status(200).json({ msg: "Orden de trabajo eliminada exitosamente" });
+      // Responde con un mensaje de éxito
+      res.status(200).json({ msg: "Orden de trabajo finalizada exitosamente", orden });
     } catch (error) {
-      console.error("Error al eliminar la orden de trabajo: ", error);
-      res.status(500).json({ msg: "Error al eliminar la orden de trabajo" });
+      // Si ocurre un error, responde con un mensaje de error
+      console.error("Error al finalizar la orden de trabajo: ", error);
+      res.status(500).json({ msg: "Ocurrió un error al intentar finalizar la orden de trabajo" });
     }
   };
+  
+  
 
 // Definir el controlador para buscar órdenes de trabajo por número de orden
 const buscarOrdenPorNumero = async (req, res) => {
