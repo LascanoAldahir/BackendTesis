@@ -5,7 +5,6 @@ import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cli
 // Método para registro de orden de trabajo
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
-  console.log(req.body);
   try {
     // Validar que todos los campos estén llenos
     if (Object.values(req.body).includes("")) {
@@ -14,7 +13,7 @@ const registrarOrdenTrabajo = async (req, res) => {
         .json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
     // Extraer los datos necesarios del cuerpo de la solicitud
-    const { cedula, ingreso } = req.body;
+    const { cedula, ingreso, clienteId } = req.body;
     // Buscar al cliente por su cédula
     const clienteExistente = await Cliente.findOne({ cedula });
     if (!clienteExistente) {
@@ -32,7 +31,8 @@ const registrarOrdenTrabajo = async (req, res) => {
     const nuevaOrden = new Ordentrabajo({
       ...req.body, // Usar los valores proporcionados en req.body
       salida: null,
-      numOrden: "0001", // Número de orden por defecto, puedes ajustar esto según sea necesario
+      numOrden: "0001",
+      cliente:clienteId // Número de orden por defecto, puedes ajustar esto según sea necesario
     });
     console.log(nuevaOrden);
     // Guardar la orden de trabajo en la base de datos
