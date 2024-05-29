@@ -21,11 +21,8 @@ const registrarOrdenTrabajo = async (req, res) => {
       }
   
       // Validar la fecha de ingreso
-      const ingresarDate = new Date(ingreso);
-      const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0); // Resetea la hora de la fecha actual
-  
-      if (ingresarDate < currentDate) {
+      const currentDate = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
+      if (ingreso < currentDate) {
         return res.status(400).json({
           msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
         });
