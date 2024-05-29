@@ -2,6 +2,7 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
 
+
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
     console.log(req.body);
@@ -10,16 +11,13 @@ const registrarOrdenTrabajo = async (req, res) => {
       if (Object.values(req.body).includes("")) {
         return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
       }
-  
       // Extraer los datos necesarios del cuerpo de la solicitud
       const { cedula, ingreso, clienteId } = req.body;
-  
       // Buscar al cliente por su cédula
       const clienteExistente = await Cliente.findOne({ cedula });
       if (!clienteExistente) {
         return res.status(400).json({ msg: "Cliente no encontrado" });
       }
-  
       // Validar la fecha de ingreso
       const currentDate = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
       if (ingreso < currentDate) {
@@ -27,17 +25,14 @@ const registrarOrdenTrabajo = async (req, res) => {
           msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
         });
       }
-  
       // Obtener el último número de orden registrado
       const ultimaOrden = await Ordentrabajo.findOne().sort({ numOrden: -1 }).exec();
       let nuevoNumOrden = "0001"; // Valor por defecto
-  
       if (ultimaOrden) {
         // Incrementar el número de orden
         const ultimoNumero = parseInt(ultimaOrden.numOrden, 10);
         nuevoNumOrden = (ultimoNumero + 1).toString().padStart(4, "0");
       }
-  
       // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
       const nuevaOrden = new Ordentrabajo({
         ...req.body, // Usar los valores proporcionados en req.body
@@ -61,7 +56,7 @@ const registrarOrdenTrabajo = async (req, res) => {
       res.status(500).json({ msg: "Error al registrar orden de trabajo" });
     }
   };
-
+/////////////////////////////////////////////////////////////////////////////////
 //Metodo para listar ordenes de trabajo
 const listarOrdenesTrabajo = async (req, res) => {
     try {
@@ -78,14 +73,13 @@ const listarOrdenesTrabajo = async (req, res) => {
           "_id nombre correo telefono cedula"
         );
       }
-  
       res.status(200).json(ordenesTrabajo);
     } catch (error) {
       console.error("Error al listar órdenes de trabajo: ", error);
       res.status(500).json({ msg: "Error al listar órdenes de trabajo" });
     }
   };
-
+/////////////////////////////////////////////////////////////////////////////////////////
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
   const { cedula } = req.params;
@@ -99,7 +93,7 @@ const buscarClientePorCedula = async (req, res) => {
     res.status(500).json({ mensaje: "Error al buscar el cliente" });
   }
 };
-
+///////////////////////////////////////////////////////////////////////////////////
 // Método para agregar un tipo de servicio a un equipo
 const tipoServicio = async (req, res) => {
   try {
@@ -127,33 +121,31 @@ const tipoServicio = async (req, res) => {
     res.status(500).json({ msg: "Error del servidor" });
   }
 };
+/////////////////////////////////////////////////////////////////////////////////////
 
-
-// Metodo para eliminar una ordend e trabajo
-
+// Método para cambiar el estado de la orden de trabajo a "finalizado"
 const eliminarOrdenTrabajo = async (req, res) => {
-    const { numOrden } = req.params; // Extrae el número de orden de los parámetros de la solicitud
     try {
-      // Buscar la orden de trabajo por su número de orden y actualizar su estado a 'finalizado'
-      const orden = await Ordentrabajo.findOneAndUpdate(
-        { numOrden: numOrden },
-        { estado: "finalizado" },
-        { new: true } // Devuelve la orden de trabajo actualizada
-      );
+      const { id } = req.params;
+  
+      // Verificar si la orden de trabajo existe
+      const orden = await Ordentrabajo.findById(id);
       if (!orden) {
         return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
       }
-      // Responde con un mensaje de éxito
-      res.status(200).json({ msg: "Orden de trabajo finalizada exitosamente", orden });
+  
+      // Actualizar el estado de la orden de trabajo a "finalizado"
+      orden.estado = "finalizado";
+      await orden.save();
+  
+      res.status(200).json({ msg: "Orden de trabajo finalizada exitosamente" });
     } catch (error) {
-      // Si ocurre un error, responde con un mensaje de error
       console.error("Error al finalizar la orden de trabajo: ", error);
-      res.status(500).json({ msg: "Ocurrió un error al intentar finalizar la orden de trabajo" });
+      res.status(500).json({ msg: "Error al finalizar la orden de trabajo" });
     }
   };
-  
-  
 
+/////////////////////////////////////////////////////////////////////////////////////
 // Definir el controlador para buscar órdenes de trabajo por número de orden
 const buscarOrdenPorNumero = async (req, res) => {
   try {
