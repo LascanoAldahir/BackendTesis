@@ -8,10 +8,10 @@ import { buscarOrdenPorNumero,
 const router = Router();
 
 // Definir la ruta para buscar órdenes de trabajo por número de orden
-router.get('/ordenes/:numOrden', buscarOrdenPorNumero);
+router.get('/orden/:numOrden', buscarOrdenPorNumero);
 // Ruta para registrar una nueva orden de trabajo
-router.post('/ordenes/registrar', registrarOrdenTrabajo);
+router.post('/orden/registro', registrarOrdenTrabajo);
 // Ruta para listar las órdenes de trabajo
-router.get('/ordenes-trabajo', listarOrdenesTrabajo);
+router.get('/ordenes/listar', listarOrdenesTrabajo);
 
 export default router; // Exportar el enrutador
