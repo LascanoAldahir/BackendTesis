@@ -9,6 +9,12 @@ const registrarOrdenTrabajo = async (req, res) => {
       if (Object.values(req.body).includes("")) {
         return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
       }
+      // Verificar si req.tecnicoBDD está definido
+    if (!req.tecnicoBDD) {
+        return res.status(400).json({ msg: "No se encontró información del técnico" });
+      }
+
+
       // Extraer los datos necesarios del cuerpo de la solicitud
       const { clienteCedula, equipo, modelo, marca, serie, color, ingreso, razon, servicio } = req.body;
       // Buscar al cliente por su cédula
