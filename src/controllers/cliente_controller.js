@@ -126,16 +126,12 @@ const registrarCliente = async (req, res) => {
   const {correo} = req.body
   // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes(""))
-    return res
-      .status(400)
-      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
   // Busca si el email ya está registrado en la base de datos
   const verificarEmailBDD = await Cliente.findOne({correo})
   // Si el email ya está registrado, responde con un mensaje de error
   if (verificarEmailBDD)
-    return res
-      .status(400)
-      .json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
+    return res.status(400).json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
   // Crea una nueva instancia de Paciente con los datos proporcionados en el cuerpo de la solicitud
   const nuevoCliente = new Cliente(req.body);
   // Genera una contraseña aleatoria
@@ -150,9 +146,7 @@ const registrarCliente = async (req, res) => {
   nuevoCliente.password = await nuevoCliente.encryptPassword(password)
   // Responde con un mensaje de éxito
   await nuevoCliente.save()
-  res
-    .status(200)
-    .json({ msg: "Registro exitoso del paciente y correo enviado" });
+  res.status(200).json({ msg: "Registro exitoso del paciente y correo enviado" });
 };
 
 // Método para actualizar un paciente

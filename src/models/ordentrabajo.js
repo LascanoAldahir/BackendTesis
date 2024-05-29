@@ -25,21 +25,18 @@ const ordentrabajoSchema = new Schema({
     marca: {
         type: String,  
         required: true, // Campo obligatorio
-        default: true,
         trim: true
     },
     // Campo para la prioridad del tratamiento (Baja, Media, Alta)
     serie: {
         type: String,  
         required: true, // Campo obligatorio
-        default: true,
         trim: true  
     },
     // Campo para referenciar el paciente al que se aplica el tratamiento
     color: {
         type: String,
         required: true, // Campo obligatorio
-        default: true   // Valor por defecto: true
     },
     ingreso: {
         type: Date,
