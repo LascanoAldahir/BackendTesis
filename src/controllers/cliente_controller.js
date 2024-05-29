@@ -63,10 +63,6 @@ const loginCliente = async (req, res) => {
   }
 };
 
-export { loginCliente };
-
-
-export { loginCliente };
 
 //----------------------------------------------------------------------------------------------------
 
