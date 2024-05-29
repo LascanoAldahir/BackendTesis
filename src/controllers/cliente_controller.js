@@ -24,15 +24,16 @@ const buscarClientePorCedula = async (req, res) => {
 
 //------------------------------------------------------------------------------------------------------
 // Método para el proceso de login
+
 const loginCliente = async (req, res) => {
   try {
-    const { cedula, password } = req.body;
+    const { correo, password } = req.body;
 
-    if (!cedula || !password) {
+    if (!correo || !password) {
       return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
 
-    const clienteBDD = await Cliente.findOne({ cedula });
+    const clienteBDD = await Cliente.findOne({ correo });
     if (!clienteBDD) {
       return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
     }
@@ -43,7 +44,7 @@ const loginCliente = async (req, res) => {
     }
 
     const token = generarJWT(clienteBDD._id, "cliente");
-    const { nombre, _id, correo, telefono, frecuente, tecnico } = clienteBDD;
+    const { nombre, _id, cedula, telefono, frecuente, tecnico } = clienteBDD;
 
     return res.status(200).json({
       token,
@@ -61,8 +62,6 @@ const loginCliente = async (req, res) => {
     return res.status(500).json({ msg: "Error en el servidor" });
   }
 };
-
-
 //----------------------------------------------------------------------------------------------------
 
 
@@ -192,24 +191,31 @@ const eliminarCliente = async (req, res) => {
 
 // Método para recuperar el password
 const recuperarPasswordCli = async (req, res) => {
-  const { cedula } = req.body;
-  if (Object.values(req.body).includes(""))
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
-  const clienteBDD = await Cliente.findOne({ cedula });
-  if (!tecnicoBDD)
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
-  const token = tecnicoBDD.crearToken();
-  tecnicoBDD.token = token;
-  await sendMailToRecoveryPasswordCli(cedula, token);
-  await tecnicoBDD.save();
-  res
-    .status(200)
-    .json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
+  try {
+    const { correo } = req.body;
+
+    if (!correo) {
+      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    }
+
+    const clienteBDD = await Cliente.findOne({ correo });
+    if (!clienteBDD) {
+      return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
+    }
+
+    const token = clienteBDD.crearToken();
+    clienteBDD.token = token;
+    
+    await sendMailToRecoveryPasswordCli(correo, token);
+    await clienteBDD.save();
+    
+    return res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
+  } catch (error) {
+    console.error("Error al recuperar el password: ", error);
+    return res.status(500).json({ msg: "Error en el servidor" });
+  }
 };
+
 
 // Método para comprobar el token
 const comprobarTokenPaswordCli = async (req, res) => {
