@@ -115,6 +115,29 @@ const tipoServicio = async (req, res) => {
   }
 };
 
+
+// Metodo para eliminar una ordend e trabajo
+
+const eliminarOrdenTrabajo = async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      // Buscar la orden de trabajo por su ID
+      const orden = await Ordentrabajo.findById(id);
+      if (!orden) {
+        return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
+      }
+  
+      // Eliminar la orden de trabajo
+      await orden.remove();
+  
+      res.status(200).json({ msg: "Orden de trabajo eliminada exitosamente" });
+    } catch (error) {
+      console.error("Error al eliminar la orden de trabajo: ", error);
+      res.status(500).json({ msg: "Error al eliminar la orden de trabajo" });
+    }
+  };
+
 // Definir el controlador para buscar órdenes de trabajo por número de orden
 const buscarOrdenPorNumero = async (req, res) => {
   try {
@@ -146,4 +169,5 @@ export {
   buscarOrdenPorNumero,
   registrarOrdenTrabajo,
   listarOrdenesTrabajo,
+  eliminarOrdenTrabajo
 };

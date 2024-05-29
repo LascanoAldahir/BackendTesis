@@ -175,9 +175,7 @@ const eliminarCliente = async (req, res) => {
   try {
     // Verifica si el ID del cliente es válido
     if (!mongoose.Types.ObjectId.isValid(id))
-      return res
-        .status(404)
-        .json({ msg: "Lo sentimos, no existe el cliente ${id}" });
+      return res.status(404).json({ msg: "Lo sentimos, no existe el cliente ${id}" });
     // Elimina el cliente de la base de datos
     await Cliente.findByIdAndDelete(id);
     // Responde con un mensaje de éxito
@@ -185,9 +183,7 @@ const eliminarCliente = async (req, res) => {
   } catch (error) {
     // Si ocurre un error, responde con un mensaje de error
     console.error(error);
-    res
-      .status(500)
-      .json({ msg: "Ocurrió un error al intentar eliminar al cliente" });
+    res.status(500).json({ msg: "Ocurrió un error al intentar eliminar al cliente" });
   }
 };
 
