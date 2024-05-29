@@ -14,7 +14,6 @@ const registrarOrdenTrabajo = async (req, res) => {
         return res.status(400).json({ msg: "No se encontró información del técnico" });
       }
 
-
       // Extraer los datos necesarios del cuerpo de la solicitud
       const { clienteCedula, equipo, modelo, marca, serie, color, ingreso, razon, servicio } = req.body;
       // Buscar al cliente por su cédula
@@ -35,7 +34,6 @@ const registrarOrdenTrabajo = async (req, res) => {
         fechaSalida: null, // Dejar nulo inicialmente
         servicio,
         estado: "pendiente",
-        tecnico: req.tecnicoBDD._id, // Almacenar el ID del técnico
         numOrden: "0001" // Número de orden por defecto, puedes ajustar esto según sea necesario
       });
 
