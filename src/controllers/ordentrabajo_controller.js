@@ -1,6 +1,7 @@
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
+import ordentrabajo from "../models/ordentrabajo.js";
 
 
 // Método para registro de orden de trabajo
@@ -123,6 +124,21 @@ const tipoServicio = async (req, res) => {
 };
 /////////////////////////////////////////////////////////////////////////////////////
 
+const detalleProforma = async(req,res)=>{
+    const {id} = req.params // Extrae el ID del cliente de los parámetros de la solicitud
+    // Verifica si el ID es válido
+    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el paciente ${id}`});
+    // Busca al cliente por su ID y lo popula con la información del tecnico asociado y las ODT asociadas
+    const ordenes = await ordentrabajo.findById(id).populate('cliente', '_id nombre cedula');
+    // Responde con el detalle del paciente y sus tratamientos
+    res.status(200).json({
+      ordenes
+    })
+  }
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+
 // Método para cambiar el estado de la orden de trabajo a "finalizado"
 const eliminarOrdenTrabajo = async (req, res) => {
     try {
@@ -177,5 +193,6 @@ export {
   buscarOrdenPorNumero,
   registrarOrdenTrabajo,
   listarOrdenesTrabajo,
-  eliminarOrdenTrabajo
+  eliminarOrdenTrabajo,
+  detalleProforma
 };
