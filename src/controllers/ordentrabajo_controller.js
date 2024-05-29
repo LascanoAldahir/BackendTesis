@@ -42,6 +42,27 @@ const registrarOrdenTrabajo = async (req, res) => {
   };
   
 
+  //Metodo para listar ordenes de trabajo
+  const listarOrdenesTrabajo = async (req, res) => {
+    try {
+      // Verificar si la solicitud contiene datos de clienteBDD
+      if (req.clienteBDD && "propietario" in req.clienteBDD) {
+        // Si el clienteBDD existe y es propietario, buscar órdenes de trabajo asociadas a ese cliente
+        const ordenesTrabajo = await Ordentrabajo.find({ cliente: req.clienteBDD._id })
+          .populate("tecnico", "_id nombre");
+        res.status(200).json(ordenesTrabajo);
+      } else {
+        // Si no es propietario, buscar órdenes de trabajo asociadas al técnico que hizo la solicitud
+        const ordenesTrabajo = await Ordentrabajo.find({ tecnico: req.tecnicoBDD })
+          .populate("cliente", "_id nombre correo telefono cedula")
+          .populate("tecnico", "_id nombre");
+        res.status(200).json(ordenesTrabajo);
+      }
+    } catch (error) {
+      console.error("Error al listar órdenes de trabajo: ", error);
+      res.status(500).json({ msg: "Error al listar órdenes de trabajo" });
+    }
+  };
 
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
@@ -115,4 +136,5 @@ export {
   tipoServicio,
   buscarOrdenPorNumero,
   registrarOrdenTrabajo,
+  listarOrdenesTrabajo
 };
