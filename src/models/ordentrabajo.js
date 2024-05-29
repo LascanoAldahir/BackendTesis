@@ -42,11 +42,18 @@ const ordentrabajoSchema = new Schema({
         default: true   // Valor por defecto: true
     },
     ingreso: {
-            type: Date,
-            required: true,
-            trim: true,
-            default: Date.now() // Valor por defecto: fecha y hora actual
-   },
+        type: Date,
+        required: true,
+        trim: true,
+        validate: {
+            validator: function(value) {
+                // Permitir fechas anteriores, pero no futuras
+                return value <= Date.now();
+            },
+            message: 'La fecha de ingreso debe ser igual o anterior a la fecha actual'
+        },
+        default: Date.now // Valor por defecto: fecha y hora actual
+    },
    razon:{
     type: String,
         required: [true, 'La razón es obligatoria'],

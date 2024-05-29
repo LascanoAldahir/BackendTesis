@@ -24,63 +24,44 @@ const buscarClientePorCedula = async (req, res) => {
 
 //------------------------------------------------------------------------------------------------------
 // Método para el proceso de login
-// Método para el proceso de login
 const loginCliente = async (req, res) => {
-  const { cedula, password } = req.body; // Extrae la cédula y la contraseña del cuerpo de la solicitud
-  
-  // Verifica si algún campo del cuerpo de la solicitud está vacío
-  if (Object.values(req.body).includes("")) {
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
+  try {
+    const { cedula, password } = req.body;
+
+    if (!cedula || !password) {
+      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    }
+
+    const clienteBDD = await Cliente.findOne({ cedula });
+    if (!clienteBDD) {
+      return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
+    }
+
+    const verificarPassword = await clienteBDD.matchPassword(password);
+    if (!verificarPassword) {
+      return res.status(401).json({ msg: "Lo sentimos, el password no es el correcto" });
+    }
+
+    const token = generarJWT(clienteBDD._id, "cliente");
+    const { nombre, _id, correo, telefono, frecuente, tecnico } = clienteBDD;
+
+    return res.status(200).json({
+      token,
+      nombre,
+      correo,
+      telefono,
+      frecuente,
+      tecnico,
+      rol: "cliente",
+      _id,
+      cedula // Incluyendo cedula en la respuesta
+    });
+  } catch (error) {
+    console.error("Error en el proceso de login: ", error);
+    return res.status(500).json({ msg: "Error en el servidor" });
   }
-
-  // Busca un cliente en la base de datos por su cédula
-  const clienteBDD = await Cliente.findOne({ cedula });
-  
-  // Si no se encuentra ningún cliente con la cédula proporcionada, responde con un mensaje de error
-  if (!clienteBDD) {
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
-  }
-
-  // Comprueba si la contraseña proporcionada coincide con la contraseña almacenada para el cliente en la base de datos
-  const verificarPassword = await clienteBDD.matchPassword(password);
-  
-  // Si la contraseña no coincide, responde con un mensaje de error
-  if (!verificarPassword) {
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, el password no es el correcto" });
-  }
-
-  // Genera un token JWT para el cliente
-  const token = generarJWT(clienteBDD._id, "cliente");
-
-  // Extrae algunos datos específicos del cliente para incluir en la respuesta
-  const {
-    nombre,
-    correo,
-    telefono,
-    frecuente,
-    tecnico,
-    _id
-  } = clienteBDD;
-
-  // Responde con un objeto JSON que contiene el token JWT y otros datos del cliente
-  res.status(200).json({
-    token,
-    nombre,
-    cedula,
-    correo,
-    telefono,
-    frecuente,
-    tecnico,
-    rol: "cliente",
-    _id
-  });
 };
+
 
 //----------------------------------------------------------------------------------------------------
 
