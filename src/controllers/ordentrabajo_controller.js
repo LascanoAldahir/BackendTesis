@@ -6,57 +6,69 @@ import ordentrabajo from "../models/ordentrabajo.js";
 
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
-    console.log(req.body);
-    try {
-      // Validar que todos los campos estén llenos
-      if (Object.values(req.body).includes("")) {
-        return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
-      }
-      // Extraer los datos necesarios del cuerpo de la solicitud
-      const { cedula, ingreso, clienteId } = req.body;
-      // Buscar al cliente por su cédula
-      const clienteExistente = await Cliente.findOne({ cedula });
-      if (!clienteExistente) {
-        return res.status(400).json({ msg: "Cliente no encontrado" });
-      }
-      // Validar la fecha de ingreso
-      const currentDate = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
-      if (ingreso < currentDate) {
-        return res.status(400).json({
-          msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
-        });
-      }
-      // Obtener el último número de orden registrado
-      const ultimaOrden = await Ordentrabajo.findOne().sort({ numOrden: -1 }).exec();
-      let nuevoNumOrden = "0001"; // Valor por defecto
-      if (ultimaOrden) {
-        // Incrementar el número de orden
-        const ultimoNumero = parseInt(ultimaOrden.numOrden, 10);
-        nuevoNumOrden = (ultimoNumero + 1).toString().padStart(4, "0");
-      }
-      // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
-      const nuevaOrden = new Ordentrabajo({
-        ...req.body, // Usar los valores proporcionados en req.body
-        salida: null,
-        numOrden: nuevoNumOrden, // Número de orden calculado
-        cliente: clienteId,
-      });
-  
-      console.log(nuevaOrden);
-  
-      // Guardar la orden de trabajo en la base de datos
-      await nuevaOrden.save();
-  
-      // Responder con un mensaje de éxito
-      res.status(200).json({
-        msg: "Orden de trabajo registrada exitosamente",
-        clienteId: clienteExistente._id,
-      });
-    } catch (error) {
-      console.error("Error al registrar orden de trabajo: ", error);
-      res.status(500).json({ msg: "Error al registrar orden de trabajo" });
+  console.log(req.body);
+  try {
+    // Validar que todos los campos estén llenos
+    if (Object.values(req.body).includes("")) {
+      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
-  };
+    
+    // Extraer los datos necesarios del cuerpo de la solicitud
+    const { cedula, ingreso, clienteId } = req.body;
+    
+    // Buscar al cliente por su cédula
+    const clienteExistente = await Cliente.findOne({ cedula });
+    if (!clienteExistente) {
+      return res.status(400).json({ msg: "Cliente no encontrado" });
+    }
+    
+    // Validar la fecha de ingreso
+    const currentDate = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
+    if (ingreso < currentDate) {
+      return res.status(400).json({
+        msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
+      });
+    }
+    
+    // Formatear la fecha de ingreso a YYYY-MM-DD
+    const formattedIngreso = new Date(ingreso).toISOString().split("T")[0];
+    
+    // Obtener el último número de orden registrado
+    const ultimaOrden = await Ordentrabajo.findOne().sort({ numOrden: -1 }).exec();
+    let nuevoNumOrden = "0001"; // Valor por defecto
+    if (ultimaOrden) {
+      // Incrementar el número de orden
+      const ultimoNumero = parseInt(ultimaOrden.numOrden, 10);
+      nuevoNumOrden = (ultimoNumero + 1).toString().padStart(4, "0");
+    }
+    
+    // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
+    const nuevaOrden = new Ordentrabajo({
+      ...req.body, // Usar los valores proporcionados en req.body
+      ingreso: formattedIngreso, // Fecha de ingreso formateada
+      salida: null,
+      numOrden: nuevoNumOrden, // Número de orden calculado
+      cliente: clienteId,
+    });
+
+    console.log(nuevaOrden);
+
+    // Guardar la orden de trabajo en la base de datos
+    await nuevaOrden.save();
+
+    // Enviar el correo electrónico al cliente con la cédula y la contraseña
+    await sendMailToCliente(clienteExistente.correo, `Se ha registrado una nueva orden de trabajo con el número: ${nuevaOrden._id}`);
+
+    // Responder con un mensaje de éxito
+    res.status(200).json({
+      msg: "Orden de trabajo registrada exitosamente",
+      clienteId: clienteExistente._id,
+    });
+  } catch (error) {
+    console.error("Error al registrar orden de trabajo: ", error);
+    res.status(500).json({ msg: "Error al registrar orden de trabajo" });
+  }
+};
 /////////////////////////////////////////////////////////////////////////////////
 //Metodo para listar ordenes de trabajo
 const listarOrdenesTrabajo = async (req, res) => {
