@@ -3,41 +3,62 @@ import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
 import ordentrabajo from "../models/ordentrabajo.js";
 
+
+// Método para registro de orden de trabajo
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
   try {
     // Validar que todos los campos estén llenos
     if (Object.values(req.body).includes("")) {
-      return res
-        .status(400)
-        .json({ msg: "Lo sentimos, debes llenar todos los campos" });
+      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
+    
     // Extraer los datos necesarios del cuerpo de la solicitud
     const { cedula, ingreso, clienteId } = req.body;
+    
     // Buscar al cliente por su cédula
     const clienteExistente = await Cliente.findOne({ cedula });
     if (!clienteExistente) {
       return res.status(400).json({ msg: "Cliente no encontrado" });
     }
+    
     // Validar la fecha de ingreso
     const currentDate = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
-
     if (ingreso < currentDate) {
       return res.status(400).json({
         msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
       });
     }
+    
+    // Formatear la fecha de ingreso a YYYY-MM-DD
+    const formattedIngreso = new Date(ingreso).toISOString().split("T")[0];
+    
+    // Obtener el último número de orden registrado
+    const ultimaOrden = await Ordentrabajo.findOne().sort({ numOrden: -1 }).exec();
+    let nuevoNumOrden = "0001"; // Valor por defecto
+    if (ultimaOrden) {
+      // Incrementar el número de orden
+      const ultimoNumero = parseInt(ultimaOrden.numOrden, 10);
+      nuevoNumOrden = (ultimoNumero + 1).toString().padStart(4, "0");
+    }
+    
     // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
     const nuevaOrden = new Ordentrabajo({
       ...req.body, // Usar los valores proporcionados en req.body
+      ingreso: formattedIngreso, // Fecha de ingreso formateada
       salida: null,
-      numOrden: "0001", // Número de orden por defecto, puedes ajustar esto según sea necesario
-      cliente:clienteId
-    
+      numOrden: nuevoNumOrden, // Número de orden calculado
+      cliente: clienteId,
     });
+
     console.log(nuevaOrden);
+
     // Guardar la orden de trabajo en la base de datos
     await nuevaOrden.save();
+
+    // Enviar el correo electrónico al cliente con la cédula y la contraseña
+    await sendMailToCliente(clienteExistente.correo, `Se ha registrado una nueva orden de trabajo con el número: ${nuevaOrden._id}`);
+
     // Responder con un mensaje de éxito
     res.status(200).json({
       msg: "Orden de trabajo registrada exitosamente",
@@ -48,7 +69,7 @@ const registrarOrdenTrabajo = async (req, res) => {
     res.status(500).json({ msg: "Error al registrar orden de trabajo" });
   }
 };
-
+/////////////////////////////////////////////////////////////////////////////////
 //Metodo para listar ordenes de trabajo
 const listarOrdenesTrabajo = async (req, res) => {
     try {
@@ -65,14 +86,13 @@ const listarOrdenesTrabajo = async (req, res) => {
           "_id nombre correo telefono cedula"
         );
       }
-  
       res.status(200).json(ordenesTrabajo);
     } catch (error) {
       console.error("Error al listar órdenes de trabajo: ", error);
       res.status(500).json({ msg: "Error al listar órdenes de trabajo" });
     }
   };
-
+/////////////////////////////////////////////////////////////////////////////////////////
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
   const { cedula } = req.params;
@@ -86,7 +106,7 @@ const buscarClientePorCedula = async (req, res) => {
     res.status(500).json({ mensaje: "Error al buscar el cliente" });
   }
 };
-
+///////////////////////////////////////////////////////////////////////////////////
 // Método para agregar un tipo de servicio a un equipo
 const tipoServicio = async (req, res) => {
   try {
@@ -114,30 +134,33 @@ const tipoServicio = async (req, res) => {
     res.status(500).json({ msg: "Error del servidor" });
   }
 };
+/////////////////////////////////////////////////////////////////////////////////////
 
 
-// Metodo para eliminar una ordend e trabajo
 
-const eliminarOrdenTrabajo = async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      // Buscar la orden de trabajo por su ID
-      const orden = await Ordentrabajo.findById(id);
-      if (!orden) {
-        return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
-      }
-  
-      // Eliminar la orden de trabajo
-      await orden.remove();
-  
-      res.status(200).json({ msg: "Orden de trabajo eliminada exitosamente" });
-    } catch (error) {
-      console.error("Error al eliminar la orden de trabajo: ", error);
-      res.status(500).json({ msg: "Error al eliminar la orden de trabajo" });
+// Método para cambiar el estado de la orden de trabajo a "finalizado"
+const finalizarOrdenTrabajo = async (req, res) => {
+  try {
+    const { numOrden } = req.params;
+
+    // Buscar la orden de trabajo por su número
+    const orden = await Ordentrabajo.findOne({ numOrden });
+
+    if (!orden) {
+      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
-  };
+    // Cambiar el estado a 'finalizado'
+    orden.estado = 'finalizado';
+    await orden.save();
 
+    res.status(200).json({ msg: "Estado de la orden de trabajo actualizado a 'finalizado'" });
+  } catch (error) {
+    console.error("Error al finalizar la orden de trabajo: ", error);
+    res.status(500).json({ msg: "Error al finalizar la orden de trabajo" });
+  }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////
 // Definir el controlador para buscar órdenes de trabajo por número de orden
 const buscarOrdenPorNumero = async (req, res) => {
   try {
@@ -182,6 +205,6 @@ export {
   buscarOrdenPorNumero,
   registrarOrdenTrabajo,
   listarOrdenesTrabajo,
-  eliminarOrdenTrabajo,
-  detalleProforma 
+  finalizarOrdenTrabajo,
+  detalleProforma
 };

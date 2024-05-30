@@ -120,7 +120,7 @@ const detalleCliente = async (req, res) => {
     cliente,
   });
 };
-
+////////////////////////////////////////////////////////////////////////////////////////////
 // Método para registrar un paciente
 const registrarCliente = async (req, res) => {
   // desestructura el email
@@ -149,8 +149,8 @@ const registrarCliente = async (req, res) => {
   await nuevoCliente.save()
   res.status(200).json({ msg: "Registro exitoso del paciente y correo enviado" });
 };
-
-// Método para actualizar un paciente
+///////////////////////////////////////////////////////////////////////////////////////
+// Método para actualizar un cliente
 const actualizarCliente = async (req, res) => {
   const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
   // Verifica si algún campo del cuerpo de la solicitud está vacío

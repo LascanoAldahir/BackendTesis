@@ -40,10 +40,10 @@ const ordentrabajoSchema = new Schema(
       required: true, // Campo obligatorio
     },
     ingreso: {
-      type: Date,
+      type: String,
       required: true,
       trim: true,
-      default: Date.now, // Valor por defecto: fecha y hora actual
+      default: () => new Date().toISOString().split("T")[0], // Valor por defecto: fecha actual en formato YYYY-MM-DD
     },
     razon: {
       type: String,
