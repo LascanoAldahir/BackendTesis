@@ -153,26 +153,26 @@ const detalleProforma = async(req,res)=>{
 
 
 // Método para cambiar el estado de la orden de trabajo a "finalizado"
-const eliminarOrdenTrabajo = async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      // Verificar si la orden de trabajo existe
-      const orden = await Ordentrabajo.findById(id);
-      if (!orden) {
-        return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
-      }
-  
-      // Actualizar el estado de la orden de trabajo a "finalizado"
-      orden.estado = "finalizado";
-      await orden.save();
-  
-      res.status(200).json({ msg: "Orden de trabajo finalizada exitosamente" });
-    } catch (error) {
-      console.error("Error al finalizar la orden de trabajo: ", error);
-      res.status(500).json({ msg: "Error al finalizar la orden de trabajo" });
+const finalizarOrdenTrabajo = async (req, res) => {
+  try {
+    const { numOrden } = req.params;
+
+    // Buscar la orden de trabajo por su número
+    const orden = await Ordentrabajo.findOne({ numOrden });
+
+    if (!orden) {
+      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
-  };
+    // Cambiar el estado a 'finalizado'
+    orden.estado = 'finalizado';
+    await orden.save();
+
+    res.status(200).json({ msg: "Estado de la orden de trabajo actualizado a 'finalizado'" });
+  } catch (error) {
+    console.error("Error al finalizar la orden de trabajo: ", error);
+    res.status(500).json({ msg: "Error al finalizar la orden de trabajo" });
+  }
+};
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Definir el controlador para buscar órdenes de trabajo por número de orden
@@ -206,6 +206,6 @@ export {
   buscarOrdenPorNumero,
   registrarOrdenTrabajo,
   listarOrdenesTrabajo,
-  eliminarOrdenTrabajo,
+  finalizarOrdenTrabajo,
   detalleProforma
 };
