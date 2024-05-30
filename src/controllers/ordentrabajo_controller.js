@@ -1,6 +1,7 @@
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
+import ordentrabajo from "../models/ordentrabajo.js";
 
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
@@ -161,6 +162,19 @@ const buscarOrdenPorNumero = async (req, res) => {
   }
 };
 
+const detalleProforma = async(req,res)=>{
+  const {id} = req.params // Extrae el ID del paciente de los parámetros de la solicitud
+  // Verifica si el ID es válido
+  if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el paciente ${id}`});
+  // Busca al paciente por su ID y lo popula con la información del veterinario asociado y los tratamientos asociados
+  const ordenes = await ordentrabajo.findById(id).populate('cliente', '_id nombre cedula');
+  // Responde con el detalle del paciente y sus tratamientos
+  res.status(200).json({
+    ordenes
+  })
+}
+
+
 // Exporta los métodos de la API relacionados con la gestión de tratamientos
 export {
   buscarClientePorCedula,
@@ -168,5 +182,6 @@ export {
   buscarOrdenPorNumero,
   registrarOrdenTrabajo,
   listarOrdenesTrabajo,
-  eliminarOrdenTrabajo
+  eliminarOrdenTrabajo,
+  detalleProforma 
 };
