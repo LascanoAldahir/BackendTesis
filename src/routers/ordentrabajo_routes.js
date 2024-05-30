@@ -16,7 +16,7 @@ router.post('/orden/registro', registrarOrdenTrabajo);
 // Ruta para listar las órdenes de trabajo
 router.get('/ordenes/listar', listarOrdenesTrabajo);
 // Ruta para finalizar la orden de trabajo
-router.put('/ordenes/finalizar/:numOrden', finalizarOrdenTrabajo);
+router.put('/ordenes/finalizar/:id', finalizarOrdenTrabajo);
 
 
 router.get("/orden/visualizar/:id",detalleProforma);

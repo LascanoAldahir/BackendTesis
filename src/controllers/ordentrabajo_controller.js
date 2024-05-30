@@ -3,25 +3,26 @@ import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
 import ordentrabajo from "../models/ordentrabajo.js";
 
-
 // Método para registro de orden de trabajo
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
   try {
     // Validar que todos los campos estén llenos
     if (Object.values(req.body).includes("")) {
-      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+      return res
+        .status(400)
+        .json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
-    
+
     // Extraer los datos necesarios del cuerpo de la solicitud
     const { cedula, ingreso, clienteId } = req.body;
-    
+
     // Buscar al cliente por su cédula
     const clienteExistente = await Cliente.findOne({ cedula });
     if (!clienteExistente) {
       return res.status(400).json({ msg: "Cliente no encontrado" });
     }
-    
+
     // Validar la fecha de ingreso
     const currentDate = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
     if (ingreso < currentDate) {
@@ -29,19 +30,21 @@ const registrarOrdenTrabajo = async (req, res) => {
         msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
       });
     }
-    
+
     // Formatear la fecha de ingreso a YYYY-MM-DD
     const formattedIngreso = new Date(ingreso).toISOString().split("T")[0];
-    
+
     // Obtener el último número de orden registrado
-    const ultimaOrden = await Ordentrabajo.findOne().sort({ numOrden: -1 }).exec();
+    const ultimaOrden = await Ordentrabajo.findOne()
+      .sort({ numOrden: -1 })
+      .exec();
     let nuevoNumOrden = "0001"; // Valor por defecto
     if (ultimaOrden) {
       // Incrementar el número de orden
       const ultimoNumero = parseInt(ultimaOrden.numOrden, 10);
       nuevoNumOrden = (ultimoNumero + 1).toString().padStart(4, "0");
     }
-    
+
     // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
     const nuevaOrden = new Ordentrabajo({
       ...req.body, // Usar los valores proporcionados en req.body
@@ -57,7 +60,10 @@ const registrarOrdenTrabajo = async (req, res) => {
     await nuevaOrden.save();
 
     // Enviar el correo electrónico al cliente con la cédula y la contraseña
-    await sendMailToCliente(clienteExistente.correo, `Se ha registrado una nueva orden de trabajo con el número: ${nuevaOrden._id}`);
+    await sendMailToCliente(
+      clienteExistente.correo,
+      `Se ha registrado una nueva orden de trabajo con el número: ${nuevaOrden._id}`
+    );
 
     // Responder con un mensaje de éxito
     res.status(200).json({
@@ -72,26 +78,26 @@ const registrarOrdenTrabajo = async (req, res) => {
 /////////////////////////////////////////////////////////////////////////////////
 //Metodo para listar ordenes de trabajo
 const listarOrdenesTrabajo = async (req, res) => {
-    try {
-      let ordenesTrabajo;
-      if (req.clienteBDD && "propietario" in req.clienteBDD) {
-        // Si el clienteBDD existe y es propietario, buscar órdenes de trabajo asociadas a ese cliente
-        ordenesTrabajo = await Ordentrabajo.find({
-          cliente: req.clienteBDD._id,
-        }).populate("cliente", "_id nombre correo telefono cedula");
-      } else {
-        // Si no hay cliente especificado, devolver todas las órdenes de trabajo
-        ordenesTrabajo = await Ordentrabajo.find().populate(
-          "cliente",
-          "_id nombre correo telefono cedula"
-        );
-      }
-      res.status(200).json(ordenesTrabajo);
-    } catch (error) {
-      console.error("Error al listar órdenes de trabajo: ", error);
-      res.status(500).json({ msg: "Error al listar órdenes de trabajo" });
+  try {
+    let ordenesTrabajo;
+    if (req.clienteBDD && "propietario" in req.clienteBDD) {
+      // Si el clienteBDD existe y es propietario, buscar órdenes de trabajo asociadas a ese cliente
+      ordenesTrabajo = await Ordentrabajo.find({
+        cliente: req.clienteBDD._id,
+      }).populate("cliente", "_id nombre correo telefono cedula");
+    } else {
+      // Si no hay cliente especificado, devolver todas las órdenes de trabajo
+      ordenesTrabajo = await Ordentrabajo.find().populate(
+        "cliente",
+        "_id nombre correo telefono cedula"
+      );
     }
-  };
+    res.status(200).json(ordenesTrabajo);
+  } catch (error) {
+    console.error("Error al listar órdenes de trabajo: ", error);
+    res.status(500).json({ msg: "Error al listar órdenes de trabajo" });
+  }
+};
 /////////////////////////////////////////////////////////////////////////////////////////
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
@@ -136,24 +142,27 @@ const tipoServicio = async (req, res) => {
 };
 /////////////////////////////////////////////////////////////////////////////////////
 
-
-
 // Método para cambiar el estado de la orden de trabajo a "finalizado"
 const finalizarOrdenTrabajo = async (req, res) => {
   try {
-    const { numOrden } = req.params;
+    const { id } = req.body; // Recibir el ID desde el cuerpo de la solicitud
+    console.log(req.body);
 
     // Buscar la orden de trabajo por su número
-    const orden = await Ordentrabajo.findOne({ numOrden });
+    const orden = await Ordentrabajo.findOne({ _id: id });
 
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
     // Cambiar el estado a 'finalizado'
-    orden.estado = 'finalizado';
+    orden.estado = "finalizado";
     await orden.save();
 
-    res.status(200).json({ msg: "Estado de la orden de trabajo actualizado a 'finalizado'" });
+    res
+      .status(200)
+      .json({
+        msg: "Estado de la orden de trabajo actualizado a 'finalizado'",
+      });
   } catch (error) {
     console.error("Error al finalizar la orden de trabajo: ", error);
     res.status(500).json({ msg: "Error al finalizar la orden de trabajo" });
@@ -185,18 +194,22 @@ const buscarOrdenPorNumero = async (req, res) => {
   }
 };
 
-const detalleProforma = async(req,res)=>{
-  const {id} = req.params // Extrae el ID del paciente de los parámetros de la solicitud
+const detalleProforma = async (req, res) => {
+  const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
   // Verifica si el ID es válido
-  if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el paciente ${id}`});
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res
+      .status(404)
+      .json({ msg: `Lo sentimos, no existe el paciente ${id}` });
   // Busca al paciente por su ID y lo popula con la información del veterinario asociado y los tratamientos asociados
-  const ordenes = await ordentrabajo.findById(id).populate('cliente', '_id nombre cedula');
+  const ordenes = await ordentrabajo
+    .findById(id)
+    .populate("cliente", "_id nombre cedula");
   // Responde con el detalle del paciente y sus tratamientos
   res.status(200).json({
-    ordenes
-  })
-}
-
+    ordenes,
+  });
+};
 
 // Exporta los métodos de la API relacionados con la gestión de tratamientos
 export {
@@ -206,5 +219,5 @@ export {
   registrarOrdenTrabajo,
   listarOrdenesTrabajo,
   finalizarOrdenTrabajo,
-  detalleProforma
+  detalleProforma,
 };
