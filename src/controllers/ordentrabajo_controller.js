@@ -5,6 +5,7 @@ import ordentrabajo from "../models/ordentrabajo.js";
 
 
 // Método para registro de orden de trabajo
+// Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
   console.log(req.body);
   try {
