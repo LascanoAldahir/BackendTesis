@@ -26,7 +26,7 @@ const registrarOrdenTrabajo = async (req, res) => {
 
     // Validar la fecha de ingreso
     const currentDate = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
-    if (ingreso < currentDate) {
+    if (ingreso <= currentDate) {
       return res.status(400).json({
         msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
       });
@@ -61,7 +61,7 @@ const registrarOrdenTrabajo = async (req, res) => {
     await nuevaOrden.save();
 
     // Enviar el correo electrónico al cliente con la cédula y la contraseña
-    await sendOrderToCliente(clienteExistente.correo,nuevoNumOrden,equipo);
+    await sendOrderToCliente(clienteExistente.correo, nuevoNumOrden, equipo);
 
     // Responder con un mensaje de éxito
     res.status(200).json({
@@ -156,12 +156,10 @@ const finalizarOrdenTrabajo = async (req, res) => {
     orden.estado = "finalizado";
     orden.salida = new Date();
     await orden.save();
-    
-    res
-      .status(200)
-      .json({
-        msg: "Estado de la orden de trabajo actualizado a 'finalizado'",
-      });
+
+    res.status(200).json({
+      msg: "Estado de la orden de trabajo actualizado a 'finalizado'",
+    });
   } catch (error) {
     console.error("Error al finalizar la orden de trabajo: ", error);
     res.status(500).json({ msg: "Error al finalizar la orden de trabajo" });
@@ -210,6 +208,23 @@ const detalleProforma = async (req, res) => {
   });
 };
 
+const detalleOrden = async (req, res) => {
+  const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
+  // Verifica si el ID es válido
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res
+      .status(404)
+      .json({ msg: `Lo sentimos, no existe el paciente ${id}` });
+  // Busca al paciente por su ID y lo popula con la información del veterinario asociado y los tratamientos asociados
+  const ordenes = await ordentrabajo
+    .findById(id)
+    .populate("cliente", "_id nombre cedula");
+  // Responde con el detalle del paciente y sus tratamientos
+  res.status(200).json({
+    ordenes,
+  });
+};
+
 // Exporta los métodos de la API relacionados con la gestión de tratamientos
 export {
   buscarClientePorCedula,
@@ -219,5 +234,5 @@ export {
   listarOrdenesTrabajo,
   finalizarOrdenTrabajo,
   detalleProforma,
-  
+  detalleOrden,
 };

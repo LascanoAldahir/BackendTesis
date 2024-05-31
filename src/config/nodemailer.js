@@ -100,7 +100,7 @@ const sendOrderToCliente = async(userMail,numOrder,equipo)=>{
     html: `
     <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
     <hr>
-    <p>Estimado usuario ${numOrder} se ha ingresado con exito.</p>
+    <p>Estimado usuario</p>
     <p>Se ha ingresado su equipo: ${equipo} con el numero de orden ${numOrder} con exito.</p>
     
     <footer>Puedes hacer un seguimiento del proceso en nuestra aplicación</footer>
