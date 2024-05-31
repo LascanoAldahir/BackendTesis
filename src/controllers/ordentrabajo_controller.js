@@ -153,7 +153,7 @@ const finalizarOrdenTrabajo = async (req, res) => {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
     // Cambiar el estado a 'finalizado'
-    orden.estado = "finalizado";
+    orden.estado = "Finalizado";
     orden.salida = new Date();
     await orden.save();
 

@@ -62,7 +62,7 @@ const ordentrabajoSchema = new Schema(
     estado: {
       type: String,
       required: true,
-      default: "pendiente",
+      default: "Pendiente",
     },
     cliente: {
       type: Schema.Types.ObjectId,
