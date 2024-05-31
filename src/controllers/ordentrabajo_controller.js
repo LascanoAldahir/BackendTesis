@@ -2,6 +2,7 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
 import ordentrabajo from "../models/ordentrabajo.js";
+import { sendOrderToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
 
 // Método para registro de orden de trabajo
 // Método para registro de orden de trabajo
@@ -15,7 +16,7 @@ const registrarOrdenTrabajo = async (req, res) => {
     }
 
     // Extraer los datos necesarios del cuerpo de la solicitud
-    const { cedula, ingreso, clienteId } = req.body;
+    const { cedula, ingreso, clienteId, equipo } = req.body;
 
     // Buscar al cliente por su cédula
     const clienteExistente = await Cliente.findOne({ cedula });
@@ -60,10 +61,7 @@ const registrarOrdenTrabajo = async (req, res) => {
     await nuevaOrden.save();
 
     // Enviar el correo electrónico al cliente con la cédula y la contraseña
-    await sendMailToCliente(
-      clienteExistente.correo,
-      `Se ha registrado una nueva orden de trabajo con el número: ${nuevaOrden._id}`
-    );
+    await sendOrderToCliente(clienteExistente.correo,nuevoNumOrden,equipo);
 
     // Responder con un mensaje de éxito
     res.status(200).json({
@@ -156,9 +154,12 @@ const finalizarOrdenTrabajo = async (req, res) => {
     }
     // Cambiar el estado a 'finalizado'
     orden.estado = "finalizado";
+    orden.salida = new Date();
     await orden.save();
-
-    res.status(200).json({
+    
+    res
+      .status(200)
+      .json({
         msg: "Estado de la orden de trabajo actualizado a 'finalizado'",
       });
   } catch (error) {
@@ -218,4 +219,5 @@ export {
   listarOrdenesTrabajo,
   finalizarOrdenTrabajo,
   detalleProforma,
+  
 };

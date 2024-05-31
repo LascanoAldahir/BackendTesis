@@ -84,7 +84,26 @@ const sendMailToCliente = async(userMail,password)=>{
     
     <p>Contraseña de acceso: ${password}</p>
     <hr>
-    <footer>Te damo la Bienvenida!</footer>
+    <footer>Te damos la Bienvenida!</footer>
+    `
+    });
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+
+}
+/////////////////////////////////////////////////////////////
+// Función para enviar un correo electrónico de bienvenida al cliente
+const sendOrderToCliente = async(userMail,numOrder,equipo)=>{
+    let info = await transporter.sendMail({
+    from: 'electronica_zurita@admin.com',
+    to: userMail,
+    subject: "Correo de ingreso de orden",
+    html: `
+    <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
+    <hr>
+    <p>Estimado usuario ${numOrder} se ha ingresado con exito.</p>
+    <p>Se ha ingresado su equipo: ${equipo} con el numero de orden ${numOrder} con exito.</p>
+    
+    <footer>Puedes hacer un seguimiento del proceso en nuestra aplicación</footer>
     `
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
@@ -95,5 +114,6 @@ export {
     sendMailToUser,
     sendMailToRecoveryPassword,
     sendMailToCliente,
-    sendMailToRecoveryPasswordCli
+    sendMailToRecoveryPasswordCli,
+    sendOrderToCliente
 }
