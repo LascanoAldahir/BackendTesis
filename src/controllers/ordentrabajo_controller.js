@@ -158,7 +158,7 @@ const finalizarOrdenTrabajo = async (req, res) => {
     await orden.save();
 
     res.status(200).json({
-      msg: "Estado de la orden de trabajo actualizado a 'finalizado'",
+      msg: "Estado de la orden de trabajo actualizado a 'Finalizado'",
     });
   } catch (error) {
     console.error("Error al finalizar la orden de trabajo: ", error);
