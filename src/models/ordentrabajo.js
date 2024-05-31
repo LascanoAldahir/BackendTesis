@@ -46,9 +46,8 @@ const ordentrabajoSchema = new Schema(
     },
     razon: {
       type: String,
-      required: [true, "La razón es obligatoria"],
-      minlength: [10, "La razón debe tener al menos 10 caracteres"],
-      maxlength: [500, "La razón no puede exceder los 500 caracteres"],
+      required: true,
+      trim: true,
     },
     salida: {
       type: Date,
