@@ -5,18 +5,25 @@ import ordentrabajo from "../models/ordentrabajo.js";
 import { sendOrderToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
 
 // Método para registro de orden de trabajo
-// Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
   try {
+    // Extraer los datos necesarios del cuerpo de la solicitud
+    const { cedula, ingreso, clienteId, equipo, razon } = req.body;
     // Validar que todos los campos estén llenos
     if (Object.values(req.body).includes("")) {
       return res
         .status(400)
         .json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
-
-    // Extraer los datos necesarios del cuerpo de la solicitud
-    const { cedula, ingreso, clienteId, equipo } = req.body;
+    // Validar la longitud del campo 'razon'
+    const minLength = 10;
+    const maxLength = 500;
+    if (razon.length < minLength || razon.length > maxLength) {
+      return res.status(400).json({
+        msg: `La razón debe tener entre ${minLength} y ${maxLength} caracteres`,
+      });
+    }
+    
 
     // Buscar al cliente por su cédula
     const clienteExistente = await Cliente.findOne({ cedula });
@@ -24,16 +31,19 @@ const registrarOrdenTrabajo = async (req, res) => {
       return res.status(400).json({ msg: "Cliente no encontrado" });
     }
 
-    // Validar la fecha de ingreso
-    const currentDate = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
-    if (ingreso <= currentDate) {
+    // Obtener la fecha actual en la zona horaria deseada (UTC-5)
+    const offset = new Date().getTimezoneOffset() * 60 * 1000;
+    const currentDate = new Date(new Date().getTime() - offset);
+
+    // Restar un día a la fecha actual
+    const fechaAnterior = new Date(currentDate);
+    fechaAnterior.setDate(currentDate.getDate() - 1);
+    // Comparar las fechas
+    if (fechaAnterior >= new Date(ingreso)) {
       return res.status(400).json({
         msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
       });
     }
-
-    // Formatear la fecha de ingreso a YYYY-MM-DD
-    const formattedIngreso = new Date(ingreso).toISOString().split("T")[0];
 
     // Obtener el último número de orden registrado
     const ultimaOrden = await Ordentrabajo.findOne()
@@ -49,7 +59,7 @@ const registrarOrdenTrabajo = async (req, res) => {
     // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
     const nuevaOrden = new Ordentrabajo({
       ...req.body, // Usar los valores proporcionados en req.body
-      ingreso: formattedIngreso, // Fecha de ingreso formateada
+      ingreso: ingreso, // Fecha de ingreso formateada
       salida: null,
       numOrden: nuevoNumOrden, // Número de orden calculado
       cliente: clienteId,
