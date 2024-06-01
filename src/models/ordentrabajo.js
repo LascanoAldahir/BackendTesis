@@ -16,6 +16,13 @@ const ordentrabajoSchema = new Schema(
       required: true, // Campo obligatorio
       trim: true, // Se eliminan espacios en blanco al inicio y al final
     },
+    estadoProforma: {
+      type: Boolean,
+      required: true,
+      default: false // Puedes definir un valor por defecto si lo necesitas, opcional
+    }
+    ,
+
     // Campo para la descripción del tratamiento
     modelo: {
       type: String, // Tipo de dato: String

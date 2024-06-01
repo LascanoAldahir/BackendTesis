@@ -21,5 +21,5 @@ router.put('/ordenes/finalizar/:id', finalizarOrdenTrabajo);
 // Ruta para la proforma
 router.get("/orden/visualizar/:id",detalleProforma);
 // Ruta para la ordenes normales
-router.get("/orden/actualizar/:id",detalleOrden);
+router.put("/orden/actualizar/:id",detalleOrden);
 export default router; // Exportar el enrutador
