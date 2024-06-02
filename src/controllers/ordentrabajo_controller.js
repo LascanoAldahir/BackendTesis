@@ -255,16 +255,7 @@ const detalleOrden = async (req, res) => {
     const ordenActualizada = await ordentrabajo.findByIdAndUpdate(
       id,
       {
-        cliente,
-        equipo,
-        modelo,
-        marca,
-        serie,
-        color,
-        ingreso,
-        razon,
-        salida,
-        servicio,
+        _id,
         estado
       },
       { new: true } // Devuelve el documento actualizado
