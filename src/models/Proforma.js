@@ -1,44 +1,49 @@
 // Importar el Schema y el modelo de mongoose
 import { Schema, model } from 'mongoose';
-// Importar bcrypt para cifrar las contraseñas
-import bcrypt from "bcryptjs";
 
 // Definir el esquema del tratamiento
 const proformaSchema = new Schema({
-    // Campo para el nombre del tratamiento
+    
     ordenN: {
         type: String,   // Tipo de dato: String
         required: true, // Campo obligatorio
         trim: true      // Se eliminan espacios en blanco al inicio y al final
     },
-    // Campo para la descripción del tratamiento
+    
     equipo: {
         type: String,   // Tipo de dato: String
         required: true, // Campo obligatorio
         trim: true      // Se eliminan espacios en blanco al inicio y al final
     },
-    // Campo para el estado del tratamiento (activo o inactivo)
+    
     cliente : {
         type: String,  
         required: true, // Campo obligatorio
         default: true   // Valor por defecto: true
     },
-    // Campo para la prioridad del tratamiento (Baja, Media, Alta)
     serie: {
         type: String,  
         required: true, // Campo obligatorio
         default: true   // Valor por defecto: true
     },
-    // Campo para referenciar el paciente al que se aplica el tratamiento
     componente: {
         type: String,
-        required: true, // Campo obligatorio
-        default: true   // Valor por defecto: true
+        required: true, 
+        default: true  
     },
     modelo: {
         type: String,
         required: true,
         enum: ['Revision','Mantenimiento','Reparacion']
+    },
+    aceptado: {
+        type: Boolean,
+        required: true,
+        default: false 
+    },
+    pieza:{
+        type: String,
+
     },
     precio:{
         type: Number,
@@ -46,6 +51,39 @@ const proformaSchema = new Schema({
         min: 0,
         default: 0
     },
+    pieza: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      precio: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      precioFinal: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      clienteNombre: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      clienteCedula: {
+        type: Number,
+        required: true,
+      },
+      precio: {
+        type: Number, 
+        required: true,
+      },
+      precioTotal: {
+        type: Number, 
+        required: true,
+      },
+    
 }, {
     timestamps: true // Agregar timestamps de creación y modificación automáticamente
 });
