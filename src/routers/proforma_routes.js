@@ -1,5 +1,5 @@
 import { 
-    detalleOrden,
+    crearProforma
 } from '../controllers/proforma_controlller.js';
 
 // Importar el modelo de equipo
