@@ -245,7 +245,7 @@ const detalleProforma = async (req, res) => {
 ////////////////////////////////////////////////////////////////////////
 const detalleOrden = async (req, res) => {
   const { id } = req.params; // Extrae el ID de la orden de los parámetros de la solicitud
-  const { cliente, equipo, modelo, marca, serie, color, ingreso, razon, salida, servicio, estado } = req.body; // Extrae los datos a actualizar del cuerpo de la solicitud
+  const { _id, estado } = req.body; // Extrae los datos a actualizar del cuerpo de la solicitud
   // Verifica si el ID es válido
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ msg: `Lo sentimos, no existe la orden de trabajo con ID ${id}` });
