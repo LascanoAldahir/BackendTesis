@@ -21,8 +21,6 @@ router.get('/ordenes/listar', listarOrdenesTrabajo);
 router.put('/ordenes/finalizar/:id', finalizarOrdenTrabajo);
 // Ruta para la proforma
 router.get("/orden/visualizar/:id",detalleProforma);
-// Ruta para la ordenes normales
-router.put("/orden/actualizar/:id",detalleOrden);
 // Ruta para aceptar la proforma
 router.put('/ordenes/aceptar-proforma/:id', aceptarProforma);
 
