@@ -224,6 +224,7 @@ const buscarOrdenPorNumero = async (req, res) => {
     });
   }
 };
+/////////////////////////////////////////////////////////////////////////
 
 const detalleProforma = async (req, res) => {
   const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud

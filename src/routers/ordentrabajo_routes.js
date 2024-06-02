@@ -4,7 +4,6 @@ import { buscarOrdenPorNumero,
     listarOrdenesTrabajo,
     finalizarOrdenTrabajo,
     detalleProforma,
-    detalleOrden,
     aceptarProforma
 } from '../controllers/ordentrabajo_controller.js';
 
