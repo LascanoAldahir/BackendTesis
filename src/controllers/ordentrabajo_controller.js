@@ -241,22 +241,45 @@ const detalleProforma = async (req, res) => {
     ordenes,
   });
 };
-
+////////////////////////////////////////////////////////////////////////
 const detalleOrden = async (req, res) => {
-  const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
+  const { id } = req.params; // Extrae el ID de la orden de los parámetros de la solicitud
+  const { cliente, equipo, modelo, marca, serie, color, ingreso, razon, salida, servicio, estado } = req.body; // Extrae los datos a actualizar del cuerpo de la solicitud
   // Verifica si el ID es válido
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res
-      .status(404)
-      .json({ msg: `Lo sentimos, no existe el paciente ${id}` });
-  // Busca al paciente por su ID y lo popula con la información del veterinario asociado y los tratamientos asociados
-  const ordenes = await ordentrabajo
-    .findById(id)
-    .populate("cliente", "_id nombre cedula");
-  // Responde con el detalle del paciente y sus tratamientos
-  res.status(200).json({
-    ordenes,
-  });
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ msg: `Lo sentimos, no existe la orden de trabajo con ID ${id}` });
+  }
+  try {
+    // Busca la orden de trabajo por su ID y actualiza los campos con los datos proporcionados en el cuerpo de la solicitud
+    const ordenActualizada = await ordentrabajo.findByIdAndUpdate(
+      id,
+      {
+        cliente,
+        equipo,
+        modelo,
+        marca,
+        serie,
+        color,
+        ingreso,
+        razon,
+        salida,
+        servicio,
+        estado
+      },
+      { new: true } // Devuelve el documento actualizado
+    ).populate("cliente", "_id nombre cedula");
+    if (!ordenActualizada) {
+      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
+    }
+    // Responde con el detalle de la orden de trabajo actualizada
+    res.status(200).json({
+      msg: "Orden de trabajo actualizada exitosamente",
+      orden: ordenActualizada,
+    });
+  } catch (error) {
+    console.error("Error al actualizar la orden de trabajo: ", error);
+    res.status(500).json({ msg: "Error al actualizar la orden de trabajo" });
+  }
 };
 
 // Exporta los métodos de la API relacionados con la gestión de tratamientos
