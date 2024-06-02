@@ -90,17 +90,14 @@ const aceptarProforma = async (req, res) => {
   try {
     const { id } = req.params; // Recibir el ID desde los parámetros de la URL
     console.log(req.params);
-
     // Buscar la orden de trabajo por su ID
     const orden = await Ordentrabajo.findOne({ _id: id });
-
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
     // Cambiar el estadoProforma a true
     orden.estadoProforma = true;
     await orden.save();
-
     res.status(200).json({
       msg: "Estado de la proforma actualizado a 'aceptado'",
     });
@@ -109,8 +106,6 @@ const aceptarProforma = async (req, res) => {
     res.status(500).json({ msg: "Error al aceptar la proforma" });
   }
 };
-
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //Metodo para listar ordenes de trabajo
