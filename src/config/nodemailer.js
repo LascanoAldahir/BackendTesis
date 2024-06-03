@@ -92,7 +92,7 @@ const sendMailToCliente = async(userMail,password)=>{
 }
 /////////////////////////////////////////////////////////////
 // Función para enviar un correo electrónico de bienvenida al cliente
-const sendOrderToCliente = async(userMail,numOrder,equipo)=>{
+const sendOrderFinalizadoToCliente = async(userMail,numOrder,equipo)=>{
     let info = await transporter.sendMail({
     from: 'electronica_zurita@admin.com',
     to: userMail,
@@ -108,6 +108,8 @@ const sendOrderToCliente = async(userMail,numOrder,equipo)=>{
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
+////////////////////////////////////////////////////////////////
+
 
 // Exporta las funciones para que puedan ser utilizadas en otros archivos
 export {
@@ -115,5 +117,5 @@ export {
     sendMailToRecoveryPassword,
     sendMailToCliente,
     sendMailToRecoveryPasswordCli,
-    sendOrderToCliente
+    sendOrderFinalizadoToCliente
 }
