@@ -23,7 +23,6 @@ const registrarOrdenTrabajo = async (req, res) => {
         msg: `La razón debe tener entre ${minLength} y ${maxLength} caracteres`,
       });
     }
-    
 
     // Buscar al cliente por su cédula
     const clienteExistente = await Cliente.findOne({ cedula });
@@ -245,29 +244,33 @@ const detalleProforma = async (req, res) => {
 ////////////////////////////////////////////////////////////////////////
 const detalleOrden = async (req, res) => {
   const { id } = req.params; // Extrae el ID de la orden de los parámetros de la solicitud
-  const { _id, estado } = req.body; // Extrae los datos a actualizar del cuerpo de la solicitud
+  const { estado } = req.body; // Extrae el estado a actualizar del cuerpo de la solicitud
+  console.log(id, estado)
   // Verifica si el ID es válido
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ msg: `Lo sentimos, no existe la orden de trabajo con ID ${id}` });
+    return res
+      .status(404)
+      .json({ msg: `Lo sentimos, no existe la orden de trabajo con ID ${id}` });
   }
+
   try {
-    // Busca la orden de trabajo por su ID y actualiza los campos con los datos proporcionados en el cuerpo de la solicitud
+    // Busca la orden de trabajo por su ID y actualiza el campo estado con los datos proporcionados en el cuerpo de la solicitud
     const ordenActualizada = await ordentrabajo.findByIdAndUpdate(
       id,
-      {
-        _id,
-        estado
-      },
+      { estado },
       { new: true } // Devuelve el documento actualizado
-    ).populate("cliente", "_id nombre cedula");
+    );
+
     if (!ordenActualizada) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
+    console.log(`Orden actualizada: ${ordenActualizada}`);
     // Responde con el detalle de la orden de trabajo actualizada
     res.status(200).json({
       msg: "Orden de trabajo actualizada exitosamente",
       orden: ordenActualizada,
     });
+    
   } catch (error) {
     console.error("Error al actualizar la orden de trabajo: ", error);
     res.status(500).json({ msg: "Error al actualizar la orden de trabajo" });
@@ -284,5 +287,5 @@ export {
   finalizarOrdenTrabajo,
   detalleProforma,
   detalleOrden,
-  aceptarProforma
+  aceptarProforma,
 };
