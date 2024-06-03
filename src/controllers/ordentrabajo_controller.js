@@ -23,17 +23,14 @@ const registrarOrdenTrabajo = async (req, res) => {
         msg: `La razón debe tener entre ${minLength} y ${maxLength} caracteres`,
       });
     }
-
     // Buscar al cliente por su cédula
     const clienteExistente = await Cliente.findOne({ cedula });
     if (!clienteExistente) {
       return res.status(400).json({ msg: "Cliente no encontrado" });
     }
-
     // Obtener la fecha actual en la zona horaria deseada (UTC-5)
     const offset = new Date().getTimezoneOffset() * 60 * 1000;
     const currentDate = new Date(new Date().getTime() - offset);
-
     // Restar un día a la fecha actual
     const fechaAnterior = new Date(currentDate);
     fechaAnterior.setDate(currentDate.getDate() - 1);
@@ -43,7 +40,6 @@ const registrarOrdenTrabajo = async (req, res) => {
         msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
       });
     }
-
     // Obtener el último número de orden registrado
     const ultimaOrden = await Ordentrabajo.findOne()
       .sort({ numOrden: -1 })
@@ -54,7 +50,6 @@ const registrarOrdenTrabajo = async (req, res) => {
       const ultimoNumero = parseInt(ultimaOrden.numOrden, 10);
       nuevoNumOrden = (ultimoNumero + 1).toString().padStart(4, "0");
     }
-
     // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
     const nuevaOrden = new Ordentrabajo({
       ...req.body, // Usar los valores proporcionados en req.body
@@ -178,10 +173,8 @@ const finalizarOrdenTrabajo = async (req, res) => {
   try {
     const { id } = req.body; // Recibir el ID desde el cuerpo de la solicitud
     console.log(req.body);
-
     // Buscar la orden de trabajo por su número
     const orden = await Ordentrabajo.findOne({ _id: id });
-
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
@@ -189,7 +182,6 @@ const finalizarOrdenTrabajo = async (req, res) => {
     orden.estado = "Finalizado";
     orden.salida = new Date();
     await orden.save();
-
     res.status(200).json({
       msg: "Estado de la orden de trabajo actualizado a 'Finalizado'",
     });
