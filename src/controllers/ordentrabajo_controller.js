@@ -2,7 +2,8 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
 import ordentrabajo from "../models/ordentrabajo.js";
-import { sendOrderFinalizadoToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
+import { sendOrderFinalizadoToCliente,
+  sendOrderEnProcesoToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
 
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
@@ -195,6 +196,35 @@ const finalizarOrdenTrabajo = async (req, res) => {
 };
 
 /////////////////////////////////////////////////////////////////////////////////////
+
+// Método para cambiar el estado de la orden de trabajo a "finalizado"
+const enProcesoOrdenTrabajo = async (req, res) => {
+  try {
+    const { id } = req.body; // Recibir el ID desde el cuerpo de la solicitud
+    console.log(req.body);
+    // Buscar la orden de trabajo por su número
+    const orden = await Ordentrabajo.findOne({ _id: id });
+    if (!orden) {
+      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
+    }
+    // Cambiar el estado a 'finalizado'
+    orden.estado = "En proceso";
+    orden.salida = new Date();
+    await orden.save();
+    //Enviar el correo electronico al cliente
+    const cliente = orden.cliente;
+    await sendOrderEnProcesoToCliente(cliente.emali, orden.numOrden)
+    res.status(200).json({
+      msg: "Estado de la orden de trabajo actualizado a 'En Proceso'",
+    });
+  } catch (error) {
+    console.error("Error al finalizar la orden de trabajo: ", error);
+    res.status(500).json({ msg: "Error al finalizar la orden de trabajo" });
+  }
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////
 // Definir el controlador para buscar órdenes de trabajo por número de orden
 const buscarOrdenPorNumero = async (req, res) => {
   try {
@@ -283,4 +313,5 @@ export {
   detalleProforma,
   detalleOrden,
   aceptarProforma,
+  enProcesoOrdenTrabajo
 };

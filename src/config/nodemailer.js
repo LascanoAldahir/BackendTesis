@@ -1,6 +1,7 @@
 //holi.jj
 import nodemailer from "nodemailer"; // Importa el módulo nodemailer para enviar correos electrónicos
 import dotenv from 'dotenv'; // Importa el módulo dotenv para cargar variables de entorno desde un archivo '.env'
+import Cliente from "../models/Cliente";
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
 
 // Configura el transporte de correo con los datos proporcionados en las variables de entorno
@@ -101,13 +102,35 @@ const sendOrderFinalizadoToCliente = async(userMail,numOrder,equipo)=>{
     <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
     <hr>
     <p>Estimado usuario</p>
-    <p>Se ha ingresado su equipo: ${equipo} con el numero de orden ${numOrder} con exito.</p>
+    <p>El proceso de su equipo: ${equipo} con el numero de orden ${numOrder} a finalizado con exito.</p>
     
     <footer>Puedes hacer un seguimiento del proceso en nuestra aplicación</footer>
     `
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
+
+
+/////////////////////////////////////////////////////////////
+// Función para enviar un correo electrónico de bienvenida al cliente
+const sendOrderEnProcesoToCliente = async(userMail,numOrder,equipo)=>{
+    let info = await transporter.sendMail({
+    from: 'electronica_zurita@admin.com',
+    to: userMail,
+    subject: "Correo de ingreso de orden",
+    html: `
+    <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
+    <hr>
+    <p>Estimado usuario ${Cliente}</p>
+    <p>El proceso a realizar en su equipo: ${equipo} con el numero de orden ${numOrder} está en proceso.</p>
+    
+    <footer>Puedes hacer un seguimiento del proceso en nuestra aplicación</footer>
+    `
+    });
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+}
+
+
 ////////////////////////////////////////////////////////////////
 
 
@@ -117,5 +140,6 @@ export {
     sendMailToRecoveryPassword,
     sendMailToCliente,
     sendMailToRecoveryPasswordCli,
-    sendOrderFinalizadoToCliente
+    sendOrderFinalizadoToCliente,
+    sendOrderEnProcesoToCliente
 }
