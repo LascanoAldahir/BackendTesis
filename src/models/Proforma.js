@@ -3,19 +3,16 @@ import { Schema, model } from 'mongoose';
 
 // Definir el esquema del tratamiento
 const proformaSchema = new Schema({
-    
     ordenN: {
         type: String,   // Tipo de dato: String
         required: true, // Campo obligatorio
         trim: true      // Se eliminan espacios en blanco al inicio y al final
     },
-    
     equipo: {
         type: String,   // Tipo de dato: String
         required: true, // Campo obligatorio
         trim: true      // Se eliminan espacios en blanco al inicio y al final
     },
-    
     cliente : {
         type: String,  
         required: true, // Campo obligatorio
@@ -43,7 +40,6 @@ const proformaSchema = new Schema({
     },
     pieza:{
         type: String,
-
     },
     precio:{
         type: Number,
@@ -78,6 +74,11 @@ const proformaSchema = new Schema({
         type: Number, 
         required: true,
       },
+      salida:{
+        type: Date,
+        required: true,
+      }
+      
     
 }, {
     timestamps: true // Agregar timestamps de creación y modificación automáticamente
