@@ -1,7 +1,7 @@
 //holi.jj
 import nodemailer from "nodemailer"; // Importa el módulo nodemailer para enviar correos electrónicos
 import dotenv from 'dotenv'; // Importa el módulo dotenv para cargar variables de entorno desde un archivo '.env'
-import Cliente from "../models/Cliente";
+import Cliente from "../models/Cliente.js";
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
 
 // Configura el transporte de correo con los datos proporcionados en las variables de entorno
