@@ -1,9 +1,11 @@
+
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
 import ordentrabajo from "../models/ordentrabajo.js";
 import { sendOrderFinalizadoToCliente,
-  sendOrderEnProcesoToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
+  sendOrderEnProcesoToCliente,
+  sendOrderToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
 
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
