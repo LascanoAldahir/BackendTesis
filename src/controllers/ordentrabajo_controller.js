@@ -61,10 +61,8 @@ const registrarOrdenTrabajo = async (req, res) => {
     });
 
     console.log(nuevaOrden);
-
     // Guardar la orden de trabajo en la base de datos
     await nuevaOrden.save();
-
     // Enviar el correo electrónico al cliente con la cédula y la contraseña
     await sendOrderToCliente(clienteExistente.correo, nuevoNumOrden, equipo);
 

@@ -110,6 +110,28 @@ const sendOrderFinalizadoToCliente = async(userMail,numOrder,equipo)=>{
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
+/////////////////////////////////////////////////////////////
+// Función para enviar un correo electrónico de bienvenida al cliente
+const sendOrderToCliente = async(userMail,numOrder,equipo)=>{
+    let info = await transporter.sendMail({
+    from: 'electronica_zurita@admin.com',
+    to: userMail,
+    subject: "Correo de ingreso de orden",
+    html: `
+    <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
+    <hr>
+    <p>Estimado usuario</p>
+    <p>La orden de trabajo de su equipo: ${equipo} ha sido generada exitosamente.</p>
+    <hr>
+    <p>Su número de orden es: ${numOrden} </p>
+    <footer>Puedes hacer un seguimiento del proceso en nuestra aplicación</footer>
+    `
+    });
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+}
+
+
+/////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////
 // Función para enviar un correo electrónico de bienvenida al cliente
@@ -141,5 +163,6 @@ export {
     sendMailToCliente,
     sendMailToRecoveryPasswordCli,
     sendOrderFinalizadoToCliente,
-    sendOrderEnProcesoToCliente
+    sendOrderEnProcesoToCliente,
+    sendOrderToCliente
 }
