@@ -123,7 +123,7 @@ const sendOrderToCliente = async(userMail,numOrder,equipo)=>{
     <p>Estimado usuario</p>
     <p>La orden de trabajo de su equipo: ${equipo} ha sido generada exitosamente.</p>
     <hr>
-    <p>Su número de orden es: ${numOrden} </p>
+    <p>Su número de orden es: ${numOrder} </p>
     <footer>Puedes hacer un seguimiento del proceso en nuestra aplicación</footer>
     `
     });
