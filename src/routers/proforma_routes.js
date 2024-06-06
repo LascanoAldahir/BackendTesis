@@ -1,10 +1,13 @@
+// Importar Router de Express
+import { Router } from 'express';
+
+// Importar el modelo de equipo
+const router = Router();
 
 import { 
     crearProforma
 } from '../controllers/proforma_controlller.js';
 
-// Importar el modelo de equipo
-const router = Router();
 
 // Ruta para crear una nueva proforma
 router.post('/proformas', crearProforma);
