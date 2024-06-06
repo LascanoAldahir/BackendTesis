@@ -1,3 +1,4 @@
+
 import { 
     crearProforma
 } from '../controllers/proforma_controlller.js';
@@ -5,6 +6,7 @@ import {
 // Importar el modelo de equipo
 const router = Router();
 
-
 // Ruta para crear una nueva proforma
 router.post('/proformas', crearProforma);
+
+export default router;

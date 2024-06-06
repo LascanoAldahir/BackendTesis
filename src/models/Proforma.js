@@ -51,33 +51,33 @@ const proformaSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-      },
-      precio: {
+    },
+    precio: {
+       type: String,
+       required: true,
+       trim: true,
+    },
+    precioFinal: {
         type: String,
         required: true,
         trim: true,
-      },
-      precioFinal: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      clienteCedula: {
-        type: Number,
-        required: true,
-      },
-      precio: {
-        type: Number, 
-        required: true,
-      },
-      precioTotal: {
-        type: Number, 
-        required: true,
-      },
-      salida:{
-        type: Date,
-        required: true,
-      }
+    },
+    clienteCedula: {
+      type: Number,
+      required: true,
+    },
+    precio: {
+      type: Number, 
+      required: true,
+    },
+    precioTotal: {
+      type: Number, 
+      required: true,
+    },
+    salida:{
+      type: Date,
+      required: true,
+    }
       
     
 }, {

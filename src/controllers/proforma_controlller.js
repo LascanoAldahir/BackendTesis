@@ -1,17 +1,40 @@
 import Proforma from '../models/Proforma';
 
+//Metodo para crear proforma
 const crearProforma = async (req, res) => {
   try {
-    const { pieza, precio, precioFinal, clienteNombre, clienteCedula, Precio, precioTotal } = req.body;
-
-    const nuevaProforma = new Proforma({
+    const {
+      ordenN,
+      equipo,
+      cliente,
+      serie,
+      componente,
+      modelo,
+      aceptado,
       pieza,
       precio,
       precioFinal,
-      clienteNombre,
       clienteCedula,
-      Precio,
       precioTotal,
+      salida,
+      observaciones
+    } = req.body;
+
+    const nuevaProforma = new Proforma({
+      ordenN,
+      equipo,
+      cliente,
+      serie,
+      componente,
+      modelo,
+      aceptado,
+      pieza,
+      precio,
+      precioFinal,
+      clienteCedula,
+      precioTotal,
+      salida,
+      observaciones
     });
 
     await nuevaProforma.save();
