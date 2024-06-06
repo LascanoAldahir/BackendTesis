@@ -3,36 +3,13 @@ import Proforma from '../models/Proforma';
 //Metodo para crear proforma
 const crearProforma = async (req, res) => {
   try {
-    const {
-      ordenN,
-      equipo,
-      cliente,
-      serie,
-      componente,
-      modelo,
-      aceptado,
-      pieza,
-      precio,
-      clienteCedula,
-      precioTotal,
-      salida,
-      observaciones,
-    } = req.body;
+    const { ordenId, piezas, precio, precioTotal } = req.body;
 
     const nuevaProforma = new Proforma({
-      ordenN,
-      equipo,
-      cliente,
-      serie,
-      componente,
-      modelo,
-      aceptado,
-      pieza,
+      ordenId,
+      piezas,
       precio,
-      clienteCedula,
-      precioTotal,
-      salida,
-      observaciones
+      precioTotal
     });
 
     await nuevaProforma.save();
@@ -46,6 +23,7 @@ const crearProforma = async (req, res) => {
     res.status(500).json({ msg: 'Error al crear la proforma' });
   }
 };
+
 
 export{
  crearProforma 
