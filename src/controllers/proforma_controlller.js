@@ -13,11 +13,10 @@ const crearProforma = async (req, res) => {
       aceptado,
       pieza,
       precio,
-      precioFinal,
       clienteCedula,
       precioTotal,
       salida,
-      observaciones
+      observaciones,
     } = req.body;
 
     const nuevaProforma = new Proforma({
@@ -30,7 +29,6 @@ const crearProforma = async (req, res) => {
       aceptado,
       pieza,
       precio,
-      precioFinal,
       clienteCedula,
       precioTotal,
       salida,

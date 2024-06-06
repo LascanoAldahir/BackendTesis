@@ -57,11 +57,6 @@ const proformaSchema = new Schema({
        required: true,
        trim: true,
     },
-    precioFinal: {
-        type: String,
-        required: true,
-        trim: true,
-    },
     clienteCedula: {
       type: Number,
       required: true,
