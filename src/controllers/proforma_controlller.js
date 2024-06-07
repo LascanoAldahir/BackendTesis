@@ -47,7 +47,7 @@ const aceptarProforma = async (req, res) => {
 };
 /////////////////////////////////////////////////////
 // Método para obtener una proforma específica por su ID
-const detalleProforma = async (req, res) => {
+const listarProformas = async (req, res) => {
   const { id } = req.params; // Extrae el ID de la proforma de los parámetros de la solicitud
 
   // Verifica si el ID es válido
@@ -71,4 +71,4 @@ const detalleProforma = async (req, res) => {
   }
 };
 
-export { crearProforma, aceptarProforma, detalleProforma };
+export { crearProforma, aceptarProforma, listarProformas };
