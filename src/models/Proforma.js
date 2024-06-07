@@ -4,10 +4,10 @@ import { Schema, model } from 'mongoose';
 // Definir el esquema del tratamiento
 const proformaSchema = new Schema({
     ordenId: {
-      type: Schema.Types.ObjectId,
-      ref: 'ordentrabajo', // Referencia al modelo de Orden de Trabajo
-      required: true
-    },
+        type: Schema.Types.ObjectId,
+        ref: 'Ordentrabajo', // Referencia al modelo Ordentrabajo
+        required: true,
+        },
     aceptado: {
         type: Boolean,
         required:true,

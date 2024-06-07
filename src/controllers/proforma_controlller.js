@@ -1,9 +1,17 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
+import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 
+//Metodo para crear proforma
+// Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
   try {
     const { piezas, precioTotal } = req.body;
     const { ordenId } = req.params;
+
+    // Verificar si el ordenId es válido
+    if (!mongoose.Types.ObjectId.isValid(ordenId)) {
+      return res.status(400).json({ msg: "ID de la orden de trabajo no válido" });
+    }
 
     const nuevaProforma = new Proforma({
       ordenId,
@@ -19,7 +27,7 @@ const crearProforma = async (req, res) => {
     });
   } catch (error) {
     console.error("Error al crear la proforma:", error);
-    res.status(500).json({ msg: "Error al crear la proforma" }); // Asegúrate de devolver JSON
+    res.status(500).json({ msg: "Error al crear la proforma" });
   }
 };
 //////////////////////////////////////////////////////////////
@@ -47,27 +55,29 @@ const aceptarProforma = async (req, res) => {
 };
 /////////////////////////////////////////////////////
 // Método para obtener una proforma específica por su ID
+// Método para listar proformas por ordenId
 const listarProformas = async (req, res) => {
-  const { id } = req.params; // Extrae el ID de la proforma de los parámetros de la solicitud
-
-  // Verifica si el ID es válido
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ msg: `Lo sentimos, no existe la proforma con ID ${id}` });
-  }
-
   try {
-    // Busca la proforma por su ID
-    const proforma = await Proforma.findById(id);
+    const { ordenId } = req.params;
 
-    if (!proforma) {
-      return res.status(404).json({ msg: `No se encontró la proforma con ID ${id}` });
+    // Verificar si el ordenId es válido
+    if (!mongoose.Types.ObjectId.isValid(ordenId)) {
+      return res.status(400).json({ msg: "ID de la orden de trabajo no válido" });
     }
 
-    // Responde con el detalle de la proforma
-    res.status(200).json(proforma);
+    const proformas = await Proforma.find({ ordenId });
+
+    if (!proformas.length) {
+      return res.status(404).json({ msg: "No se encontraron proformas para esta orden de trabajo" });
+    }
+
+    res.status(200).json({
+      msg: "Proformas obtenidas exitosamente",
+      proformas,
+    });
   } catch (error) {
-    console.error("Error al obtener el detalle de la proforma:", error);
-    res.status(500).json({ msg: "Error al obtener el detalle de la proforma" });
+    console.error("Error al obtener las proformas:", error);
+    res.status(500).json({ msg: "Error al obtener las proformas" });
   }
 };
 
