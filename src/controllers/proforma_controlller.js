@@ -1,7 +1,6 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
 
 const crearProforma = async (req, res) => {
-  console.log(req.body);
   try {
     const { piezas, precioTotal } = req.body;
     const { ordenId } = req.params;
