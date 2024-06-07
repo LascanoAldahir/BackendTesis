@@ -4,7 +4,6 @@ import { buscarOrdenPorNumero,
     listarOrdenesTrabajo,
     finalizarOrdenTrabajo,
     detalleProforma,
-    aceptarProforma,
     detalleOrden
 } from '../controllers/ordentrabajo_controller.js';
 
@@ -21,8 +20,7 @@ router.get('/ordenes/listar', listarOrdenesTrabajo);
 router.put('/ordenes/finalizar/:id', finalizarOrdenTrabajo);
 // Ruta para la proforma
 router.get("/orden/visualizar/:id",detalleProforma);
-// Ruta para aceptar la proforma
-router.put('/ordenes/aceptar-proforma/:id', aceptarProforma);
+
 // Ruta para la ordenes normales
 router.put("/orden/actualizar/:id",detalleOrden);
 
