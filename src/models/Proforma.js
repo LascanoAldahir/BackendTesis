@@ -5,19 +5,21 @@ import { Schema, model } from 'mongoose';
 const proformaSchema = new Schema({
     ordenId: {
       type: Schema.Types.ObjectId,
-      ref: 'Ordentrabajo', // Referencia al modelo de Orden de Trabajo
+      ref: 'ordentrabajo', // Referencia al modelo de Orden de Trabajo
       required: true
     },
-    piezas: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    precio: {
-      type: Number,
-      required: true,
-      min: 0
-    },
+    piezas: [{
+      pieza: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      precio: {
+        type: Number,
+        required: true,
+        min: 0
+      }
+    }],
     precioTotal: {
       type: Number,
       required: true,
@@ -26,7 +28,5 @@ const proformaSchema = new Schema({
   }, {
     timestamps: true // Agregar timestamps de creación y modificación automáticamente
   });
-  
 
-// Exportar el modelo 'Equipo' basado en el esquema 'equipoSchema'
 export default model('Proforma', proformaSchema);

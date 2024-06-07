@@ -7,6 +7,6 @@ import {crearProforma} from '../controllers/proforma_controlller.js';
 
 
 // Ruta para crear una nueva proforma
-router.post('/proformas', crearProforma);
+router.post('/proforma/registro/:ordenId', crearProforma);
 
 export default router;
