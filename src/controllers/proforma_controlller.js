@@ -45,6 +45,30 @@ const aceptarProforma = async (req, res) => {
     res.status(500).json({ msg: "Error al aceptar la proforma" });
   }
 };
+/////////////////////////////////////////////////////
+// Método para obtener una proforma específica por su ID
+const detalleProforma = async (req, res) => {
+  const { id } = req.params; // Extrae el ID de la proforma de los parámetros de la solicitud
 
+  // Verifica si el ID es válido
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ msg: `Lo sentimos, no existe la proforma con ID ${id}` });
+  }
 
-export { crearProforma, aceptarProforma };
+  try {
+    // Busca la proforma por su ID
+    const proforma = await Proforma.findById(id);
+
+    if (!proforma) {
+      return res.status(404).json({ msg: `No se encontró la proforma con ID ${id}` });
+    }
+
+    // Responde con el detalle de la proforma
+    res.status(200).json(proforma);
+  } catch (error) {
+    console.error("Error al obtener el detalle de la proforma:", error);
+    res.status(500).json({ msg: "Error al obtener el detalle de la proforma" });
+  }
+};
+
+export { crearProforma, aceptarProforma, detalleProforma };
