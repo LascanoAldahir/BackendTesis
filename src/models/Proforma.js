@@ -8,6 +8,21 @@ const proformaSchema = new Schema({
         ref: 'Ordentrabajo', // Referencia al modelo Ordentrabajo
         required: true,
         },
+    numeroOrden: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    observaciones: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      modelo: {
+        type: String,
+        required: true,
+        trim: true,
+      },
     aceptado: {
         type: Boolean,
         required:true,
