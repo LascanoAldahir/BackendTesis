@@ -1,7 +1,6 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 
-//Metodo para crear proforma
 // Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
   try {
@@ -33,12 +32,10 @@ const crearProforma = async (req, res) => {
 //////////////////////////////////////////////////////////////
 
 // Método para obtener la proforma por el número de orden
-const obtenerProformaPorNumeroOrden = async (req, res) => {
+const visualizarProforma = async (req, res) => {
   try {
-    const { numeroOrden } = req.params;
-
-    const proforma = await Proforma.findOne({ numeroOrden });
-
+    const { ordenId } = req.params;
+    const proforma = await Proforma.findOne({ ordenId }).populate('ordenId');
     if (!proforma) {
       return res.status(404).json({ msg: "Proforma no encontrada para el número de orden proporcionado" });
     }
@@ -76,8 +73,7 @@ const aceptarProforma = async (req, res) => {
     res.status(500).json({ msg: "Error al aceptar la proforma" });
   }
 };
-/////////////////////////////////////////////////////
-// Método para obtener una proforma específica por su ID
+
 // Método para listar proformas por ordenId
 const listarProformas = async (req, res) => {
   try {
@@ -104,4 +100,4 @@ const listarProformas = async (req, res) => {
   }
 };
 
-export { crearProforma, aceptarProforma, listarProformas, obtenerProformaPorNumeroOrden };
+export { crearProforma, aceptarProforma, listarProformas, visualizarProforma };
