@@ -2,6 +2,7 @@
 import nodemailer from "nodemailer"; // Importa el módulo nodemailer para enviar correos electrónicos
 import dotenv from 'dotenv'; // Importa el módulo dotenv para cargar variables de entorno desde un archivo '.env'
 import Cliente from "../models/Cliente.js";
+
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
 
 // Configura el transporte de correo con los datos proporcionados en las variables de entorno
@@ -15,6 +16,21 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+// Función para enviar correo electrónico
+const enviarCorreo = async (destinatario, asunto, mensaje) => {
+    try {
+      const info = await transporter.sendMail({
+        from: 'tu_correo@gmail.com', // dirección de correo del remitente
+        to: destinatario, // dirección de correo del destinatario
+        subject: asunto,
+        text: mensaje,
+      });
+  
+      console.log('Correo enviado: %s', info.messageId);
+    } catch (error) {
+      console.error('Error al enviar correo: ', error);
+    }
+};
 
 // Función para enviar un correo electrónico de verificación al usuario
 const sendMailToUser = async (userMail, token) => {
@@ -159,10 +175,12 @@ const sendOrderEnProcesoToCliente = async(userMail,numOrder,equipo)=>{
 // Exporta las funciones para que puedan ser utilizadas en otros archivos
 export {
     sendMailToUser,
+    enviarCorreo,
     sendMailToRecoveryPassword,
     sendMailToCliente,
     sendMailToRecoveryPasswordCli,
-    sendOrderFinalizadoToCliente,
     sendOrderEnProcesoToCliente,
-    sendOrderToCliente
+    sendOrderToCliente,
+    sendOrderFinalizadoToCliente
+
 }

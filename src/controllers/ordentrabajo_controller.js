@@ -3,9 +3,12 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
 import ordentrabajo from "../models/ordentrabajo.js";
-import { sendOrderFinalizadoToCliente,
+import { 
+  sendOrderFinalizadoToCliente,
   sendOrderEnProcesoToCliente,
-  sendOrderToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
+  sendMailToCliente,
+  sendOrderToCliente,
+  enviarCorreo  } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
 
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
@@ -151,20 +154,33 @@ const finalizarOrdenTrabajo = async (req, res) => {
   try {
     const { id } = req.body; // Recibir el ID desde el cuerpo de la solicitud
     console.log(req.body);
+
     // Buscar la orden de trabajo por su número
     const orden = await Ordentrabajo.findOne({ _id: id });
+
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
+
     // Cambiar el estado a 'finalizado'
-    orden.estado = "Finalizado";
-    orden.salida = new Date();
+    orden.estado = "finalizado";
     await orden.save();
-    //Enviar el correo electronico al cliente
-    const cliente = orden.cliente;
-    await sendOrderFinalizadoToCliente(cliente.emali, orden.numOrden)
+
+    // Obtener el correo del cliente asociado a la orden de trabajo
+    const cliente = await Cliente.findById(orden.cliente);
+    const destinatario = cliente.correo; // Asegúrate de que el modelo Cliente tiene una propiedad correo
+
+    if (!destinatario) {
+      return res.status(400).json({ msg: "No se ha definido el correo del cliente" });
+    }
+
+    // Enviar correo electrónico al cliente
+    const asunto = "Orden de trabajo finalizada";
+    const mensaje = `Su orden de trabajo con número ${orden.numOrden} ha sido finalizada.`;
+    await enviarCorreo(destinatario, asunto, mensaje);
+
     res.status(200).json({
-      msg: "Estado de la orden de trabajo actualizado a 'Finalizado'",
+      msg: "Estado de la orden de trabajo actualizado a 'finalizado' y correo enviado",
     });
   } catch (error) {
     console.error("Error al finalizar la orden de trabajo: ", error);
