@@ -10,10 +10,9 @@ let transporter = nodemailer.createTransport({
     service: 'gmail', // Servicio de correo electrónico a utilizar (en este caso, Gmail)
     host: process.env.HOST_MAILTRAP, // Host del servicio de correo electrónico (obtenido de las variables de entorno)
     port: process.env.PORT_MAILTRAP, // Puerto del servicio de correo electrónico (obtenido de las variables de entorno)
-    auth: {
-        user: process.env.USER_MAILTRAP, // Nombre de usuario del servicio de correo electrónico (obtenido de las variables de entorno)
-        pass: process.env.PASS_MAILTRAP, // Contraseña del servicio de correo electrónico (obtenida de las variables de entorno)
-    }
+    user: process.env.USER_MAILTRAP, // Nombre de usuario del servicio de correo electrónico (obtenido de las variables de entorno)
+    pass: process.env.PASS_MAILTRAP, // Contraseña del servicio de correo electrónico (obtenida de las variables de entorno)
+    
 });
 
 // Función para enviar correo electrónico
