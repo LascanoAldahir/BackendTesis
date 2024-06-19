@@ -14,10 +14,10 @@ const login = async(req,res)=>{
     // Verifica si el email del tecnico no ha sido confirmado
     if(tecnicoBDD?.confirmEmail===false) return res.status(403).json({msg:"Lo sentimos, debe verificar su cuenta"})
     // Verifica si no se encontró ningún tecnico con el email proporcionado
-    if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, correo o password incorrectos"})
+    if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, correo o contraseña incorrectos"})
     // Verifica si la contraseña proporcionada no coincide con la almacenada en la base de datos
     const verificarPassword = await tecnicoBDD.matchPassword(password)
-    if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, correo o password incorrectos"})
+    if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, correo o contraseña incorrectos"})
     // Genera un token JWT para el veterinario autenticado
     const token = generarJWT(tecnicoBDD._id,"tecnico")
     // Extrae algunos campos del veterinario para la respuesta
@@ -167,7 +167,7 @@ const recuperarPassword = async(req,res)=>{
     // Busca un tecnico en la base de datos por su email
     const tecnicoBDD = await Tecnico.findOne({email})
     // Verifica si no se encontró ningún tecnico con el email proporcionado
-    if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, correo o password incorrectos"})
+    if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, correo o contraseña incorrectos"})
     // Crea un token para la recuperación del password
     const token = tecnicoBDD.crearToken()
     tecnicoBDD.token=token

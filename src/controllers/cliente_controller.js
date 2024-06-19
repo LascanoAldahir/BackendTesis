@@ -35,12 +35,12 @@ const loginCliente = async (req, res) => {
 
     const clienteBDD = await Cliente.findOne({ correo });
     if (!clienteBDD) {
-      return res.status(404).json({ msg: "Lo sentimos, correo o password incorrectos" });
+      return res.status(404).json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
     }
 
     const verificarPassword = await clienteBDD.matchPassword(password);
     if (!verificarPassword) {
-      return res.status(401).json({ msg: "Lo sentimos, correo o password incorrectos" });
+      return res.status(401).json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
     }
 
     const token = generarJWT(clienteBDD._id, "cliente");
@@ -198,7 +198,7 @@ const recuperarPasswordCli = async (req, res) => {
 
     const clienteBDD = await Cliente.findOne({ correo });
     if (!clienteBDD) {
-      return res.status(404).json({ msg: "Lo sentimos, correo o password incorrectos" });
+      return res.status(404).json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
     }
 
     const token = clienteBDD.crearToken();
