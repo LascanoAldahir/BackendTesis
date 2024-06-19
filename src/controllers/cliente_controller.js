@@ -35,7 +35,7 @@ const loginCliente = async (req, res) => {
 
     const clienteBDD = await Cliente.findOne({ correo });
     if (!clienteBDD) {
-      return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
+      return res.status(404).json({ msg: "Lo sentimos, correo o password incorrectos" });
     }
 
     const verificarPassword = await clienteBDD.matchPassword(password);
@@ -198,7 +198,7 @@ const recuperarPasswordCli = async (req, res) => {
 
     const clienteBDD = await Cliente.findOne({ correo });
     if (!clienteBDD) {
-      return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
+      return res.status(404).json({ msg: "Lo sentimos, correo o password incorrectos" });
     }
 
     const token = clienteBDD.crearToken();
