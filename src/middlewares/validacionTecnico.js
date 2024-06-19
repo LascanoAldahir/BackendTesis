@@ -7,13 +7,11 @@ export const validacionTecnico = [
     check(["nombre", "apellido", "ruc", "telefono", "email", "password"])
         .exists()
         .withMessage('Los campos "nombre", "apellido", "ruc", "teléfono", "email" y/o "password" son obligatorios')
-        // Validar que los campos no estén vacíos
-        .notEmpty()
+        .notEmpty() // Validar que los campos no estén vacíos
         .withMessage('Los campos "nombre", "apellido", "ruc", "teléfono", "email" y/o "password" no pueden estar vacíos')
-        // Eliminar los espacios en blanco del valor de los campos
-        .customSanitizer(value => value?.trim()),
+        .customSanitizer(value => value?.trim()), // Eliminar los espacios en blanco del valor de los campos
 
-    // Validar los campos nombre y apellido para asegurar que tengan entre 3 y 12 caracteres y solo letras
+    // Validar nombre y apellido que tengan de 3 y 12 caracteres y solo letras
     check(["nombre", "apellido"])
         .isLength({ min: 3, max: 12 })
         .withMessage('El campo "nombre" y/o "apellido" debe(n) tener entre 3 y 12 caracteres')
@@ -51,8 +49,7 @@ export const validacionTecnico = [
         .withMessage('El campo "password" debe tener al menos 5 caracteres')
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*).*$/)
         .withMessage('El campo "password" debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial')
-        // Eliminar los espacios en blanco del valor del campo
-        .customSanitizer(value => value?.trim()),
+        .customSanitizer(value => value?.trim()), // Eliminar los espacios en blanco del valor del campo
 
     // Middleware para manejar los errores de validación
     (req, res, next) => {

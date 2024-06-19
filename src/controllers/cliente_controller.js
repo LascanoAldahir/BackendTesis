@@ -40,7 +40,7 @@ const loginCliente = async (req, res) => {
 
     const verificarPassword = await clienteBDD.matchPassword(password);
     if (!verificarPassword) {
-      return res.status(401).json({ msg: "Lo sentimos, el password no es el correcto" });
+      return res.status(401).json({ msg: "Lo sentimos, correo o password incorrectos" });
     }
 
     const token = generarJWT(clienteBDD._id, "cliente");
