@@ -167,7 +167,7 @@ const recuperarPassword = async(req,res)=>{
     // Busca un tecnico en la base de datos por su email
     const tecnicoBDD = await Tecnico.findOne({email})
     // Verifica si no se encontró ningún tecnico con el email proporcionado
-    if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, correo o contraseña incorrectos"})
+    if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, correo incorrecto o no se encuentra registrado"})
     // Crea un token para la recuperación del password
     const token = tecnicoBDD.crearToken()
     tecnicoBDD.token=token
