@@ -18,8 +18,6 @@ router.post('/orden/registro', registrarOrdenTrabajo);
 router.get('/ordenes/listar', listarOrdenesTrabajo);
 // Ruta para finalizar la orden de trabajo
 router.put('/ordenes/finalizar/:id', finalizarOrdenTrabajo);
-// Ruta para la proforma
-router.get("/orden/visualizar/:id",detalleProforma);
 
 // Ruta para la ordenes normales
 router.put("/orden/actualizar/:id",detalleOrden);
