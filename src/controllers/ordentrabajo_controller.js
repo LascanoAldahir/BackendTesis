@@ -106,9 +106,16 @@ const listarOrdenesTrabajo = async (req, res) => {
   }
 };
 /////////////////////////////////////////////////////////////////////////////////////////
-// Buscar cliente por cedula
+// Buscar cliente por cédula
 const buscarClientePorCedula = async (req, res) => {
   const { cedula } = req.params;
+
+  // Validar que la cédula solo contenga números
+  const soloNumeros = /^[0-9]+$/;
+  if (!soloNumeros.test(cedula)) {
+    return res.status(400).json({ mensaje: "La cédula debe contener solo números" });
+  }
+
   try {
     const cliente = await Cliente.findOne({ cedula });
     if (!cliente) {
@@ -119,6 +126,7 @@ const buscarClientePorCedula = async (req, res) => {
     res.status(500).json({ mensaje: "Error al buscar el cliente" });
   }
 };
+
 ///////////////////////////////////////////////////////////////////////////////////
 // Método para agregar un tipo de servicio a un equipo
 const tipoServicio = async (req, res) => {
