@@ -163,7 +163,6 @@ const registrarCliente = async (req, res) => {
   res.status(200).json({ msg: "Registro exitoso del cliente y correo enviado" });
 };
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 // Método para actualizar un cliente
 const actualizarCliente = async (req, res) => {
