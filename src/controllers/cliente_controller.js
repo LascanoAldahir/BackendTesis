@@ -124,50 +124,59 @@ const detalleCliente = async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Método para registrar un paciente
 const registrarCliente = async (req, res) => {
-  // Desestructura el email, nombre, apellido y cédula
-  const { correo, nombre, apellido, cedula } = req.body;
+  try {
+    // Desestructura el email, nombre, apellido y cédula
+    const { correo, nombre, apellido, cedula } = req.body;
 
-  // Valida todos los campos del cuerpo de la solicitud
-  if (Object.values(req.body).includes(""))
-    return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    // Valida todos los campos del cuerpo de la solicitud
+    if (Object.values(req.body).includes("")) {
+      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    }
 
-  // Validar que nombre y apellido solo contengan letras
-  const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-  if (!soloLetras.test(nombre) || !soloLetras.test(apellido))
-    return res.status(400).json({ msg: "Los campos 'nombre' y 'apellido' deben contener solo letras" });
+    // Validar que nombre y apellido solo contengan letras
+    const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    if (!soloLetras.test(nombre) || !soloLetras.test(apellido)) {
+      return res.status(400).json({ msg: "Los campos 'nombre' y 'apellido' deben contener solo letras" });
+    }
 
-  // Busca si el email ya está registrado en la base de datos
-  const verificarEmailBDD = await Cliente.findOne({ correo });
-  // Si el email ya está registrado, responde con un mensaje de error
-  if (verificarEmailBDD)
-    return res.status(400).json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
+    // Busca si el email ya está registrado en la base de datos
+    const verificarEmailBDD = await Cliente.findOne({ correo });
+    if (verificarEmailBDD) {
+      console.log('El correo ya está registrado:', correo);
+      return res.status(400).json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
+    }
 
-  // Busca si la cédula ya está registrada en la base de datos
-  const verificarCedulaBDD = await Cliente.findOne({ cedula });
-  // Si la cédula ya está registrada, responde con un mensaje de error
-  if (verificarCedulaBDD)
-    return res.status(400).json({ msg: "Lo sentimos, la cédula ya se encuentra registrada" });
+    // Busca si la cédula ya está registrada en la base de datos
+    const verificarCedulaBDD = await Cliente.findOne({ cedula });
+    if (verificarCedulaBDD) {
+      console.log('La cédula ya está registrada:', cedula);
+      return res.status(400).json({ msg: "Lo sentimos, la cédula ya se encuentra registrada" });
+    }
 
-  // Crea una nueva instancia de Cliente con los datos proporcionados en el cuerpo de la solicitud
-  const nuevoCliente = new Cliente(req.body);
-  
-  // Genera una contraseña aleatoria
-  const password = Math.random().toString(36).slice(2);
-  
-  // Asocia el cliente con el técnico que hizo la solicitud
-  nuevoCliente.tecnico = req.tecnicoBDD._id;
-  
-  // Envía un correo electrónico al cliente con la contraseña
-  await sendMailToCliente(correo, password);
-  
-  // Encripta la contraseña
-  nuevoCliente.password = await nuevoCliente.encryptPassword(password);
-  
-  // Guarda el cliente en la base de datos
-  await nuevoCliente.save();
-  
-  // Responde con un mensaje de éxito
-  res.status(200).json({ msg: "Registro exitoso del paciente y correo enviado" });
+    // Crea una nueva instancia de Cliente con los datos proporcionados en el cuerpo de la solicitud
+    const nuevoCliente = new Cliente(req.body);
+
+    // Genera una contraseña aleatoria
+    const password = Math.random().toString(36).slice(2);
+
+    // Asocia el cliente con el técnico que hizo la solicitud
+    nuevoCliente.tecnico = req.tecnicoBDD._id;
+
+    // Envía un correo electrónico al cliente con la contraseña
+    await sendMailToCliente(correo, password);
+
+    // Encripta la contraseña
+    nuevoCliente.password = await nuevoCliente.encryptPassword(password);
+
+    // Guarda el cliente en la base de datos
+    await nuevoCliente.save();
+
+    // Responde con un mensaje de éxito
+    res.status(200).json({ msg: "Registro exitoso del paciente y correo enviado" });
+  } catch (error) {
+    console.error('Error registrando el cliente:', error);
+    res.status(500).json({ msg: "Error registrando el cliente" });
+  }
 };
 
 
