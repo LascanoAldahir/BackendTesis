@@ -1,7 +1,5 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
-import ordentrabajo from "../models/ordentrabajo.js";
-//////////////////////////////////////////////////////////////////////////////////////////////
 
 // Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
@@ -31,9 +29,28 @@ const crearProforma = async (req, res) => {
     res.status(500).json({ msg: "Error al crear la proforma" });
   }
 };
+//////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////
+// Método para obtener la proforma por el número de orden
+const visualizarProforma = async (req, res) => {
+  try {
+    const { ordenId } = req.params;
+    const proforma = await Proforma.findOne({ ordenId }).populate('ordenId');
+    if (!proforma) {
+      return res.status(404).json({ msg: "Proforma no encontrada para el número de orden proporcionado" });
+    }
 
+    res.status(200).json({
+      msg: "Proforma obtenida exitosamente",
+      proforma,
+    });
+  } catch (error) {
+    console.error("Error al obtener la proforma:", error);
+    res.status(500).json({ msg: "Error al obtener la proforma" });
+  }
+};
+
+//////////////////////////////////////////////////////////////
 
 // Método para aceptar la proforma y cambiar estadoProforma a true
 const aceptarProforma = async (req, res) => {
@@ -57,10 +74,6 @@ const aceptarProforma = async (req, res) => {
   }
 };
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////////////
 // Método para listar proformas por ordenId
 const listarProformas = async (req, res) => {
   try {
@@ -87,4 +100,4 @@ const listarProformas = async (req, res) => {
   }
 };
 
-export { crearProforma, aceptarProforma, listarProformas};
+export { crearProforma, aceptarProforma, listarProformas, visualizarProforma };
