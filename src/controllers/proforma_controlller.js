@@ -1,7 +1,6 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
-import Proforma from '../models/Proforma.js'; // Asegúrate de importar el modelo de Proforma
- cabe 
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 // Método para crear una nueva proforma
