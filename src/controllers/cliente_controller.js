@@ -30,17 +30,23 @@ const loginCliente = async (req, res) => {
     const { correo, password } = req.body;
 
     if (!correo || !password) {
-      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+      return res
+        .status(400)
+        .json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
 
     const clienteBDD = await Cliente.findOne({ correo });
     if (!clienteBDD) {
-      return res.status(404).json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
+      return res
+        .status(404)
+        .json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
     }
 
     const verificarPassword = await clienteBDD.matchPassword(password);
     if (!verificarPassword) {
-      return res.status(401).json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
+      return res
+        .status(401)
+        .json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
     }
 
     const token = generarJWT(clienteBDD._id, "cliente");
@@ -55,7 +61,7 @@ const loginCliente = async (req, res) => {
       tecnico,
       rol: "cliente",
       _id,
-      cedula // Incluyendo cedula en la respuesta
+      cedula, // Incluyendo cedula en la respuesta
     });
   } catch (error) {
     console.error("Error en el proceso de login: ", error);
@@ -63,9 +69,7 @@ const loginCliente = async (req, res) => {
   }
 };
 
-
 //----------------------------------------------------------------------------------------------------
-
 
 // Método para ver el perfil
 const perfilCliente = (req, res) => {
@@ -84,21 +88,16 @@ const perfilCliente = (req, res) => {
 
 // Método para listar pacientes
 const listarClientes = async (req, res) => {
-  // Verifica si la solicitud coniene datos de clienteBDD
-  if (req.clienteBDD && "propietario" in req.clienteBDD) {
-    // Si el pacienteBDD existe y es propietario, busca pacientes asociados a ese propietario
-    const clientes = await Cliente.find(req.clienteBDD._id)
+  try {
+    // Busca todos los clientes en la base de datos
+    const clientes = await Cliente.find({})
       .select("nombre correo telefono cedula frecuente direccion password")
       .populate("tecnico", "_id nombre");
+
     res.status(200).json(clientes);
-  } else {
-    // Si no es propietario, busca pacientes asociados al veterinarioBDD que hizo la solicitud
-    const clientes = await Cliente.find({ estado: true })
-      .where("tecnico")
-      .equals(req.tecnicoBDD)
-      .select("nombre correo telefono cedula frecuente direccion password")
-      .populate("tecnico", "_id nombre");
-    res.status(200).json(clientes);
+  } catch (error) {
+    // Maneja cualquier error que ocurra durante la búsqueda
+    res.status(500).json({ mensaje: "Error al listar los clientes", error });
   }
 };
 
@@ -128,22 +127,32 @@ const registrarCliente = async (req, res) => {
 
   // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes(""))
-    return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    return res
+      .status(400)
+      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
 
   // Validar que nombre y apellido solo contengan letras
   const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
   if (!soloLetras.test(nombre) || !soloLetras.test(apellido))
-    return res.status(400).json({ msg: "Los campos 'nombre' y 'apellido' deben contener solo letras" });
+    return res
+      .status(400)
+      .json({
+        msg: "Los campos 'nombre' y 'apellido' deben contener solo letras",
+      });
 
   // Busca si el correo ya está registrado en la base de datos
   const verificarEmailBDD = await Cliente.findOne({ correo });
   if (verificarEmailBDD)
-    return res.status(400).json({ msg: "Lo sentimos, el correo ya se encuentra registrado" });
+    return res
+      .status(400)
+      .json({ msg: "Lo sentimos, el correo ya se encuentra registrado" });
 
   // Busca si la cédula ya está registrada en la base de datos
   const verificarCedulaBDD = await Cliente.findOne({ cedula });
   if (verificarCedulaBDD)
-    return res.status(400).json({ msg: "Lo sentimos, la cédula ya se encuentra registrada" });
+    return res
+      .status(400)
+      .json({ msg: "Lo sentimos, la cédula ya se encuentra registrada" });
 
   // Crea una nueva instancia de Cliente con los datos proporcionados en el cuerpo de la solicitud
   const nuevoCliente = new Cliente(req.body);
@@ -160,7 +169,9 @@ const registrarCliente = async (req, res) => {
   await nuevoCliente.save();
 
   // Responde con un mensaje de éxito
-  res.status(200).json({ msg: "Registro exitoso del cliente y correo enviado" });
+  res
+    .status(200)
+    .json({ msg: "Registro exitoso del cliente y correo enviado" });
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +200,9 @@ const eliminarCliente = async (req, res) => {
   try {
     // Verifica si el ID del cliente es válido
     if (!mongoose.Types.ObjectId.isValid(id))
-      return res.status(404).json({ msg: "Lo sentimos, no existe el cliente ${id}" });
+      return res
+        .status(404)
+        .json({ msg: "Lo sentimos, no existe el cliente ${id}" });
     // Elimina el cliente de la base de datos
     await Cliente.findByIdAndDelete(id);
     // Responde con un mensaje de éxito
@@ -197,7 +210,9 @@ const eliminarCliente = async (req, res) => {
   } catch (error) {
     // Si ocurre un error, responde con un mensaje de error
     console.error(error);
-    res.status(500).json({ msg: "Ocurrió un error al intentar eliminar al cliente" });
+    res
+      .status(500)
+      .json({ msg: "Ocurrió un error al intentar eliminar al cliente" });
   }
 };
 
@@ -207,27 +222,34 @@ const recuperarPasswordCli = async (req, res) => {
     const { correo } = req.body;
 
     if (!correo) {
-      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+      return res
+        .status(400)
+        .json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
 
     const clienteBDD = await Cliente.findOne({ correo });
     if (!clienteBDD) {
-      return res.status(404).json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
+      return res
+        .status(404)
+        .json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
     }
 
     const token = clienteBDD.crearToken();
     clienteBDD.token = token;
-    
+
     await sendMailToRecoveryPasswordCli(correo, token);
     await clienteBDD.save();
-    
-    return res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
+
+    return res
+      .status(200)
+      .json({
+        msg: "Revisa tu correo electrónico para reestablecer tu cuenta",
+      });
   } catch (error) {
     console.error("Error al recuperar el password: ", error);
     return res.status(500).json({ msg: "Error en el servidor" });
   }
 };
-
 
 // Método para comprobar el token
 const comprobarTokenPaswordCli = async (req, res) => {
