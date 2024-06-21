@@ -1,6 +1,6 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
-
+import ordentrabajo from "../models/ordentrabajo.js";
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 // Método para crear una nueva proforma
@@ -69,16 +69,17 @@ const aceptarProforma = async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////
 const visualizarOrden = async (req, res) => {
   try {
-      const orden = await OrdenTrabajo.findById(req.params.id);
-      if (!orden) {
-          return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
-      }
-      res.json(orden);
+    const { id } = req.params;
+    const orden = await ordentrabajo.findById(id);
+    if (!orden) {
+      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
+    }
+    res.json(orden);
   } catch (error) {
-      res.status(500).json({ msg: "Error al visualizar la orden de trabajo" });
+    console.error("Error al visualizar la orden de trabajo: ", error);
+    res.status(500).json({ msg: "Error al visualizar la orden de trabajo" });
   }
 };
 ///////////////////////////////////////////////////////////////////////////////////
