@@ -4,7 +4,6 @@ import { buscarOrdenPorNumero,
     listarOrdenesTrabajo,
     finalizarOrdenTrabajo,
     detalleProforma,
-    visualizarOrden,
     detalleOrden
 } from '../controllers/ordentrabajo_controller.js';
 
@@ -19,14 +18,11 @@ router.post('/orden/registro', registrarOrdenTrabajo);
 router.get('/ordenes/listar', listarOrdenesTrabajo);
 // Ruta para finalizar la orden de trabajo
 router.put('/ordenes/finalizar/:id', finalizarOrdenTrabajo);
+// Ruta para la proforma
+router.get("/orden/visualizar/:id",detalleProforma);
+
 // Ruta para la ordenes normales
-router.get("/orden/visualizar/:id",detalleProforma);//detalleOrden
 router.put("/orden/actualizar/:id",detalleOrden);
-// Ruta para visualizar una orden de trabajo por su ID
-router.get('/orden/visualizar/:id', visualizarOrden);
-
-
-
 
 
 export default router; // Exportar el enrutador
