@@ -3,7 +3,7 @@ import { buscarOrdenPorNumero,
     registrarOrdenTrabajo,
     listarOrdenesTrabajo,
     finalizarOrdenTrabajo,
-    detalleOrden
+    detallePorforma
 } from '../controllers/ordentrabajo_controller.js';
 
 // Importar el modelo de equipo
@@ -18,7 +18,7 @@ router.get('/ordenes/listar', listarOrdenesTrabajo);
 // Ruta para finalizar la orden de trabajo
 router.put('/ordenes/finalizar/:id', finalizarOrdenTrabajo);
 // Ruta para la ordenes normales
-router.put("/orden/actualizar/:id",detalleOrden);
+router.put("/orden/actualizar/:id",detallePorforma);
 
 
 

@@ -13,7 +13,7 @@ router.put('/ordenes/aceptar-proforma/:id', aceptarProforma);
 // Ruta para listar todas las proformas asociadas a una orden de trabajo específica por su ID
 router.get('/proformas/orden/:ordenId', listarProformas);
 // Ruta para visualizar una proforma específica por ID de la orden de trabajo
-router.get('/orden/visualizar/:id', visualizarOrden); // Endpoint para visualizar una orden de trabajo por su ID
+router.get('/proforma/orden/:id', visualizarOrden); // Endpoint para visualizar una orden de trabajo por su ID
 
 
 
