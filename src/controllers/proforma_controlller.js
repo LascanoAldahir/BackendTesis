@@ -1,36 +1,50 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
+import Proforma from '../models/Proforma.js'; // Asegúrate de importar el modelo de Proforma
+ cabe 
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 // Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
-  try {
-    const { piezas, precioTotal } = req.body;
-    const { ordenId } = req.params;
+  const { ordenTrabajoId, detalles, precio } = req.body;
 
-    // Verificar si el ordenId es válido
-    if (!mongoose.Types.ObjectId.isValid(ordenId)) {
-      return res.status(400).json({ msg: "ID de la orden de trabajo no válido" });
+  try {
+    // Verificar que todos los campos estén presentes
+    if (!ordenTrabajoId || !detalles || !precio) {
+      return res.status(400).json({ msg: "Todos los campos son obligatorios" });
     }
 
+    // Verificar si la orden de trabajo existe
+    const ordenTrabajo = await OrdenTrabajo.findById(ordenTrabajoId);
+    if (!ordenTrabajo) {
+      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
+    }
+
+    // Verificar si ya existe una proforma para la orden de trabajo
+    const proformaExistente = await Proforma.findOne({ ordenTrabajo: ordenTrabajoId });
+    if (proformaExistente) {
+      return res.status(400).json({ msg: "La orden de trabajo ya tiene una proforma generada" });
+    }
+
+    // Crear una nueva instancia de Proforma con los datos proporcionados
     const nuevaProforma = new Proforma({
-      ordenId,
-      piezas,
-      precioTotal,
+      ordenTrabajo: ordenTrabajoId,
+      detalles,
+      precio
     });
 
+    // Guardar la nueva proforma en la base de datos
     await nuevaProforma.save();
 
-    res.status(201).json({
-      msg: "Proforma creada exitosamente",
-      proforma: nuevaProforma,
-    });
+    // Responder con un mensaje de éxito
+    res.status(201).json({ msg: "Proforma creada exitosamente" });
   } catch (error) {
-    console.error("Error al crear la proforma:", error);
     res.status(500).json({ msg: "Error al crear la proforma" });
   }
 };
 
-//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+
 
 // Método para aceptar la proforma y cambiar estadoProforma a true
 const aceptarProforma = async (req, res) => {
@@ -53,6 +67,9 @@ const aceptarProforma = async (req, res) => {
     res.status(500).json({ msg: "Error al aceptar la proforma" });
   }
 };
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
 
 // Método para listar proformas por ordenId
 const listarProformas = async (req, res) => {
