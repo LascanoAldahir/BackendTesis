@@ -12,6 +12,12 @@ const crearProforma = async (req, res) => {
       return res.status(400).json({ msg: "ID de la orden de trabajo no válido" });
     }
 
+    // Verificar si ya existe una proforma para esta orden de trabajo
+    const proformaExistente = await Proforma.findOne({ ordenId });
+    if (proformaExistente) {
+      return res.status(400).json({ msg: "Esta orden de trabajo ya tiene una proforma" });
+    }
+
     const nuevaProforma = new Proforma({
       ordenId,
       piezas,
