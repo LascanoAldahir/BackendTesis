@@ -246,6 +246,22 @@ const buscarOrdenPorNumero = async (req, res) => {
   }
 };
 /////////////////////////////////////////////////////////////////////////
+const detalleProforma = async (req, res) => {
+  const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
+  // Verifica si el ID es válido
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res
+      .status(404)
+      .json({ msg: 'Lo sentimos, no existe el paciente ${id}' });
+  // Busca al paciente por su ID y lo popula con la información del veterinario asociado y los tratamientos asociados
+  const ordenes = await ordentrabajo
+    .findById(id)
+    .populate("cliente", "_id nombre cedula");
+  // Responde con el detalle del paciente y sus tratamientos
+  res.status(200).json({
+    ordenes,
+  });
+};
 ////////////////////////////////////////////////////////////////////////
 const detalleOrden = async (req, res) => {
   const { id } = req.params; // Extrae el ID de la orden de los parámetros de la solicitud
@@ -255,9 +271,8 @@ const detalleOrden = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
       .status(404)
-      .json({ msg: `Lo sentimos, no existe la orden de trabajo con ID ${id}` });
+      .json({ msg: 'Lo sentimos, no existe la orden de trabajo con ID ${id}' });
   }
-
   try {
     // Busca la orden de trabajo por su ID y actualiza el campo estado con los datos proporcionados en el cuerpo de la solicitud
     const ordenActualizada = await ordentrabajo.findByIdAndUpdate(
@@ -269,7 +284,7 @@ const detalleOrden = async (req, res) => {
     if (!ordenActualizada) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
-    console.log(`Orden actualizada: ${ordenActualizada}`);
+    console.log('Orden actualizada: ${ordenActualizada}');
     // Responde con el detalle de la orden de trabajo actualizada
     res.status(200).json({
       msg: "Orden de trabajo actualizada exitosamente",
@@ -281,53 +296,20 @@ const detalleOrden = async (req, res) => {
     res.status(500).json({ msg: "Error al actualizar la orden de trabajo" });
   }
 };
-///////////////////////////////////////////////////////////////////////////////
-const detalleProforma = async (req, res) => {
-  const { id } = req.params; // Extrae el ID de la orden de los parámetros de la solicitud
-  const { estado } = req.body; // Extrae el estado a actualizar del cuerpo de la solicitud
-
-  // Verifica si el ID es válido
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ msg: `Lo sentimos, no existe la orden de trabajo con ID ${id}` });
-  }
-
-  try {
-    // Busca la orden de trabajo por su ID y actualiza el campo estado con los datos proporcionados en el cuerpo de la solicitud
-    const ordenActualizada = await Ordentrabajo.findByIdAndUpdate(
-      id,
-      { estado },
-      { new: true } // Devuelve el documento actualizado
-    );
-
-    if (!ordenActualizada) {
-      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
-    }
-
-    // Responde con el detalle de la orden de trabajo actualizada
-    res.status(200).json({
-      msg: "Orden de trabajo actualizada exitosamente",
-      orden: ordenActualizada,
-    });
-  } catch (error) {
-    console.error("Error al actualizar la orden de trabajo: ", error);
-    res.status(500).json({ msg: "Error al actualizar la orden de trabajo" });
-  }
-};
-
+////////////////////////////////////////////////////////////////////////
 const visualizarOrden = async (req, res) => {
   try {
-    const orden = await OrdenTrabajo.findById(req.params.id);
+    const { id } = req.params;
+    const orden = await ordentrabajo.findById(id);
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
     res.json(orden);
   } catch (error) {
+    console.error("Error al visualizar la orden de trabajo: ", error);
     res.status(500).json({ msg: "Error al visualizar la orden de trabajo" });
   }
 };
-
-
-
 // Exporta los métodos de la API relacionados con la gestión de tratamientos
 export {
   buscarClientePorCedula,
@@ -336,8 +318,8 @@ export {
   registrarOrdenTrabajo,
   listarOrdenesTrabajo,
   finalizarOrdenTrabajo,
-  detalleProforma,
-  detalleOrden,
   enProcesoOrdenTrabajo,
+  detalleOrden,
+  detalleProforma,
   visualizarOrden
 };

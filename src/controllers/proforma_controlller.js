@@ -69,19 +69,7 @@ const aceptarProforma = async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-const visualizarOrden = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const orden = await ordentrabajo.findById(id);
-    if (!orden) {
-      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
-    }
-    res.json(orden);
-  } catch (error) {
-    console.error("Error al visualizar la orden de trabajo: ", error);
-    res.status(500).json({ msg: "Error al visualizar la orden de trabajo" });
-  }
-};
+
 ///////////////////////////////////////////////////////////////////////////////////
 // Método para listar proformas por ordenId
 const listarProformas = async (req, res) => {
@@ -109,4 +97,4 @@ const listarProformas = async (req, res) => {
   }
 };
 
-export { crearProforma, aceptarProforma, listarProformas,visualizarOrden};
+export { crearProforma, aceptarProforma, listarProformas};

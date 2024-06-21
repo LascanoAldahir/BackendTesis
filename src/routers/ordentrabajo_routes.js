@@ -22,6 +22,8 @@ router.put('/ordenes/finalizar/:id', finalizarOrdenTrabajo);
 // Ruta para la ordenes normales
 router.get("/orden/visualizar/:id",detalleProforma);//detalleOrden
 router.put("/orden/actualizar/:id",detalleOrden);
+// Ruta para visualizar una orden de trabajo por su ID
+router.get('/orden/visualizar/:id', visualizarOrden);
 
 
 
