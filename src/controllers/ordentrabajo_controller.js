@@ -282,7 +282,7 @@ const detalleOrden = async (req, res) => {
   }
 };
 ///////////////////////////////////////////////////////////////////////////////
-const detallePorforma = async (req, res) => {
+const detalleProforma = async (req, res) => {
   const { id } = req.params; // Extrae el ID de la orden de los parámetros de la solicitud
   const { estado } = req.body; // Extrae el estado a actualizar del cuerpo de la solicitud
 
