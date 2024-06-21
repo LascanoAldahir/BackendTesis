@@ -314,6 +314,20 @@ const detalleProforma = async (req, res) => {
   }
 };
 
+const visualizarOrden = async (req, res) => {
+  try {
+    const orden = await OrdenTrabajo.findById(req.params.id);
+    if (!orden) {
+      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
+    }
+    res.json(orden);
+  } catch (error) {
+    res.status(500).json({ msg: "Error al visualizar la orden de trabajo" });
+  }
+};
+
+
+
 // Exporta los métodos de la API relacionados con la gestión de tratamientos
 export {
   buscarClientePorCedula,
@@ -325,4 +339,5 @@ export {
   detalleProforma,
   detalleOrden,
   enProcesoOrdenTrabajo,
+  visualizarOrden
 };
