@@ -19,7 +19,7 @@ router.get('/ordenes/listar', listarOrdenesTrabajo);
 // Ruta para finalizar la orden de trabajo
 router.put('/ordenes/finalizar/:id', finalizarOrdenTrabajo);
 // Ruta para la ordenes normales
-router.put("/orden/actualizar/:id",detalleProforma);
+router.put("/orden/actualizar/:id",detalleProforma);//detalleOrden
 router.get('/orden/visualizar/:id', visualizarOrden);
 
 
