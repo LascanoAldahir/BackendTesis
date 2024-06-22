@@ -237,5 +237,4 @@ export {
 	recuperarPassword,
     comprobarTokenPasword,
 	nuevoPassword,
-    listarClientes
 }
