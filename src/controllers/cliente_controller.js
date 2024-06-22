@@ -85,7 +85,7 @@ const perfilCliente = (req, res) => {
   // Responde con el perfil del cliente (sin los campos eliminados)
   res.status(200).json(req.clienteBDD);
 };
-
+////////////////////////////////////////////////////////////////////////
 // Método para listar pacientes
 const listarClientes = async (req, res) => {
   try {
@@ -100,7 +100,7 @@ const listarClientes = async (req, res) => {
     res.status(500).json({ mensaje: "Error al listar los clientes", error });
   }
 };
-
+////////////////////////////////////////////////////////////////////////
 // Método para ver el detalle de un paciente en particular
 const detalleCliente = async (req, res) => {
   const { id } = req.params; // Extrae el ID del paciente de los parámetros de la solicitud
@@ -193,7 +193,7 @@ const actualizarCliente = async (req, res) => {
   // Responde con un mensaje de éxito
   res.status(200).json({ msg: "Actualización exitosa del cliente" });
 };
-
+////////////////////////////////////////////////////////////////////////
 // Método para eliminar(dar de baja) un paciente
 const eliminarCliente = async (req, res) => {
   const { id } = req.params; // Extrae el ID del cliente de los parámetros de la solicitud
@@ -215,7 +215,7 @@ const eliminarCliente = async (req, res) => {
       .json({ msg: "Ocurrió un error al intentar eliminar al cliente" });
   }
 };
-
+////////////////////////////////////////////////////////////////////////
 // Método para recuperar el password
 const recuperarPasswordCli = async (req, res) => {
   try {
@@ -250,7 +250,7 @@ const recuperarPasswordCli = async (req, res) => {
     return res.status(500).json({ msg: "Error en el servidor" });
   }
 };
-
+////////////////////////////////////////////////////////////////////////
 // Método para comprobar el token
 const comprobarTokenPaswordCli = async (req, res) => {
   if (!req.params.token)

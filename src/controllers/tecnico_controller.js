@@ -95,12 +95,22 @@ const confirmEmail = async(req,res)=>{
     console.log("token confirmado")
 }
 
-// Método para listar veterinarios
-const listarTecnicos = (req,res)=>{
-    // Responde con una lista de veterinarios registrados
-    res.status(200).json({res:'lista de tecnicos registrados'})
-}
-
+////////////////////////////////////////////////////////////////////////
+// Método para listar tecnicos
+const listarTecnicos = async (req, res) => {
+    try {
+      // Busca todos los tecnicos en la base de datos
+      const tecnicos = await Tecnico.find({})
+        .select("nombre apllido telefono email password")
+        .populate("tecnico", "_id nombre");
+  
+      res.status(200).json(tecnicos);
+    } catch (error) {
+      // Maneja cualquier error que ocurra durante la búsqueda
+      res.status(500).json({ mensaje: "Error al listar los técnicos", error });
+    }
+  };
+//////////////////////////////////////////////////////////////////////////
 // Método para mostrar el detalle de un veterinario en particular
 const detalleTecnico = async(req,res)=>{
     const {id} = req.params // Extrae el ID del veterinario de los parámetros de la solicitud
@@ -212,6 +222,8 @@ const nuevoPassword = async (req,res)=>{
     res.status(200).json({msg:"Felicitaciones, ya puedes iniciar sesión con tu nuevo password"}) 
 }
 
+
+
 // Exportar cada uno de los métodos
 export {
     login,
@@ -224,5 +236,6 @@ export {
     actualizarPassword,
 	recuperarPassword,
     comprobarTokenPasword,
-	nuevoPassword
+	nuevoPassword,
+    listarClientes
 }
