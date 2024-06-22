@@ -222,6 +222,30 @@ const nuevoPassword = async (req,res)=>{
     res.status(200).json({msg:"Felicitaciones, ya puedes iniciar sesión con tu nuevo password"}) 
 }
 
+////////////////////////////////////////////////////////////////////////
+// Método para eliminara un tecnico
+const eliminarTecnico = async (req, res) => {
+    const { id } = req.params; // Extrae el ID del técnico de los parámetros de la solicitud
+    try {
+      // Verifica si el ID del técnico es válido
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ msg: `Lo sentimos, no existe el técnico con ID ${id}` });
+      }
+      // Elimina el técnico de la base de datos
+      const tecnicoEliminado = await Tecnico.findByIdAndDelete(id);
+      // Verifica si se encontró y eliminó el técnico
+      if (!tecnicoEliminado) {
+        return res.status(404).json({ msg: "Técnico no encontrado" });
+      }
+      // Responde con un mensaje de éxito
+      res.status(200).json({ msg: "Técnico eliminado exitosamente" });
+    } catch (error) {
+      // Si ocurre un error, responde con un mensaje de error
+      console.error(error);
+      res.status(500).json({ msg: "Ocurrió un error al intentar eliminar al técnico" });
+    }
+  };
+  ////////////////////////////////////////////////////////////////////////
 
 
 // Exportar cada uno de los métodos
@@ -237,4 +261,5 @@ export {
 	recuperarPassword,
     comprobarTokenPasword,
 	nuevoPassword,
+    eliminarTecnico
 }

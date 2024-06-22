@@ -17,6 +17,7 @@ import {
     recuperarPassword,
     comprobarTokenPasword,
     nuevoPassword,
+    eliminarTecnico
 } from "../controllers/tecnico_controller.js";
 
 // Importar middleware de autenticación
@@ -39,7 +40,7 @@ router.get("/perfil", verificarAutenticacion, perfil);
 router.put('/tecnico/actualizarpassword', verificarAutenticacion, actualizarPassword);
 router.get("/tecnico/:id", verificarAutenticacion, detalleTecnico);
 router.put("/tecnico/:id", verificarAutenticacion, actualizarPerfil);
-
+router.delete('/tecnicos/:id', eliminarTecnico);
 // Exportar la variable router
 export default router;
 
