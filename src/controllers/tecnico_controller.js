@@ -6,14 +6,14 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 
 // Método para el login
 const login = async(req,res)=>{
-    const {email,password} = req.body // Extrae el email y password del cuerpo de la solicitud
+    const {email,password} = req.body // Extrae el correo y password de la solicitud
     // Verifica si algún campo del cuerpo de la solicitud está vacío
     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
     // Busca un tecnico en la base de datos por su email, excluyendo ciertos campos del resultado
     const tecnicoBDD = await Tecnico.findOne({email}).select("-status -__v -token -updatedAt -createdAt")
-    // Verifica si el email del tecnico no ha sido confirmado
+    // Verifica si el correo del tecnico no ha sido confirmado
     if(tecnicoBDD?.confirmEmail===false) return res.status(403).json({msg:"Lo sentimos, debe verificar su cuenta"})
-    // Verifica si no se encontró ningún tecnico con el email proporcionado
+    // Verifica si no se encontró ningún tecnico con el correo proporcionado
     if(!tecnicoBDD) return res.status(404).json({msg:"Lo sentimos, correo o contraseña incorrectos"})
     // Verifica si la contraseña proporcionada no coincide con la almacenada en la base de datos
     const verificarPassword = await tecnicoBDD.matchPassword(password)
@@ -56,7 +56,7 @@ const registro = async (req,res)=>{
     // Busca en la base de datos un veterinario con el email proporcionado
     const verificarEmailBDD = await Tecnico.findOne({email})
     // Verifica si ya existe un veterinario registrado con el mismo email
-    if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
+    if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el correo ya se encuentra registrado"})
     // Crea una instancia de Tecnico con los datos proporcionados en la solicitud
     const nuevoTecnico = new Tecnico(req.body)
     // Encripta el password del nuevo veterinario
@@ -166,7 +166,7 @@ const actualizarPassword = async (req,res)=>{
     tecnicoBDD.password = await tecnicoBDD.encrypPassword(req.body.passwordnuevo)
     await tecnicoBDD.save()
     // Responde con un mensaje indicando que el password se ha actualizado correctamente
-    res.status(200).json({msg:"Password actualizado correctamente"})
+    res.status(200).json({msg:"Contraseña actualizado correctamente"})
 }
 
 // Método para recuperar el password

@@ -29,7 +29,7 @@ const tecnicoSchema = new Schema({
         trim: true,
         default: null
     },
-    // Campo para el correo electrónico del tecnico
+    // Camp o para el correo electrónico del tecnico
     email: {
         type: String,
         required: true,

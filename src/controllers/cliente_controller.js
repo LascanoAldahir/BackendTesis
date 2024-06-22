@@ -222,16 +222,12 @@ const recuperarPasswordCli = async (req, res) => {
     const { correo } = req.body;
 
     if (!correo) {
-      return res
-        .status(400)
-        .json({ msg: "Lo sentimos, debes llenar todos los campos" });
+      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
 
     const clienteBDD = await Cliente.findOne({ correo });
     if (!clienteBDD) {
-      return res
-        .status(404)
-        .json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
+      return res.status(404).json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
     }
 
     const token = clienteBDD.crearToken();
@@ -240,13 +236,11 @@ const recuperarPasswordCli = async (req, res) => {
     await sendMailToRecoveryPasswordCli(correo, token);
     await clienteBDD.save();
 
-    return res
-      .status(200)
-      .json({
+    return res.status(200).json({
         msg: "Revisa tu correo electrónico para reestablecer tu cuenta",
       });
   } catch (error) {
-    console.error("Error al recuperar el password: ", error);
+    console.error("Error al recuperar la contraseña: ", error);
     return res.status(500).json({ msg: "Error en el servidor" });
   }
 };
@@ -265,7 +259,7 @@ const comprobarTokenPaswordCli = async (req, res) => {
   await tecnicoBDD.save();
   res
     .status(200)
-    .json({ msg: "Token confirmado, ya puedes crear tu nuevo password" });
+    .json({ msg: "Token confirmado, ya puedes crear tu nueva contraseña" });
 };
 
 //modelo de orden (no borrar sino poner finalizado)
