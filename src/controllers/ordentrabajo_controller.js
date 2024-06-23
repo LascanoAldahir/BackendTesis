@@ -168,7 +168,7 @@ const finalizarOrdenTrabajo = async (req, res) => {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
     // Cambiar el estado a 'finalizado'
-    orden.estado = "finalizado";
+    orden.estado = "Finalizado";
     await orden.save();
     // Obtener el correo del cliente asociado a la orden de trabajo
     const cliente = await Cliente.findById(orden.cliente);
@@ -181,7 +181,7 @@ const finalizarOrdenTrabajo = async (req, res) => {
     const mensaje = `Su orden de trabajo con número ${orden.numOrden} ha sido finalizada.`;
     await enviarCorreo(destinatario, asunto, mensaje);
     res.status(200).json({
-      msg: "Estado de la orden de trabajo actualizado a 'finalizado' y correo enviado",
+      msg: "Estado de la orden de trabajo actualizado a 'Finalizado' y correo enviado",
     });
   } catch (error) {
     console.error("Error al finalizar la orden de trabajo: ", error);
