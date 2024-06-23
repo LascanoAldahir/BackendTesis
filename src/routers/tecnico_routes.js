@@ -40,7 +40,7 @@ router.get("/perfil", verificarAutenticacion, perfil);
 router.put('/tecnico/actualizarpassword', verificarAutenticacion, actualizarPassword);
 router.get("/tecnico/:id", verificarAutenticacion, detalleTecnico);
 router.put("/tecnico/:id", verificarAutenticacion, actualizarPerfil);
-router.delete('/tecnicos/:id', eliminarTecnico);
+router.delete('/tecnico/eliminar/:id', verificarAutenticacion,eliminarTecnico);
 // Exportar la variable router
 export default router;
 
