@@ -169,6 +169,7 @@ const finalizarOrdenTrabajo = async (req, res) => {
     }
     // Cambiar el estado a 'finalizado'
     orden.estado = "Finalizado";
+    orden.salida = new Date(); // <-- Aquí se agrega la fecha de salida
     await orden.save();
     // Obtener el correo del cliente asociado a la orden de trabajo
     const cliente = await Cliente.findById(orden.cliente);
