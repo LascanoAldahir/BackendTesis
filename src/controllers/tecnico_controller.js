@@ -69,7 +69,7 @@ const registro = async (req,res)=>{
     // Guarda el nuevo veterinario en la base de datos
     await nuevoTecnico.save()
     // Responde con un mensaje indicando que revise su correo electrónico para confirmar la cuenta
-    res.status(200).json({msg:"Revisa tu correo electrónico para confirmar tu cuenta"})
+    res.status(200).json({msg:"Mensaje de confirmación enviado correctamente al nuevo técnico"})
     console.log("Controller de registro terminada");
 }
 
@@ -99,17 +99,19 @@ const confirmEmail = async(req,res)=>{
 // Método para listar tecnicos
 const listarTecnicos = async (req, res) => {
     try {
-      // Busca todos los tecnicos en la base de datos
-      const tecnicos = await Tecnico.find({})
-        .select("nombre apllido telefono email password")
-        .populate("tecnico", "_id nombre");
-  
+      const tecnicos = await Tecnico.find({}).select("-password");
       res.status(200).json(tecnicos);
     } catch (error) {
-      // Maneja cualquier error que ocurra durante la búsqueda
-      res.status(500).json({ mensaje: "Error al listar los técnicos", error });
+      console.error("Error al listar técnicos:", error);
+      res
+        .status(500)
+        .json({
+          mensaje: "Error interno del servidor al listar técnicos",
+          error,
+        });
     }
-  };
+  };  
+  
 //////////////////////////////////////////////////////////////////////////
 // Método para mostrar el detalle de un veterinario en particular
 const detalleTecnico = async(req,res)=>{
