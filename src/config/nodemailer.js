@@ -5,7 +5,7 @@ import Cliente from "../models/Cliente.js";
 
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
 
-// Configura el transporte de correo con los datos proporcionados en las variables de entorno
+// transporte de correo con datos de las variables de entorno
 let transporter = nodemailer.createTransport({
     service: 'gmail', // Servicio de correo electrónico a utilizar (en este caso, Gmail)
     host: process.env.HOST_MAILTRAP, // Host del servicio de correo electrónico (obtenido de las variables de entorno)

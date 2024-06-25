@@ -1,4 +1,5 @@
 import { sendMailToRecoveryPasswordCli } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
+import CryptoJS from 'crypto-js';
 
 import Cliente from "../models/Cliente.js"; // Importa el modelo Cliente para interactuar con la colección de pacientes en la base de datos
 
@@ -239,17 +240,21 @@ const comprobarTokenPaswordCli = async (req, res) => {
 
 const recuperarContraCli = async (req, res) => {
   const { correo } = req.body;
+
   try {
-    // Verificar si el correo ingresado existe en la base de datos
     const cliente = await Cliente.findOne({ correo });
 
     if (!cliente) {
       return res.status(404).json({ msg: "Correo no encontrado" });
     }
-    // Asunto y mensaje del correo
+
+    // Desencriptar la contraseña
+    const bytes = CryptoJS.AES.decrypt(cliente.password, 'secret_key');
+    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+
     const asunto = "Recuperación de Contraseña";
-    const mensaje = `Hola ${cliente.nombre},\n\nTus credenciales son:\n\nCorreo: ${cliente.correo}\nContraseña: ${cliente.password}\n\nSi no solicitaste esta recuperación.`;
-    // Enviar correo electrónico con las credenciales
+    const mensaje = `Hola ${cliente.nombre},\n\nTus credenciales son las siguientes:\n\nCorreo: ${cliente.correo}\nContraseña: ${originalPassword}\n\nSi no solicitaste esta recuperación, por favor ignora este correo.`;
+
     await enviarCorreo(cliente.correo, asunto, mensaje);
 
     res.status(200).json({ msg: "Correo de recuperación enviado exitosamente" });

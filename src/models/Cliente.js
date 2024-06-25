@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from 'mongoose'; // Importa mongoose para la definición del esquema y el modelo
 // Importar bcrypt para cifrar las contraseñas
 import bcrypt from "bcryptjs";
+import CryptoJS from 'crypto-js';
 // Define el esquema del paciente
 const clienteSchema = new Schema({
     nombre: {
@@ -43,16 +44,23 @@ const clienteSchema = new Schema({
 );
 
 // Método para cifrar el password del cliente
-clienteSchema.methods.encryptPassword = async function(password){
-    const salt = await bcrypt.genSalt(10)
-    const passwordEncryp = await bcrypt.hash(password,salt)
-    return passwordEncryp
+clienteSchema.methods.encryptPassword = function(password) {
+  const encryptedPassword = CryptoJS.AES.encrypt(password, 'secret_key').toString();
+  return encryptedPassword;
 }
 
 // Método para verificar si el password ingresado es el mismo de la BDD
-clienteSchema.methods.matchPassword = async function(password){
-    const response = await bcrypt.compare(password,this.password)
-    return response
-}
+clienteSchema.methods.matchPassword = function(password) {
+    const bytes = CryptoJS.AES.decrypt(this.password, 'secret_key');
+    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+    return originalPassword === password;
+  }
+  
+  clienteSchema.pre('save', function(next) {
+    if (this.isModified('password') || this.isNew) {
+      this.password = this.encryptPassword(this.password);
+    }
+    next();
+  });
 
 export default model('Cliente', clienteSchema); // Exporta el modelo de datos del paciente
