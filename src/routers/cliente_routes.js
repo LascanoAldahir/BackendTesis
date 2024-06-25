@@ -5,7 +5,7 @@ const router = Router();
 
 // Importar controladores de clientes
 import {
-  recuperarContraseñaCli,
+  recuperarContraCli,
   actualizarCliente,
   detalleCliente,
   eliminarCliente,
@@ -25,7 +25,7 @@ router.post('/cliente/login', loginCliente); // Ruta para iniciar sesión de pac
 router.get('/cliente/perfil', verificarAutenticacion, perfilCliente); // Ruta para obtener el perfil del paciente
 router.get("/clientes", verificarAutenticacion, listarClientes); // Ruta para listar todos los pacientes
 router.get("/cliente/:id", verificarAutenticacion, detalleCliente); // Ruta para obtener detalles de un paciente específico
-router.post('/cliente/recuperar-contraseña', recuperarContraseñaCli);
+router.post('/cliente/recuperar-contra', recuperarContraCli);
 
 router.post("/cliente/registro", verificarAutenticacion, registrarCliente); // Ruta para registrar un nuevo paciente
 router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCedula);

@@ -237,7 +237,7 @@ const comprobarTokenPaswordCli = async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////
 
-const recuperarContraseñaCli = async (req, res) => {
+const recuperarContraCli = async (req, res) => {
   const { correo } = req.body;
   try {
     // Verificar si el correo ingresado existe en la base de datos
@@ -270,5 +270,5 @@ export {
   actualizarCliente,
   eliminarCliente,
   comprobarTokenPaswordCli,
-  recuperarContraseñaCli
+  recuperarContraCli
 };
