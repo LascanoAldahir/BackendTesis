@@ -5,6 +5,7 @@ const router = Router();
 
 // Importar controladores de clientes
 import {
+  recuperarContraseñaCli,
   actualizarCliente,
   detalleCliente,
   eliminarCliente,
@@ -12,13 +13,8 @@ import {
   registrarCliente,
   loginCliente,
   buscarClientePorCedula,
-  perfilCliente,
-  recuperarPasswordCli,
-  comprobarTokenPaswordCli
-  
+  perfilCliente
 } from "../controllers/cliente_controller.js";
-
-
 
 // Importar middleware de autenticación
 import verificarAutenticacion from "../middlewares/autenticacion.js";
@@ -29,9 +25,8 @@ router.post('/cliente/login', loginCliente); // Ruta para iniciar sesión de pac
 router.get('/cliente/perfil', verificarAutenticacion, perfilCliente); // Ruta para obtener el perfil del paciente
 router.get("/clientes", verificarAutenticacion, listarClientes); // Ruta para listar todos los pacientes
 router.get("/cliente/:id", verificarAutenticacion, detalleCliente); // Ruta para obtener detalles de un paciente específico
+router.post('/cliente/recuperar-contraseña', recuperarContraseñaCli);
 
-router.post("cliente/recuperar-password", recuperarPasswordCli);
-router.get("cliente/recuperar-password/:token", comprobarTokenPaswordCli);
 
 router.post("/cliente/registro", verificarAutenticacion, registrarCliente); // Ruta para registrar un nuevo paciente
 router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCedula);
