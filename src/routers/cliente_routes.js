@@ -27,7 +27,6 @@ router.get("/clientes", verificarAutenticacion, listarClientes); // Ruta para li
 router.get("/cliente/:id", verificarAutenticacion, detalleCliente); // Ruta para obtener detalles de un paciente específico
 router.post('/cliente/recuperar-contraseña', recuperarContraseñaCli);
 
-
 router.post("/cliente/registro", verificarAutenticacion, registrarCliente); // Ruta para registrar un nuevo paciente
 router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCedula);
 router.put("/cliente/actualizar/:id", verificarAutenticacion, actualizarCliente); // Ruta para actualizar los datos de un paciente
