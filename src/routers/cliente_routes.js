@@ -1,6 +1,6 @@
 import { Router } from 'express';
+import express from 'express';
 // Importar controladores de tratamientos
-
 const router = Router();
 
 // Importar controladores de clientes
@@ -13,10 +13,11 @@ import {
   loginCliente,
   buscarClientePorCedula,
   perfilCliente,
-  recuperarPassword,
-  comprobarTokenPassword,
-  nuevoPassword,
-  actualizarPassword
+
+  recuperarPasswordCli,
+  comprobarTokenPasswordCli,
+  nuevoPasswordCli,
+  actualizarPasswordCli
 } from "../controllers/cliente_controller.js";
 
 // Importar middleware de autenticación
@@ -30,12 +31,12 @@ router.get("/clientes", verificarAutenticacion, listarClientes); // Ruta para li
 router.get("/cliente/:id", verificarAutenticacion, detalleCliente); // Ruta para obtener detalles de un paciente específico
 
 // Rutas para recuperación de contraseña de clientes
-router.post("/recuperar-password", recuperarPassword);
-router.get("/recuperar-password/:token", comprobarTokenPassword);
-router.post("/nuevo-password/:token", nuevoPassword);
+router.post("/recuperar-passwordCli", recuperarPasswordCli);
+router.get("/recuperar-password/:token", comprobarTokenPasswordCli);
+router.post("/nuevo-password/:token", nuevoPasswordCli);
 
 // Ruta para actualizar la contraseña del cliente autenticado
-router.put("/actualizar-password", verificarAutenticacion, actualizarPassword);
+router.put("/actualizar-password", verificarAutenticacion, actualizarPasswordCli);
 
 router.post("/cliente/registro", verificarAutenticacion, registrarCliente); // Ruta para registrar un nuevo paciente
 router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCedula);
