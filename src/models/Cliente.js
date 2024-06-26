@@ -45,15 +45,15 @@ const clienteSchema = new Schema({
 
 // Método para cifrar el password del cliente
 clienteSchema.methods.encryptPassword = function(password) {
-  const encryptedPassword = CryptoJS.AES.encrypt(password, 'secret_key').toString();
-  return encryptedPassword;
-}
+    const encryptedPassword = CryptoJS.AES.encrypt(password, 'secret_key').toString();
+    return encryptedPassword;
+  }
 
-// Método para verificar si el password ingresado es el mismo de la BDD
-clienteSchema.methods.matchPassword = function(password) {
+// Método para desencriptar el password del cliente
+clienteSchema.methods.decryptPassword = function() {
     const bytes = CryptoJS.AES.decrypt(this.password, 'secret_key');
     const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
-    return originalPassword === password;
+    return originalPassword;
   }
   
   clienteSchema.pre('save', function(next) {

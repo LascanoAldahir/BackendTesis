@@ -237,7 +237,6 @@ const comprobarTokenPaswordCli = async (req, res) => {
 };
 
 //////////////////////////////////////////////////////////////////////////////
-
 const recuperarContraCli = async (req, res) => {
   const { correo } = req.body;
 
@@ -249,8 +248,7 @@ const recuperarContraCli = async (req, res) => {
     }
 
     // Desencriptar la contraseña
-    const bytes = CryptoJS.AES.decrypt(cliente.password, 'secret_key');
-    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+    const originalPassword = cliente.decryptPassword();
 
     const asunto = "Recuperación de Contraseña";
     const mensaje = `Hola ${cliente.nombre},\n\nTus credenciales son las siguientes:\n\nCorreo: ${cliente.correo}\nContraseña: ${originalPassword}\n\nSi no solicitaste esta recuperación, por favor ignora este correo.`;
