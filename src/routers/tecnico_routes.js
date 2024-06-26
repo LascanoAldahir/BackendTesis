@@ -36,6 +36,7 @@ router.get("/recuperar-password/:token", comprobarTokenPasword);
 router.post("/nuevo-password/:token", nuevoPassword);
 
 // Rutas privadas
+
 router.get("/perfil", verificarAutenticacion, perfil);
 router.put('/tecnico/actualizarpassword', verificarAutenticacion, actualizarPassword);
 router.get("/tecnico/:id", verificarAutenticacion, detalleTecnico);

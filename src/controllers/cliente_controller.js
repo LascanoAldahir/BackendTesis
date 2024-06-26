@@ -1,5 +1,5 @@
 import { sendMailToRecoveryPasswordCli } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
-
+import { sendMailToRecoveryPassword } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 import Cliente from "../models/Cliente.js"; // Importa el modelo Cliente para interactuar con la colección de pacientes en la base de datos
 
 import { sendMailToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
@@ -7,6 +7,8 @@ import { enviarCorreo } from "../config/nodemailer.js"; // Asegúrate de tener e
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import generarJWT from "../helpers/crearJWT.js"; // Importa la función generarJWT desde el archivo crearJWT.js para generar tokens JWT
 import Tecnico from "../models/Tecnico.js";
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
@@ -237,26 +239,61 @@ const comprobarTokenPaswordCli = async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////
 
-const recuperarContraCli = async (req, res) => {
+const recuperarPassword = async(req, res) => {
   const { correo } = req.body;
-  try {
-    // Verificar si el correo ingresado existe en la base de datos
-    const cliente = await Cliente.findOne({ correo });
+  if (Object.values(req.body).includes("")) 
+      return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+  const clienteBDD = await Cliente.findOne({ correo });
+  if (!clienteBDD) 
+      return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
+  
+  const token = crypto.randomBytes(20).toString('hex');
+  clienteBDD.resetPasswordToken = token;
+  clienteBDD.resetPasswordExpires = Date.now() + 3600000; // 1 hora
+  
+  await clienteBDD.save();
+  await sendMailToRecoveryPassword(correo, token);
+  
+  res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
+};
 
-    if (!cliente) {
-      return res.status(404).json({ msg: "Correo no encontrado" });
-    }
-    // Asunto y mensaje del correo
-    const asunto = "Recuperación de Contraseña";
-    const mensaje = `Hola ${cliente.nombre},\n\nTus credenciales son:\n\nCorreo: ${cliente.correo}\nContraseña: ${cliente.password}\n\nSi no solicitaste esta recuperación.`;
-    // Enviar correo electrónico con las credenciales
-    await enviarCorreo(cliente.correo, asunto, mensaje);
+const comprobarTokenPassword = async (req, res) => {
+  const { token } = req.params;
+  const clienteBDD = await Cliente.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+  });
+  
+  if (!clienteBDD) 
+      return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
+  
+  res.status(200).json({ msg: "Token confirmado, ya puedes crear tu nuevo password" });
+};
 
-    res.status(200).json({ msg: "Correo de recuperación enviado exitosamente" });
-  } catch (error) {
-    console.error("Error al recuperar la contraseña: ", error);
-    res.status(500).json({ msg: "Error al recuperar la contraseña" });
-  }
+const nuevoPassword = async (req, res) => {
+  const { password, confirmpassword } = req.body;
+  const { token } = req.params;
+
+  if (Object.values(req.body).includes("")) 
+      return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+  if (password !== confirmpassword) 
+      return res.status(404).json({ msg: "Lo sentimos, los passwords no coinciden" });
+  
+  const clienteBDD = await Cliente.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+  });
+  
+  if (!clienteBDD) 
+      return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
+
+  clienteBDD.password = await bcrypt.hash(password, 10);
+  clienteBDD.resetPasswordToken = undefined;
+  clienteBDD.resetPasswordExpires = undefined;
+  
+  await clienteBDD.save();
+  
+  res.status(200).json({ msg: "Felicitaciones, ya puedes iniciar sesión con tu nuevo password" });
 };
 
 // Exporta los métodos de la API relacionados con la gestión de pacientes
@@ -269,6 +306,7 @@ export {
   registrarCliente,
   actualizarCliente,
   eliminarCliente,
-  comprobarTokenPaswordCli,
-  recuperarContraCli
+  recuperarPassword,
+  comprobarTokenPassword,
+  nuevoPassword
 };
