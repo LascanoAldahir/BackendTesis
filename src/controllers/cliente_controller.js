@@ -241,20 +241,30 @@ const recuperarContraCli = async (req, res) => {
   const { correo } = req.body;
 
   try {
+    // Verificar si se recibió correctamente el correo en la solicitud
+    if (!correo) {
+      return res.status(400).json({ msg: "El campo 'correo' es obligatorio" });
+    }
+
+    // Buscar al cliente por su correo en la base de datos
     const cliente = await Cliente.findOne({ correo });
 
     if (!cliente) {
       return res.status(404).json({ msg: "Correo no encontrado" });
     }
 
-    // Desencriptar la contraseña
-    const originalPassword = cliente.decryptPassword();
+    // Desencriptar la contraseña (ejemplo utilizando CryptoJS)
+    const bytes = CryptoJS.AES.decrypt(cliente.password, 'secret_key');
+    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
 
+    // Preparar el correo de recuperación
     const asunto = "Recuperación de Contraseña";
     const mensaje = `Hola ${cliente.nombre},\n\nTus credenciales son las siguientes:\n\nCorreo: ${cliente.correo}\nContraseña: ${originalPassword}\n\nSi no solicitaste esta recuperación, por favor ignora este correo.`;
 
+    // Enviar el correo utilizando una función enviarCorreo definida previamente
     await enviarCorreo(cliente.correo, asunto, mensaje);
 
+    // Respuesta exitosa
     res.status(200).json({ msg: "Correo de recuperación enviado exitosamente" });
   } catch (error) {
     console.error("Error al recuperar la contraseña: ", error);
