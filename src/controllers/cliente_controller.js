@@ -1,5 +1,4 @@
 import { sendMailToRecoveryPasswordCli } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
-import CryptoJS from 'crypto-js';
 
 import Cliente from "../models/Cliente.js"; // Importa el modelo Cliente para interactuar con la colección de pacientes en la base de datos
 
@@ -123,13 +122,16 @@ const detalleCliente = async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Método para registrar un cliente
 const registrarCliente = async (req, res) => {
+  // desestructura el correo y cédula
   const { correo, nombre, apellido, cedula } = req.body;
 
+  // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes(""))
     return res
       .status(400)
       .json({ msg: "Lo sentimos, debes llenar todos los campos" });
 
+  // Validar que nombre y apellido solo contengan letras
   const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
   if (!soloLetras.test(nombre) || !soloLetras.test(apellido))
     return res
@@ -138,27 +140,35 @@ const registrarCliente = async (req, res) => {
         msg: "Los campos 'nombre' y 'apellido' deben contener solo letras",
       });
 
+  // Busca si el correo ya está registrado en la base de datos
   const verificarEmailBDD = await Cliente.findOne({ correo });
   if (verificarEmailBDD)
     return res
       .status(400)
       .json({ msg: "Lo sentimos, el correo ya se encuentra registrado" });
 
+  // Busca si la cédula ya está registrada en la base de datos
   const verificarCedulaBDD = await Cliente.findOne({ cedula });
   if (verificarCedulaBDD)
     return res
       .status(400)
       .json({ msg: "Lo sentimos, la cédula ya se encuentra registrada" });
 
+  // Crea una nueva instancia de Cliente con los datos proporcionados en el cuerpo de la solicitud
   const nuevoCliente = new Cliente(req.body);
+  // Genera una contraseña aleatoria
   const password = Math.random().toString(36).slice(2);
+  // Asocia el cliente con el técnico que hizo la solicitud
   nuevoCliente.tecnico = req.tecnicoBDD._id;
 
+  // Envía un correo electrónico al cliente con la contraseña
   await sendMailToCliente(correo, password);
-
-  nuevoCliente.password = nuevoCliente.encryptPassword(password);
+  // Encripta la contraseña
+  nuevoCliente.password = await nuevoCliente.encryptPassword(password);
+  // Guarda el cliente en la base de datos
   await nuevoCliente.save();
 
+  // Responde con un mensaje de éxito
   res
     .status(200)
     .json({ msg: "Registro exitoso del cliente y correo enviado" });
@@ -226,22 +236,20 @@ const comprobarTokenPaswordCli = async (req, res) => {
 };
 
 //////////////////////////////////////////////////////////////////////////////
+
 const recuperarContraCli = async (req, res) => {
   const { correo } = req.body;
-
   try {
+    // Verificar si el correo ingresado existe en la base de datos
     const cliente = await Cliente.findOne({ correo });
 
     if (!cliente) {
       return res.status(404).json({ msg: "Correo no encontrado" });
     }
-
-    // Desencriptar la contraseña
-    const originalPassword = cliente.decryptPassword();
-
+    // Asunto y mensaje del correo
     const asunto = "Recuperación de Contraseña";
-    const mensaje = `Hola ${cliente.nombre},\n\nTus credenciales son las siguientes:\n\nCorreo: ${cliente.correo}\nContraseña: ${originalPassword}\n\nSi no solicitaste esta recuperación, por favor ignora este correo.`;
-
+    const mensaje = `Hola ${cliente.nombre},\n\nTus credenciales son:\n\nCorreo: ${cliente.correo}\nContraseña: ${cliente.password}\n\nSi no solicitaste esta recuperación.`;
+    // Enviar correo electrónico con las credenciales
     await enviarCorreo(cliente.correo, asunto, mensaje);
 
     res.status(200).json({ msg: "Correo de recuperación enviado exitosamente" });
@@ -250,6 +258,7 @@ const recuperarContraCli = async (req, res) => {
     res.status(500).json({ msg: "Error al recuperar la contraseña" });
   }
 };
+
 // Exporta los métodos de la API relacionados con la gestión de pacientes
 export {
   loginCliente,
