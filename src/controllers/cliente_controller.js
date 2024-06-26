@@ -3,10 +3,9 @@ import { sendMailToRecoveryPassword } from "../config/nodemailer.js"; // Importa
 import Cliente from "../models/Cliente.js"; // Importa el modelo Cliente para interactuar con la colección de pacientes en la base de datos
 
 import { sendMailToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
-import { enviarCorreo } from "../config/nodemailer.js"; // Asegúrate de tener esta función correctamente definida e importada
+
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import generarJWT from "../helpers/crearJWT.js"; // Importa la función generarJWT desde el archivo crearJWT.js para generar tokens JWT
-import Tecnico from "../models/Tecnico.js";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 
@@ -129,32 +128,24 @@ const registrarCliente = async (req, res) => {
 
   // Valida todos los campos del cuerpo de la solicitud
   if (Object.values(req.body).includes(""))
-    return res
-      .status(400)
-      .json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
 
   // Validar que nombre y apellido solo contengan letras
   const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
   if (!soloLetras.test(nombre) || !soloLetras.test(apellido))
-    return res
-      .status(400)
-      .json({
+    return res.status(400).json({
         msg: "Los campos 'nombre' y 'apellido' deben contener solo letras",
       });
 
   // Busca si el correo ya está registrado en la base de datos
   const verificarEmailBDD = await Cliente.findOne({ correo });
   if (verificarEmailBDD)
-    return res
-      .status(400)
-      .json({ msg: "Lo sentimos, el correo ya se encuentra registrado" });
+    return res.status(400).json({ msg: "Lo sentimos, el correo ya se encuentra registrado" });
 
   // Busca si la cédula ya está registrada en la base de datos
   const verificarCedulaBDD = await Cliente.findOne({ cedula });
   if (verificarCedulaBDD)
-    return res
-      .status(400)
-      .json({ msg: "Lo sentimos, la cédula ya se encuentra registrada" });
+    return res.status(400).json({ msg: "Lo sentimos, la cédula ya se encuentra registrada" });
 
   // Crea una nueva instancia de Cliente con los datos proporcionados en el cuerpo de la solicitud
   const nuevoCliente = new Cliente(req.body);
@@ -220,43 +211,35 @@ const eliminarCliente = async (req, res) => {
 ////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////
-// Método para comprobar el token
-const comprobarTokenPaswordCli = async (req, res) => {
-  if (!req.params.token)
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, no se puede validar la cuenta" });
-  const tecnicoBDD = await Tecnico.findOne({ token: req.params.token });
-  if (tecnicoBDD?.token !== req.params.token)
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, no se puede validar la cuenta" });
-  await tecnicoBDD.save();
-  res
-    .status(200)
-    .json({ msg: "Token confirmado, ya puedes crear tu nueva contraseña" });
+// Método para actualizar el password
+const actualizarPassword = async (req, res) => {
+  const clienteBDD = await Cliente.findById(req.clienteBDD._id);
+  if (!clienteBDD) return res.status(404).json({ msg: `Lo sentimos, no existe el cliente ${req.clienteBDD._id}` });
+  const verificarPassword = await clienteBDD.matchPassword(req.body.passwordactual);
+  if (!verificarPassword) return res.status(404).json({ msg: "Lo sentimos, el password actual no es el correcto" });
+  clienteBDD.password = await clienteBDD.encryptPassword(req.body.passwordnuevo);
+  await clienteBDD.save();
+  res.status(200).json({ msg: "Password actualizado correctamente" });
 };
-
 //////////////////////////////////////////////////////////////////////////////
-
-const recuperarPassword = async(req, res) => {
+// Método para recuperar el password
+const recuperarPassword = async (req, res) => {
   const { correo } = req.body;
-  if (Object.values(req.body).includes("")) 
-      return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+  if (Object.values(req.body).includes("")) return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
   const clienteBDD = await Cliente.findOne({ correo });
-  if (!clienteBDD) 
-      return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
+  if (!clienteBDD) return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" });
   
   const token = crypto.randomBytes(20).toString('hex');
   clienteBDD.resetPasswordToken = token;
   clienteBDD.resetPasswordExpires = Date.now() + 3600000; // 1 hora
   
   await clienteBDD.save();
-  await sendMailToRecoveryPassword(correo, token);
+  await sendMailToRecoveryPasswordCli(correo, token);
   
   res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
 };
-
+////////////////////////////////////////////////////////////////////////////
+// Método para comprobar el token
 const comprobarTokenPassword = async (req, res) => {
   const { token } = req.params;
   const clienteBDD = await Cliente.findOne({
@@ -264,28 +247,25 @@ const comprobarTokenPassword = async (req, res) => {
       resetPasswordExpires: { $gt: Date.now() },
   });
   
-  if (!clienteBDD) 
-      return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
+  if (!clienteBDD) return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
   
   res.status(200).json({ msg: "Token confirmado, ya puedes crear tu nuevo password" });
 };
-
+///////////////////////////////////////////////////////////////////////////////////////
+// Método para crear el nuevo password
 const nuevoPassword = async (req, res) => {
   const { password, confirmpassword } = req.body;
   const { token } = req.params;
 
-  if (Object.values(req.body).includes("")) 
-      return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
-  if (password !== confirmpassword) 
-      return res.status(404).json({ msg: "Lo sentimos, los passwords no coinciden" });
+  if (Object.values(req.body).includes("")) return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+  if (password !== confirmpassword) return res.status(404).json({ msg: "Lo sentimos, los passwords no coinciden" });
   
   const clienteBDD = await Cliente.findOne({
       resetPasswordToken: token,
       resetPasswordExpires: { $gt: Date.now() },
   });
   
-  if (!clienteBDD) 
-      return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
+  if (!clienteBDD) return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
 
   clienteBDD.password = await bcrypt.hash(password, 10);
   clienteBDD.resetPasswordToken = undefined;
@@ -306,6 +286,7 @@ export {
   registrarCliente,
   actualizarCliente,
   eliminarCliente,
+  actualizarPassword,
   recuperarPassword,
   comprobarTokenPassword,
   nuevoPassword

@@ -7,9 +7,7 @@ import Cliente from "../models/Cliente.js";
 const verificarAutenticacion = async (req, res, next) => {
   // Validar si se está enviando el token
   if (!req.headers.authorization)
-    return res
-      .status(404)
-      .json({ msg: "Lo sentimos, debes proporcionar un token" });
+    return res.status(404).json({ msg: "Lo sentimos, debes proporcionar un token" });
 
   // Desestructurar el token del encabezado
   const { authorization } = req.headers;
@@ -24,15 +22,18 @@ const verificarAutenticacion = async (req, res, next) => {
 
     // Verificar el rol
     if (rol === "tecnico") {
-      // Obtener el usuario tecnicoo de la base de datos y excluir el campo de la contraseña
+      // Obtener el usuario tecnico de la base de datos y excluir el campo de la contraseña
       req.tecnicoBDD = await Tecnico.findById(id).lean().select("-password");
       // Continuar el proceso
       next();
-    } else {
-      // Obtener el usuario paciente de la base de datos y excluir el campo de la contraseña
-      req.clienteBDD = await Tecnico.findById(id).lean().select("-password");
+    } else if (rol === "cliente") {
+      // Obtener el usuario cliente de la base de datos y excluir el campo de la contraseña
+      req.clienteBDD = await Cliente.findById(id).lean().select("-password");
       // Continuar el proceso
       next();
+    } else {
+      // Si el rol no es válido
+      return res.status(403).json({ msg: "Rol no autorizado" });
     }
   } catch (error) {
     // Capturar errores y presentarlos
