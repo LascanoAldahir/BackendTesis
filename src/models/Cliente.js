@@ -38,7 +38,11 @@ const clienteSchema = new Schema({
     tecnico: {
         type: Schema.Types.ObjectId,
         ref: 'Tecnico' // Nombre del modelo Tecnico
-    }
+    },
+    token: { 
+        type: String },
+  tokenExpires: { 
+    type: Date },
 }, 
 );
 

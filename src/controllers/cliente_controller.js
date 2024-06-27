@@ -276,19 +276,16 @@ const comprobarTokenPasswordCli = async (req, res) => {
       return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" });
     }
 
-    // Buscar al cliente utilizando el token de reseteo de contraseña
-    const clienteBDD = await Cliente.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() },
-    });
+       // Buscar al cliente utilizando el token
+       const clienteBDD = await Cliente.findOne({
+        token,
+        tokenExpires: { $gt: Date.now() },
+      });
 
     // Si no se encuentra ningún cliente con el token proporcionado, responder con un mensaje de error
     if (!clienteBDD) {
       return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
     }
-
-    // Guardar los cambios en el cliente (opcional en este contexto, depende de la lógica de tu aplicación)
-    await clienteBDD.save();
 
     // Responder al cliente con un mensaje de éxito
     res.status(200).json({ msg: "Token confirmado, ya puedes crear tu nuevo password" });
