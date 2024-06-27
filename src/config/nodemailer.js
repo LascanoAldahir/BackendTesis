@@ -81,7 +81,7 @@ const sendMailToRecoveryPasswordCli = async (userMail, token) => {
         html: `
         <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
         <hr>
-        <a href=${process.env.URL_FRONTEND}/recuperar-contraseña/${token}>Clic para reestablecer tu contraseña</a>
+        <a href=${process.env.URL_FRONTEND}/recuperar/cliente/${token}>Clic para reestablecer tu contraseña</a>
         <hr>
         <footer>Electronica Zurita te dá la bienvenida!</footer>
         `
