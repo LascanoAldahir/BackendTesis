@@ -1,4 +1,4 @@
-import { sendMailToRecoveryPassword } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
+import { sendMailToRecoveryPasswordCli } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 import Cliente from "../models/Cliente.js"; // Importa el modelo Cliente para interactuar con la colección de pacientes en la base de datos
 
 import { sendMailToCliente } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
@@ -242,7 +242,7 @@ const recuperarPasswordCli = async (req, res) => {
     // Guardar los cambios en la base de datos
     await clienteBDD.save();
     // Enviar correo electrónico con el token para recuperación de contraseña
-    await sendMailToRecoveryPassword(correo, token);
+    await sendMailToRecoveryPasswordCli(correo, token);
     // Responder al cliente con un mensaje de éxito
     res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
   } catch (error) {
