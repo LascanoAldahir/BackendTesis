@@ -50,8 +50,7 @@ const loginCliente = async (req, res) => {
         .json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
     }
 
-    // Reutilizar el token existente
-    const token = clienteBDD.token;
+    const token = generarJWT(clienteBDD._id, "cliente");
     const { nombre, _id, cedula, telefono, frecuente, tecnico } = clienteBDD;
 
     return res.status(200).json({
@@ -70,7 +69,6 @@ const loginCliente = async (req, res) => {
     return res.status(500).json({ msg: "Error en el servidor" });
   }
 };
-
 //----------------------------------------------------------------------------------------------------
 
 // Método para ver el perfil
