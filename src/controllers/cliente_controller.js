@@ -7,6 +7,8 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 import generarJWT from "../helpers/crearJWT.js"; // Importa la función generarJWT desde el archivo crearJWT.js para generar tokens JWT
 import bcrypt from "bcryptjs";
 
+
+
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
   const { cedula } = req.params;
@@ -48,7 +50,8 @@ const loginCliente = async (req, res) => {
         .json({ msg: "Lo sentimos, correo o contraseña incorrectos" });
     }
 
-    const token = generarJWT(clienteBDD._id, "cliente");
+    // Reutilizar el token existente
+    const token = clienteBDD.token;
     const { nombre, _id, cedula, telefono, frecuente, tecnico } = clienteBDD;
 
     return res.status(200).json({
@@ -151,18 +154,20 @@ const registrarCliente = async (req, res) => {
   const password = Math.random().toString(36).slice(2);
   // Asocia el cliente con el técnico que hizo la solicitud
   nuevoCliente.tecnico = req.tecnicoBDD._id;
-
   // Envía un correo electrónico al cliente con la contraseña
   await sendMailToCliente(correo, password);
   // Encripta la contraseña
   nuevoCliente.password = await nuevoCliente.encryptPassword(password);
+  
+  // Generar y guardar el token
+  const token = jwt.sign({ id: nuevoCliente._id }, secret, { expiresIn: '1d' });
+  nuevoCliente.token = token;
+
   // Guarda el cliente en la base de datos
   await nuevoCliente.save();
 
   // Responde con un mensaje de éxito
-  res
-    .status(200)
-    .json({ msg: "Registro exitoso del cliente y correo enviado" });
+  res.status(200).json({ msg: "Registro exitoso del cliente y correo enviado" });
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -221,28 +226,28 @@ const actualizarPasswordCli = async (req,res)=>{
 
 //////////////////////////////////////////////////////////////////////////////
 const recuperarPasswordCli = async (req, res) => {
-  const { correo } = req.body;
-
   try {
+    const { correo } = req.body;
+    
     // Validar si el campo de correo está vacío
     if (!correo) {
       return res.status(400).json({ msg: "Debes proporcionar un correo electrónico" });
     }
+    
     // Buscar al cliente por su correo electrónico
     const clienteBDD = await Cliente.findOne({ correo });
+    
     // Si no se encuentra el cliente, responder con un mensaje de error
     if (!clienteBDD) {
       return res.status(404).json({ msg: "El usuario no se encuentra registrado" });
     }
-    // Generar un token único para el reseteo de contraseña (opcional)
-    const token = await bcrypt.hash(correo + Date.now().toString(), 10);
-    // Establecer el token en el documento del cliente y definir su expiración
-    clienteBDD.resetPasswordToken = token;
-    clienteBDD.resetPasswordExpires = Date.now() + 3600000; // 1 hora de expiración
-    // Guardar los cambios en la base de datos
-    await clienteBDD.save();
+    
+    // Reutilizar el token existente
+    const token = clienteBDD.token;
+
     // Enviar correo electrónico con el token para recuperación de contraseña
     await sendMailToRecoveryPasswordCli(correo, token);
+    
     // Responder al cliente con un mensaje de éxito
     res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
   } catch (error) {
@@ -251,6 +256,7 @@ const recuperarPasswordCli = async (req, res) => {
     res.status(500).json({ msg: "Ocurrió un error al intentar recuperar la contraseña" });
   }
 };
+
 
 ////////////////////////////////////////////////////////////////////////////
 // Método para comprobar el token
