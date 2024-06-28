@@ -31,9 +31,9 @@ router.get("/clientes", verificarAutenticacion, listarClientes); // Ruta para li
 router.get("/cliente/:id", verificarAutenticacion, detalleCliente); // Ruta para obtener detalles de un paciente específico
 
 // Rutas para recuperación de contraseña de clientes
-router.post("/recuperar-passwordCli", recuperarPasswordCli);
-router.get("/recuperar-passwordCli/:token", comprobarTokenPasswordCli);
-router.post("/nuevo-passwordCli/:token", nuevoPasswordCli);
+router.post("/cliente/recuperar-password", recuperarPasswordCli);
+router.get("/cliente/recuperar-password/:token", comprobarTokenPasswordCli);
+router.post("/cliente/nuevo-password/:token", nuevoPasswordCli);
 
 // Ruta para actualizar la contraseña del cliente autenticado
 router.put("/actualizar-password", verificarAutenticacion, actualizarPasswordCli);
