@@ -1,5 +1,6 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
+import { enviarCorreoProforma } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 
 // Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
@@ -18,13 +19,27 @@ const crearProforma = async (req, res) => {
       return res.status(400).json({ msg: "Esta orden de trabajo ya tiene una proforma" });
     }
 
+    // Crear nueva proforma
     const nuevaProforma = new Proforma({
       ordenId,
       piezas,
       precioTotal,
     });
-
     await nuevaProforma.save();
+
+    // Obtener los detalles de la orden para obtener el correo del cliente
+    const orden = await Orden.findById(ordenId);
+    if (!orden) {
+      return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
+    }
+    const clienteCorreo = orden.clienteCorreo;
+
+    // Enviar el correo
+    try {
+      await enviarCorreoProforma(clienteCorreo, ordenId, piezas, precioTotal);
+    } catch (error) {
+      return res.status(500).json({ msg: 'Error al enviar el correo al cliente' });
+    }
 
     res.status(201).json({
       msg: "Proforma creada exitosamente",
