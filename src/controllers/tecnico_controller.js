@@ -3,7 +3,7 @@ import { sendMailToUser, sendMailToRecoveryPassword } from "../config/nodemailer
 import generarJWT from "../helpers/crearJWT.js"; // Importa la función para generar tokens JWT
 import Tecnico from "../models/Tecnico.js"; // Importa el modelo de Veterinario para interactuar con la colección de veterinarios en la base de datos
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
-import express from 'express';
+
 // Método para el login
 const login = async(req,res)=>{
     const {email,password} = req.body // Extrae el correo y password de la solicitud
@@ -260,8 +260,8 @@ export {
     detalleTecnico,
     actualizarPerfil,
     actualizarPassword,
-	recuperarPassword,
+	  recuperarPassword,
     comprobarTokenPasword,
-	nuevoPassword,
+	  nuevoPassword,
     eliminarTecnico
 }

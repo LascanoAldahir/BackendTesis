@@ -55,7 +55,12 @@ const tecnicoSchema = new Schema({
     confirmEmail: {
         type: Boolean,
         default: false
-    }
+    },
+    rol: {
+        type: String,
+        enum: ['admin', 'tecnico'],
+        default: 'tecnico',
+      },
 }, {
     timestamps: true // Agregar timestamps de creación y modificación automáticamente
 });

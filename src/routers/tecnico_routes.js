@@ -1,5 +1,10 @@
 // Importar Router de Express
 import { Router } from 'express';
+// Importar middleware de autenticación y validación
+import { verifyToken, checkRole } from "../middlewares/autenticacion.js";
+import { validacionTecnico } from '../middlewares/validacionTecnico.js';
+// Importar middleware de autenticación
+import { verificarAutenticacionTec } from "../middlewares/autenticacion.js";
 
 // Crear una instancia de Router()
 const router = Router();
@@ -20,11 +25,6 @@ import {
     eliminarTecnico
 } from "../controllers/tecnico_controller.js";
 
-// Importar middleware de autenticación
-import verificarAutenticacion from '../middlewares/autenticacion.js';
-
-// Importar middleware de validación
-import { validacionTecnico } from '../middlewares/validacionTecnico.js';
 
 // Rutas públicas
 router.post("/login", login);
@@ -37,10 +37,39 @@ router.post("/nuevo-password/:token", nuevoPassword);
 
 // Rutas privadas
 
-router.get("/perfil", verificarAutenticacion, perfil);
-router.put('/tecnico/actualizarpassword', verificarAutenticacion, actualizarPassword);
-router.get("/tecnico/:id", verificarAutenticacion, detalleTecnico);
-router.put("/tecnico/:id", verificarAutenticacion, actualizarPerfil);
-router.delete('/tecnico/eliminar/:id', verificarAutenticacion,eliminarTecnico);
-// Exportar la variable router
-export default router;
+router.get("/perfil", verificarAutenticacionTec, perfil);
+router.put('/tecnico/actualizarpassword', verificarAutenticacionTec, actualizarPassword);
+router.get("/tecnico/:id", verificarAutenticacionTec, detalleTecnico);
+router.put("/tecnico/:id", verificarAutenticacionTec, actualizarPerfil);
+router.delete('/tecnico/eliminar/:id', verificarAutenticacionTec,eliminarTecnico);
+
+// Ruta para registrar nuevos técnicos
+router.post('/registrar', verifyToken, checkRole('admin'), async (req, res) => {
+    const { nombre, email, password } = req.body;
+
+    try {
+        let user = await Tecnico.findOne({ email });
+        if (user) {
+            return res.status(400).json({ msg: 'El usuario ya existe' });
+        }
+
+        user = new Tecnico({
+            nombre,
+            email,
+            password,
+            rol: 'tecnico',
+        });
+
+        user.password = await user.encrypPassword(password);
+
+        await user.save();
+
+        res.status(201).json({ msg: 'Nuevo técnico registrado' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+  
+  export default router;
+
