@@ -160,8 +160,8 @@ const registrarCliente = async (req, res) => {
     
     // Generar y guardar el token
     const token = jwt.sign({ id: nuevoCliente._id }, secret, { expiresIn: '1d' });
-    nuevoCliente.token = token;
-
+    nuevoCliente.resetPasswordToken = token;
+    nuevoCliente.resetPasswordExpires = Date.now() + 3600000; // 1 hora
     // Guarda el cliente en la base de datos
     await nuevoCliente.save();
 
@@ -240,7 +240,6 @@ const recuperarPasswordCli = async (req, res) => {
     if (!correo) {
       return res.status(400).json({ msg: "Debes proporcionar un correo electrónico" });
     }
-    
     // Buscar al cliente por su correo electrónico
     const clienteBDD = await Cliente.findOne({ correo });
     
@@ -250,9 +249,10 @@ const recuperarPasswordCli = async (req, res) => {
     }
     
     // Reutilizar el token existente
-    const token = clienteBDD.token;
-
-    // Enviar correo electrónico con el token para recuperación de contraseña
+    const token = jwt.sign({ id: clienteBDD._id }, secret, { expiresIn: '1h' });
+    clienteBDD.resetPasswordToken = token;
+    clienteBDD.resetPasswordExpires = Date.now() + 3600000; // 1 hora
+    await clienteBDD.save();
     await sendMailToRecoveryPasswordCli(correo, token);
     
     // Responder al cliente con un mensaje de éxito
@@ -270,23 +270,19 @@ const recuperarPasswordCli = async (req, res) => {
 const comprobarTokenPasswordCli = async (req, res) => {
   try {
     const { token } = req.params;
-
     // Verificar si el token no está presente en la solicitud
     if (!token) {
       return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" });
     }
-
        // Buscar al cliente utilizando el token
        const clienteBDD = await Cliente.findOne({
-        token,
-        tokenExpires: { $gt: Date.now() },
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() },
       });
-
     // Si no se encuentra ningún cliente con el token proporcionado, responder con un mensaje de error
     if (!clienteBDD) {
       return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
     }
-
     // Responder al cliente con un mensaje de éxito
     res.status(200).json({ msg: "Token confirmado, ya puedes crear tu nuevo password" });
   } catch (error) {
