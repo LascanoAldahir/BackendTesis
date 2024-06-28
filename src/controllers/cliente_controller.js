@@ -225,10 +225,10 @@ const actualizarPasswordCli = async (req,res)=>{
   const clienteBDD = await Cliente.findById(req.clienteBDD._id)
   if(!clienteBDD) return res.status(404).json({msg:`Lo sentimos, no existe el cliente ${id}`})
   const verificarPassword = await clienteBDD.matchPassword(req.body.passwordactual)
-  if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password actual no es el correcto"})
+  if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, la contraseña actual no es correcto"})
   clienteBDD.password = await clienteBDD.encrypPassword(req.body.passwordnuevo)
   await clienteBDD.save()
-  res.status(200).json({msg:"Password actualizado correctamente"})
+  res.status(200).json({msg:"Contraseña actualizado correctamente"})
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ const recuperarPasswordCli = async (req, res) => {
     res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
   } catch (error) {
     // Capturar y manejar cualquier error que ocurra durante el proceso
-    console.error("Error en recuperarPassword:", error);
+    console.error("Error en recuperar Contraseña:", error);
     res.status(500).json({ msg: "Ocurrió un error al intentar recuperar la contraseña" });
   }
 };
@@ -284,10 +284,10 @@ const comprobarTokenPasswordCli = async (req, res) => {
       return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
     }
     // Responder al cliente con un mensaje de éxito
-    res.status(200).json({ msg: "Token confirmado, ya puedes crear tu nuevo password" });
+    res.status(200).json({ msg: "Token confirmado, ya puedes crear tu nueva contraseña" });
   } catch (error) {
     // Capturar y manejar cualquier error que ocurra durante el proceso
-    console.error("Error en comprobarTokenPassword:", error);
+    console.error("Error en comprobarToken:", error);
     res.status(500).json({ msg: "Ocurrió un error al intentar validar el token de recuperación" });
   }
 };
@@ -300,7 +300,7 @@ const nuevoPasswordCli = async (req, res) => {
   if (Object.values(req.body).includes("")) 
       return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" });
   if (password !== confirmpassword) 
-      return res.status(404).json({ msg: "Lo sentimos, los passwords no coinciden" });
+      return res.status(404).json({ msg: "Lo sentimos, las contraseñas no coinciden" });
   
   const clienteBDD = await Cliente.findOne({
       resetPasswordToken: token,
@@ -316,7 +316,7 @@ const nuevoPasswordCli = async (req, res) => {
   
   await clienteBDD.save();
   
-  res.status(200).json({ msg: "Felicitaciones, ya puedes iniciar sesión con tu nuevo password" });
+  res.status(200).json({ msg: "Felicitaciones, ya puedes iniciar sesión con tu nuevo contraseña" });
 };
 
 // Exporta los métodos de la API relacionados con la gestión de pacientes

@@ -201,16 +201,16 @@ const comprobarTokenPasword = async (req,res)=>{
     // Marca el token como nulo en la base de datos para indicar que ya ha sido utilizado
     await tecnicoBDD.save()
     // Responde con un mensaje indicando que el token ha sido confirmado y se puede crear un nuevo password
-    res.status(200).json({msg:"Token confirmado, ya puedes crear tu nuevo password"}) 
+    res.status(200).json({msg:"Token confirmado, ya puedes crear tu nueva contraseña"}) 
 }
 
-// Método para crear un nuevo password después de la recuperación
+// Método para crear un nueva contraseña después de la recuperación
 const nuevoPassword = async (req,res)=>{
-    const{password,confirmpassword} = req.body // Extrae el password y la confirmación del password de la solicitud
+    const{password,confirmpassword} = req.body // Extrae la contraseña y la confirmación del password de la solicitud
     // Verifica si algún campo del cuerpo de la solicitud está vacío
     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
     // Verifica si los passwords proporcionados coinciden
-    if(password != confirmpassword) return res.status(404).json({msg:"Lo sentimos, los passwords no coinciden"})
+    if(password != confirmpassword) return res.status(404).json({msg:"Lo sentimos, las contraseñas no coinciden"})
     // Busca un tecnico en la base de datos por el token proporcionado en la solicitud
     const tecnicoBDD = await Tecnico.findOne({token:req.params.token})
     // Verifica si el token almacenado en la base de datos coincide con el proporcionado en la solicitud
