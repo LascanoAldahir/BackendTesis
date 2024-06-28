@@ -32,8 +32,8 @@ router.get("/cliente/:id", verificarAutenticacion, detalleCliente); // Ruta para
 
 // Rutas para recuperación de contraseña de clientes
 router.post("/recuperar-passwordCli", recuperarPasswordCli);
-router.get("/recuperar-password/:token", comprobarTokenPasswordCli);
-router.post("/nuevo-password/:token", nuevoPasswordCli);
+router.get("/recuperar-passwordCli/:token", comprobarTokenPasswordCli);
+router.post("/nuevo-passwordCli/:token", nuevoPasswordCli);
 
 // Ruta para actualizar la contraseña del cliente autenticado
 router.put("/actualizar-password", verificarAutenticacion, actualizarPasswordCli);
