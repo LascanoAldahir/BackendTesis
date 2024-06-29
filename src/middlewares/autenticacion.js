@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 import Tecnico from "../models/Tecnico.js";
 import Cliente from "../models/Cliente.js";
 
-const verificarAutenticacionTec = async (req, res, next) => {
+// Método para proteger rutas
+const verificarAutenticacion = async (req, res, next) => {
   // Validar si se está enviando el token
   if (!req.headers.authorization)
     return res.status(404).json({ msg: "Lo sentimos, debes proporcionar un token" });
@@ -14,63 +15,25 @@ const verificarAutenticacionTec = async (req, res, next) => {
   // Capturar errores
   try {
     // Verificar el token recuperado con el almacenado
-    const { id, rol } = jwt.verify(
+      const { id, rol } = jwt.verify(
       authorization.split(" ")[1],
       process.env.JWT_SECRET
     );
 
-    // Verificar el rol y si es técnico
-    if (rol !== "tecnico") {
-      return res.status(403).json({ msg: "Rol no autorizado" });
-    }
-
-    // Obtener el técnico de la base de datos y excluir el campo de la contraseña
-    const tecnico = await Tecnico.findById(id).lean().select("-password");
-
-    // Verificar si el técnico tiene permisos especiales para crear nuevos técnicos
-    if (!tecnico.permisos.includes('crear_tecnico')) {
-      return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
-    }
-
-    // Asignar el objeto del técnico al request para su uso en las rutas
-    req.tecnicoBDD = tecnico;
-
-    // Continuar el proceso
-    next();
-  } catch (error) {
-    // Capturar errores y presentarlos
-    const e = new Error("Formato del token no válido");
-    return res.status(404).json({ msg: e.message });
-  }
-};
-//////////////////////////////////////////////////////////////////////////////
-
-// Middleware para verificar autenticación de clientes
-const verificarAutenticacionCli = async (req, res, next) => {
-  // Validar si se está enviando el token
-  if (!req.headers.authorization)
-    return res.status(404).json({ msg: "Lo sentimos, debes proporcionar un token" });
-
-  // Desestructurar el token del encabezado
-  const { authorization } = req.headers;
-
-  // Capturar errores
-  try {
-    // Verificar el token recuperado con el almacenado
-    const { id, rol } = jwt.verify(
-      authorization.split(" ")[1],
-      process.env.JWT_SECRET
-    );
-
-    // Verificar el rol específicamente para clientes
-    if (rol === "cliente") {
+    // Verificar el rol
+    if (rol === "tecnico") {
+      // Obtener el usuario tecnico de la base de datos y excluir el campo de la contraseña
+      req.tecnicoBDD = await Tecnico.findById(id).lean().select("-password");
+      // Continuar el proceso
+      next();
+    } else if (rol === "cliente") {
       // Obtener el usuario cliente de la base de datos y excluir el campo de la contraseña
       req.clienteBDD = await Cliente.findById(id).lean().select("-password");
       // Continuar el proceso
       next();
     } else {
-      // Si el rol no es válido para clientes
-      return res.status(403).json({ msg: "Rol no autorizado para clientes" });
+      // Si el rol no es válido
+      return res.status(403).json({ msg: "Rol no autorizado" });
     }
   } catch (error) {
     // Capturar errores y presentarlos
@@ -78,10 +41,6 @@ const verificarAutenticacionCli = async (req, res, next) => {
     return res.status(404).json({ msg: e.message });
   }
 };
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
 const verifyToken = (req, res, next) => {
   const token = req.header('Authorization');
@@ -112,4 +71,4 @@ const checkRole = (role) => {
   };
 };
 
-export { verificarAutenticacionTec, verificarAutenticacionCli, verifyToken, checkRole };
+export { verificarAutenticacion, verifyToken, checkRole };

@@ -248,7 +248,43 @@ const eliminarTecnico = async (req, res) => {
     }
   };
   ////////////////////////////////////////////////////////////////////////
+// Función para verificar si un técnico tiene el rol de administrador
+ const verificarAdmin = async (req, res) => {
+  const { id } = req.params; // Obtener el ID del técnico de los parámetros de la URL
 
+  try {
+    // Verificar el token del encabezado
+    const { authorization } = req.headers;
+    if (!authorization) {
+      return res.status(401).json({ msg: 'Token de autorización no proporcionado' });
+    }
+
+    // Desestructurar y verificar el token
+    const token = authorization.split(' ')[1];
+    const { rol } = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (rol !== 'admin') {
+      return res.status(403).json({ msg: 'No tienes permisos para realizar esta acción' });
+    }
+
+    // Buscar el técnico por ID en la base de datos
+    const tecnico = await Tecnico.findById(id);
+
+    if (!tecnico) {
+      return res.status(404).json({ msg: 'Técnico no encontrado' });
+    }
+
+    // Verificar si el técnico tiene el rol de administrador
+    if (tecnico.rol === 'admin') {
+      return res.json({ msg: 'El técnico tiene el rol de administrador' });
+    } else {
+      return res.status(403).json({ msg: 'El técnico no tiene el rol de administrador' });
+    }
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ msg: 'Error interno del servidor' });
+  }
+};
 
 // Exportar cada uno de los métodos
 export {
@@ -263,5 +299,6 @@ export {
 	  recuperarPassword,
     comprobarTokenPasword,
 	  nuevoPassword,
-    eliminarTecnico
+    eliminarTecnico,
+    verificarAdmin
 }
