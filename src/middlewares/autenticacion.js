@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import Tecnico from "../models/Tecnico.js";
 import Cliente from "../models/Cliente.js";
 
-// Middleware para verificar autenticación de técnicos
 const verificarAutenticacionTec = async (req, res, next) => {
   // Validar si se está enviando el token
   if (!req.headers.authorization)
@@ -20,16 +19,24 @@ const verificarAutenticacionTec = async (req, res, next) => {
       process.env.JWT_SECRET
     );
 
-    // Verificar el rol específicamente para técnicos
-    if (rol === "tecnico") {
-      // Obtener el usuario técnico de la base de datos y excluir el campo de la contraseña
-      req.tecnicoBDD = await Tecnico.findById(id).lean().select("-password");
-      // Continuar el proceso
-      next();
-    } else {
-      // Si el rol no es válido para técnicos
-      return res.status(403).json({ msg: "Rol no autorizado para técnicos" });
+    // Verificar el rol y si es técnico
+    if (rol !== "tecnico") {
+      return res.status(403).json({ msg: "Rol no autorizado" });
     }
+
+    // Obtener el técnico de la base de datos y excluir el campo de la contraseña
+    const tecnico = await Tecnico.findById(id).lean().select("-password");
+
+    // Verificar si el técnico tiene permisos especiales para crear nuevos técnicos
+    if (!tecnico.permisos.includes('crear_tecnico')) {
+      return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
+    }
+
+    // Asignar el objeto del técnico al request para su uso en las rutas
+    req.tecnicoBDD = tecnico;
+
+    // Continuar el proceso
+    next();
   } catch (error) {
     // Capturar errores y presentarlos
     const e = new Error("Formato del token no válido");

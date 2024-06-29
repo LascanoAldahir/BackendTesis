@@ -44,32 +44,40 @@ router.put("/tecnico/:id", verificarAutenticacionTec, actualizarPerfil);
 router.delete('/tecnico/eliminar/:id', verificarAutenticacionTec,eliminarTecnico);
 
 // Ruta para registrar nuevos técnicos
-router.post('/registrar', verifyToken, checkRole('admin'), async (req, res) => {
+router.post('/tecnicoAdmin/registrar', verificarAutenticacionTec, async (req, res) => {
     const { nombre, email, password } = req.body;
-
+  
     try {
-        let user = await Tecnico.findOne({ email });
-        if (user) {
-            return res.status(400).json({ msg: 'El usuario ya existe' });
-        }
-
-        user = new Tecnico({
-            nombre,
-            email,
-            password,
-            rol: 'tecnico',
-        });
-
-        user.password = await user.encrypPassword(password);
-
-        await user.save();
-
-        res.status(201).json({ msg: 'Nuevo técnico registrado' });
+      // Aquí puedes acceder al técnico autenticado
+      const tecnicoAutenticado = req.tecnicoBDD;
+  
+      // Verificar que el técnico autenticado tenga permisos para crear nuevos técnicos
+      if (!tecnicoAutenticado.permisos.includes('crear_tecnico')) {
+        return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
+      }
+  
+      let user = await Tecnico.findOne({ email });
+      if (user) {
+        return res.status(400).json({ msg: 'El usuario ya existe' });
+      }
+  
+      user = new Tecnico({
+        nombre,
+        email,
+        password,
+        rol: 'tecnico',
+      });
+  
+      user.password = await user.encrypPassword(password);
+  
+      await user.save();
+  
+      res.status(201).json({ msg: 'Nuevo técnico registrado' });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
+      console.error(err.message);
+      res.status(500).send('Server error');
     }
-});
+  });
   
   export default router;
 
