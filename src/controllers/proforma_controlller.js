@@ -7,18 +7,15 @@ const crearProforma = async (req, res) => {
   try {
     const { piezas, precioTotal } = req.body;
     const { ordenId } = req.params;
-
     // Verificar si el ordenId es válido
     if (!mongoose.Types.ObjectId.isValid(ordenId)) {
       return res.status(400).json({ msg: "ID de la orden de trabajo no válido" });
     }
-
     // Verificar si ya existe una proforma para esta orden de trabajo
     const proformaExistente = await Proforma.findOne({ ordenId });
     if (proformaExistente) {
       return res.status(400).json({ msg: "Esta orden de trabajo ya tiene una proforma" });
     }
-
     // Crear nueva proforma
     const nuevaProforma = new Proforma({
       ordenId,
@@ -26,29 +23,32 @@ const crearProforma = async (req, res) => {
       precioTotal,
     });
     await nuevaProforma.save();
-
     // Obtener los detalles de la orden para obtener el correo del cliente
     const orden = await Orden.findById(ordenId);
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
     const clienteCorreo = orden.clienteCorreo;
+   // Enviar el correo
+   try {
+    await enviarCorreoProforma(clienteCorreo, ordenId, piezas, precioTotal);
 
-    // Enviar el correo
-    try {
-      await enviarCorreoProforma(clienteCorreo, ordenId, piezas, precioTotal);
-    } catch (error) {
-      return res.status(500).json({ msg: 'Error al enviar el correo al cliente' });
-    }
+    // Actualizar estado de la orden a "En proceso"
+    orden.estado = 'En proceso';
+    await orden.save();
 
-    res.status(201).json({
-      msg: "Proforma creada exitosamente",
-      proforma: nuevaProforma,
-    });
   } catch (error) {
-    console.error("Error al crear la proforma:", error);
-    res.status(500).json({ msg: "Error al crear la proforma" });
+    return res.status(500).json({ msg: 'Error al enviar el correo al cliente' });
   }
+
+  res.status(201).json({
+    msg: "Proforma creada exitosamente",
+    proforma: nuevaProforma,
+  });
+} catch (error) {
+  console.error("Error al crear la proforma:", error);
+  res.status(500).json({ msg: "Error al crear la proforma" });
+}
 };
 //////////////////////////////////////////////////////////////
 
