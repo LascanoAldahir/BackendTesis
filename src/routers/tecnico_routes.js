@@ -45,7 +45,6 @@ router.put("/tecnico/:id", verificarAutenticacion, actualizarPerfil);
 router.delete('/tecnico/eliminar/:id', verificarAutenticacion,eliminarTecnico);
 
 // Ruta para verificar si un técnico tiene el rol de administrador
-router.get('/tecnico/verificar-admin/:id', verifyToken, verificarAdmin);
-
-  export default router;
+router.get('/tecnico/verificar-admin/:id', verificarAutenticacion, verificarAdmin);
+export default router;
 
