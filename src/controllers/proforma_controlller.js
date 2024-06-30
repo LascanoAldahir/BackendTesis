@@ -1,11 +1,14 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
-import Orden from "../models/ordentrabajo.js"
+import Cliente from "../models/Cliente.js";
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import { enviarCorreoProforma } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
+import ordentrabajo from "../models/ordentrabajo.js"
 
 // Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
   try {
+    console.log(req.body)
+    console.log(req.params)
     const { piezas, precioTotal } = req.body;
     const { ordenId } = req.params;
 
@@ -21,13 +24,15 @@ const crearProforma = async (req, res) => {
     }
 
     // Obtener los detalles de la orden
-    const orden = await OrdenTrabajo.findById(ordenId);
+    const orden = await Orden.findById(ordenId);
+  
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
 
     // Obtener los detalles del cliente usando el clienteId de la orden
-    const cliente = await Cliente.findById(orden.clienteId);
+    const cliente = await Cliente.findById(orden.cliente);
+    console.log(cliente)
     if (!cliente) {
       return res.status(404).json({ msg: "Cliente no encontrado" });
     }
@@ -44,11 +49,11 @@ const crearProforma = async (req, res) => {
       precioTotal,
     });
     await nuevaProforma.save();
-
+      console.log(nuevaProforma)
     // Enviar el correo
     try {
       await enviarCorreoProforma(clienteCorreo, orden.numOrden, piezas, precioTotal);
-
+      console.log(orden.numOrden)
       // Actualizar estado de la orden a "En proceso"
       orden.estado = 'En proceso';
       await orden.save();
