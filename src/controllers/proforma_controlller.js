@@ -2,7 +2,6 @@ import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estruc
 import Cliente from "../models/Cliente.js";
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import { enviarCorreoProforma } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
-import ordentrabajo from "../models/ordentrabajo.js"
 
 // Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
