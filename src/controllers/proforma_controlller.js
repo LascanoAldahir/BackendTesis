@@ -4,7 +4,6 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 import { enviarCorreoProforma } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 
 // Método para crear una nueva proforma
-// Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
   try {
     const { piezas, precioTotal } = req.body;
@@ -22,12 +21,12 @@ const crearProforma = async (req, res) => {
     }
 
     // Obtener los detalles de la orden para obtener el correo del cliente
-    const orden = await Orden.findById(ordenId);
+    const orden = await Orden.findById(ordenId); 
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
 
-    const clienteCorreo = orden.clienteCorreo;
+    const clienteCorreo = orden.clienteCorreo; //traigo correo desde la orden
     if (!clienteCorreo) {
       return res.status(400).json({ msg: "No se encontró el correo del cliente en la orden de trabajo" });
     }
