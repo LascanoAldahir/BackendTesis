@@ -4,6 +4,7 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 import { enviarCorreoProforma } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
 import Orden from "../models/ordentrabajo.js" //importamos orden
 
+
 // Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
   try {
