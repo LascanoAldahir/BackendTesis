@@ -20,15 +20,21 @@ const crearProforma = async (req, res) => {
       return res.status(400).json({ msg: "Esta orden de trabajo ya tiene una proforma" });
     }
 
-    // Obtener los detalles de la orden para obtener el correo del cliente
-    const orden = await Orden.findById(ordenId); 
+    // Obtener los detalles de la orden
+    const orden = await OrdenTrabajo.findById(ordenId);
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
 
-    const clienteCorreo = orden.clienteCorreo; //traigo correo desde la orden
+    // Obtener los detalles del cliente usando el clienteId de la orden
+    const cliente = await Cliente.findById(orden.clienteId);
+    if (!cliente) {
+      return res.status(404).json({ msg: "Cliente no encontrado" });
+    }
+
+    const clienteCorreo = cliente.correo;
     if (!clienteCorreo) {
-      return res.status(400).json({ msg: "No se encontró el correo del cliente en la orden de trabajo" });
+      return res.status(400).json({ msg: "No se encontró el correo del cliente" });
     }
 
     // Crear nueva proforma
@@ -41,7 +47,7 @@ const crearProforma = async (req, res) => {
 
     // Enviar el correo
     try {
-      await enviarCorreoProforma(clienteCorreo, ordenId, piezas, precioTotal);
+      await enviarCorreoProforma(clienteCorreo, orden.numOrden, piezas, precioTotal);
 
       // Actualizar estado de la orden a "En proceso"
       orden.estado = 'En proceso';
