@@ -1,13 +1,12 @@
 import Proforma from "../models/Proforma.js"; // Ajusta la ruta según tu estructura de archivos
-import Cliente from "../models/Cliente.js";
+import Cliente from "../models/Cliente.js"; // importamos cliente
 import mongoose from "mongoose"; // Importa mongoose para trabajar con la base de datos MongoDB
 import { enviarCorreoProforma } from "../config/nodemailer.js"; // Importa funciones para enviar correos electrónicos
+import Orden from "../models/ordentrabajo.js" //importamos orden
 
 // Método para crear una nueva proforma
 const crearProforma = async (req, res) => {
   try {
-    console.log(req.body)
-    console.log(req.params)
     const { piezas, precioTotal } = req.body;
     const { ordenId } = req.params;
 
@@ -31,7 +30,6 @@ const crearProforma = async (req, res) => {
 
     // Obtener los detalles del cliente usando el clienteId de la orden
     const cliente = await Cliente.findById(orden.cliente);
-    console.log(cliente)
     if (!cliente) {
       return res.status(404).json({ msg: "Cliente no encontrado" });
     }
@@ -48,7 +46,6 @@ const crearProforma = async (req, res) => {
       precioTotal,
     });
     await nuevaProforma.save();
-      console.log(nuevaProforma)
     // Enviar el correo
     try {
       await enviarCorreoProforma(clienteCorreo, orden.numOrden, piezas, precioTotal);
