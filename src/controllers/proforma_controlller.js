@@ -13,18 +13,22 @@ const crearProforma = async (req, res) => {
 
     // Verificar si el ordenId es válido
     if (!mongoose.Types.ObjectId.isValid(ordenId)) {
-      return res.status(400).json({ msg: "ID de la orden de trabajo no válido" });
+      return res
+        .status(400)
+        .json({ msg: "ID de la orden de trabajo no válido" });
     }
 
     // Verificar si ya existe una proforma para esta orden de trabajo
     const proformaExistente = await Proforma.findOne({ ordenId });
     if (proformaExistente) {
-      return res.status(400).json({ msg: "Esta orden de trabajo ya tiene una proforma" });
+      return res
+        .status(400)
+        .json({ msg: "Esta orden de trabajo ya tiene una proforma" });
     }
 
     // Obtener los detalles de la orden
     const orden = await Orden.findById(ordenId);
-  
+
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
@@ -37,7 +41,9 @@ const crearProforma = async (req, res) => {
 
     const clienteCorreo = cliente.correo;
     if (!clienteCorreo) {
-      return res.status(400).json({ msg: "No se encontró el correo del cliente" });
+      return res
+        .status(400)
+        .json({ msg: "No se encontró el correo del cliente" });
     }
 
     // Crear nueva proforma
@@ -49,24 +55,29 @@ const crearProforma = async (req, res) => {
     await nuevaProforma.save();
     // Enviar el correo
     try {
-      await enviarCorreoProforma(clienteCorreo, orden.numOrden, piezas, precioTotal);
-      console.log(orden.numOrden)
+      await enviarCorreoProforma(
+        clienteCorreo,
+        orden.numOrden,
+        piezas,
+        precioTotal
+      );
+      console.log(orden.numOrden);
       // Actualizar estado de la orden a "En proceso"
-      orden.estado = 'En proceso';
+      orden.estado = "En proceso";
       await orden.save();
-
     } catch (error) {
-      return res.status(500).json({ msg: 'Error al enviar el correo al cliente' });
+      return res
+        .status(500)
+        .json({ msg: "Error al enviar el correo al cliente" });
     }
 
     res.status(201).json({
       msg: "Proforma creada exitosamente",
       proforma: nuevaProforma,
     });
-
   } catch (error) {
     console.error("Error al crear la proforma:", error);
-    res.status(500).json({ msg: "Error al crear la proforma"});
+    res.status(500).json({ msg: "Error al crear la proforma", error });
   }
 };
 //////////////////////////////////////////////////////////////
@@ -75,9 +86,13 @@ const crearProforma = async (req, res) => {
 const visualizarProforma = async (req, res) => {
   try {
     const { ordenId } = req.params;
-    const proforma = await Proforma.findOne({ ordenId }).populate('ordenId');
+    const proforma = await Proforma.findOne({ ordenId }).populate("ordenId");
     if (!proforma) {
-      return res.status(404).json({ msg: "Proforma no encontrada para el número de orden proporcionado" });
+      return res
+        .status(404)
+        .json({
+          msg: "Proforma no encontrada para el número de orden proporcionado",
+        });
     }
 
     res.status(200).json({
@@ -85,8 +100,10 @@ const visualizarProforma = async (req, res) => {
       proforma,
     });
   } catch (error) {
-    console.error("Error al obtener la proforma:", error);
-    res.status(500).json({ msg: "Error al obtener la proforma" });
+    console.error("Error al crear la proforma:", error);
+    res
+      .status(500)
+      .json({ msg: "Error al crear la proforma", error: error.message });
   }
 };
 
