@@ -66,7 +66,7 @@ const crearProforma = async (req, res) => {
 
   } catch (error) {
     console.error("Error al crear la proforma:", error);
-    res.status(500).json({ msg: "Error al crear la proforma" , error});
+    res.status(500).json({ msg: "Error al crear la proforma"});
   }
 };
 //////////////////////////////////////////////////////////////
