@@ -177,7 +177,7 @@ const sendOrderEnProcesoToCliente = async(userMail,numOrder,equipo)=>{
 const enviarCorreoProforma = (clienteCorreo, ordenId, piezas, precioTotal) => {
   // Crear una cadena de texto con los detalles de las piezas
   const detallesPiezas = piezas
-    .map((pieza) => - Pieza: ${pieza.pieza}, Precio: $${pieza.precio})
+    .map((pieza) => - `Pieza: ${pieza.pieza}, Precio: $${pieza.precio}`)
     .join("\n");
 
   const mailOptions = {
