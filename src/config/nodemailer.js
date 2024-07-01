@@ -39,7 +39,7 @@ const enviarCorreo = async (destinatario, asunto, mensaje) => {
 const sendMailToUser = async (userMail, token) => {
     // let es una variable que ouede cambiar por eso no es const
     let info = await transporter.sendMail({
-        from: 'info@electronica_zurita.com', // Dirección de correo electrónico del remitente
+        from: 'info@electronica_zurita.com', // Dirección de correo electrónico del remitente..
         to: userMail, // Dirección de correo electrónico del destinatario
         subject: "Verifica tu cuenta de correo electrónico", // Asunto del correo electrónico
         html: `
