@@ -30,8 +30,8 @@ router.get("/cliente/:id", verificarAutenticacion, detalleCliente); // Ruta para
 
 // Rutas para recuperación de contraseña de clientes
 router.post("/cliente/recuperar-password", recuperarPasswordCli);
-router.get("/cliente/recuperar-password/:token", comprobarTokenPasswordCli);
-router.post("/cliente/nuevo-passwordCli/:token", nuevoPasswordCli);
+router.get("/cliente/recuperar-password/:token", verificarAutenticacion, comprobarTokenPasswordCli);
+router.post("/cliente/nuevo-passwordCli/:token", verificarAutenticacion, nuevoPasswordCli);
 
 // Ruta para actualizar la contraseña del cliente autenticado
 router.put("/actualizar-password", verificarAutenticacion, actualizarPasswordCli);
@@ -41,4 +41,4 @@ router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCe
 router.put("/cliente/actualizar/:id", verificarAutenticacion, actualizarCliente); // Ruta para actualizar los datos de un paciente
 router.delete("/cliente/eliminar/:id", verificarAutenticacion, eliminarCliente); // Ruta para eliminar un paciente
 
-export default router; // Exportar el enrutador
+export default router; //Exportar el enrutador
