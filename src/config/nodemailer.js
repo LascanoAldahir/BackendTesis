@@ -175,36 +175,41 @@ const sendOrderEnProcesoToCliente = async(userMail,numOrder,equipo)=>{
 ////////////////////////////////////////////////////////////////
 // Función para enviar correo
 const enviarCorreoProforma = (clienteCorreo, ordenId, piezas, precioTotal) => {
-    const mailOptions = {
-      from: 'electronica_zurita@admin.com',
-      to: clienteCorreo,
-      subject: 'Proforma Creada',
-      text: `Estimado cliente,
-  
-  Se ha creado una proforma para su orden de trabajo con ID: ${ordenId}.
-  
-  Detalles de la Proforma:
-  - Piezas: ${piezas}
-  - Precio Total: $${precioTotal}
-  
-  Gracias por confiar en nosotros.
-  
-  Saludos,
-  Tu Empresa de Confianza, Electrónica Zurita.`
-    };
-  
-    return new Promise((resolve, reject) => {
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error('Error al enviar el correo:', error);
-          reject(error);
-        } else {
-          console.log('Correo enviado:', info.response);
-          resolve(info.response);
-        }
-      });
-    });
+  // Crear una cadena de texto con los detalles de las piezas
+  const detallesPiezas = piezas
+    .map((pieza) => - Pieza: ${pieza.pieza}, Precio: $${pieza.precio})
+    .join("\n");
+
+  const mailOptions = {
+    from: "electronica_zurita@admin.com",
+    to: clienteCorreo,
+    subject: "Proforma Creada",
+    text: `Estimado cliente,
+
+Se ha creado una proforma para su orden de trabajo con ID: ${ordenId}.
+
+Detalles de la Proforma:
+${detallesPiezas}
+- Precio Total: $${precioTotal}
+
+Gracias por confiar en nosotros.
+
+Saludos,
+Tu Empresa de Confianza, Electrónica Zurita.`,
   };
+
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error al enviar el correo:", error);
+        reject(error);
+      } else {
+        console.log("Correo enviado:", info.response);
+        resolve(info.response);
+      }
+    });
+  });
+};
 
 // Exporta las funciones para que puedan ser utilizadas en otros archivos
 export {
