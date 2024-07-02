@@ -36,23 +36,32 @@ const enviarCorreo = async (destinatario, asunto, mensaje) => {
     }
 };
 
-// Función para enviar un correo electrónico de verificación al usuario..
-const sendMailToUser = async (userMail, token) => {
-  // let es una variable que ouede cambiar por eso no es const
-  let info = await transporter.sendMail({
+// Función para enviar un correo electrónico de verificación al usuario.
+const sendMailToUser = async (userMail, token, numOrden) => {
+  try {
+    let info = await transporter.sendMail({
       from: 'electronica_zurita@admin.com', // Dirección de correo electrónico del remitente.
       to: userMail, // Dirección de correo electrónico del destinatario
       subject: "Verifica tu cuenta de correo electrónico", // Asunto del correo electrónico
       html: `
       <h1>Sistema de gestión (💻🖱️ Electrónica Zurita 🔌🎧)</h1>
       <hr>
+      <p>¡Hola!</p>
+      <p>Gracias por registrarte en nuestro sistema.</p>
+      <p>Tu número de orden es: ${numOrden}</p>
+      <p>Por favor, haz clic en el siguiente enlace para confirmar tu cuenta:</p>
       <a href=${process.env.URL_FRONTEND}/confirmar/${token}>Clic para confirmar tu cuenta</a>
       <hr>
-      <footer>Electronica Zurita te dá la bienvenida!</footer>
+      <footer>Electronica Zurita te da la bienvenida!</footer>
       `
-  });
-  console.log("Mensaje enviado satisfactoriamente: ", info.messageId); // Imprime el ID del mensaje enviado satisfactoriamente en consola
-}
+    });
+
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId); // Imprime el ID del mensaje enviado satisfactoriamente en consola
+  } catch (error) {
+    console.error("Error al enviar el correo:", error); // Manejar cualquier error que ocurra durante el envío del correo
+    throw new Error("Error al enviar el correo electrónico");
+  }
+};
 
 // Función para enviar un correo electrónico de recuperación de contraseña al usuario
 const sendMailToRecoveryPassword = async (userMail, token) => {
