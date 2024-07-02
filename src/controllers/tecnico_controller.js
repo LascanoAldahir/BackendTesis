@@ -49,6 +49,7 @@ const perfil =(req,res)=>{
 
 // Método para el registro
 const registro = async (req,res)=>{
+    console.log(req.body)
     // Desestructura el email y password del cuerpo de la solicitud
     const {email,password} = req.body
     // Verifica si algún campo del cuerpo de la solicitud está vacío

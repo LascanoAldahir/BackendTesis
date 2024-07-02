@@ -2,6 +2,7 @@
 import nodemailer from "nodemailer"; // Importa el módulo nodemailer para enviar correos electrónicos
 import dotenv from 'dotenv'; // Importa el módulo dotenv para cargar variables de entorno desde un archivo '.env'
 import Cliente from "../models/Cliente.js";
+import Tecnico from "../models/Tecnico.js";
 
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
 
@@ -39,7 +40,7 @@ const enviarCorreo = async (destinatario, asunto, mensaje) => {
 const sendMailToUser = async (userMail, token) => {
     // let es una variable que ouede cambiar por eso no es const
     let info = await transporter.sendMail({
-        from: 'info@electronica_zurita.com', // Dirección de correo electrónico del remitente.
+        from: 'electronica_zurita@admin.com', // Dirección de correo electrónico del remitente.
         to: userMail, // Dirección de correo electrónico del destinatario
         subject: "Verifica tu cuenta de correo electrónico", // Asunto del correo electrónico
         html: `

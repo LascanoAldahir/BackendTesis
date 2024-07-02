@@ -1,7 +1,6 @@
 // Importar Router de Express
 import { Router } from 'express';
 // Importar middleware de autenticación y validación
-import { verifyToken, checkRole } from "../middlewares/autenticacion.js";
 import { validacionTecnico } from '../middlewares/validacionTecnico.js';
 // Importar middleware de autenticación
 import { verificarAutenticacion } from "../middlewares/autenticacion.js";
