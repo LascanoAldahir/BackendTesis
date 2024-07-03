@@ -73,8 +73,8 @@ const registro = async (req,res)=>{
   console.log("Controller de registro terminada");
 }
 
-// Método para confirmar el token
 
+// Método para confirmar el token
 const confirmEmail = async(req,res)=>{
     console.log("comenzando confirmacion de token");
     // Verifica si no se proporcionó un token en los parámetros de la solicitud
