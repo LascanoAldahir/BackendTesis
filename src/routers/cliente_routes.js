@@ -35,7 +35,6 @@ router.post("/cliente/nuevo-passwordCli/:token",nuevoPasswordCli);
 
 // Ruta para actualizar la contraseña del cliente autenticado
 router.put("/actualizar-password", verificarAutenticacion, actualizarPasswordCli);
-
 router.post("/cliente/registro", verificarAutenticacion, registrarCliente); // Ruta para registrar un nuevo paciente
 router.get('/clientes/cedula/:cedula', verificarAutenticacion,buscarClientePorCedula);
 router.put("/cliente/actualizar/:id", verificarAutenticacion, actualizarCliente); // Ruta para actualizar los datos de un paciente
