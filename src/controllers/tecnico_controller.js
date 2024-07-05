@@ -48,30 +48,55 @@ const perfil =(req,res)=>{
 }
 
 // Método para el registro
-const registro = async (req,res)=>{
-  // Desestructura el email y password del cuerpo de la solicitud
-  const {email,password} = req.body
-  // Verifica si algún campo del cuerpo de la solicitud está vacío
-  if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
-  // Busca en la base de datos un veterinario con el email proporcionado
-  const verificarEmailBDD = await Tecnico.findOne({email})
-  // Verifica si ya existe un veterinario registrado con el mismo email
-  if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el correo ya se encuentra registrado"})
-  // Crea una instancia de Tecnico con los datos proporcionados en la solicitud
-  const nuevoTecnico = new Tecnico(req.body)
-  // Encripta el password del nuevo veterinario
-  nuevoTecnico.password = await nuevoTecnico.encrypPassword(password)
-  // Crea un token para el nuevo tecnico
-  const token = nuevoTecnico.crearToken()
-  console.log("Token creado exitosamente");
-  // Envía un correo electrónico al nuevo veterinario para confirmar su cuenta
-  await sendMailToUser(email,token)
-  // Guarda el nuevo veterinario en la base de datos
-  await nuevoTecnico.save()
-  // Responde con un mensaje indicando que revise su correo electrónico para confirmar la cuenta
-  res.status(200).json({msg:"Mensaje de confirmación enviado correctamente al nuevo técnico"})
-  console.log("Controller de registro terminada");
-}
+const registro = async (req, res) => {
+  try {
+    // Desestructura el email y password del cuerpo de la solicitud
+    const { email, password } = req.body;
+
+    // Verifica si algún campo del cuerpo de la solicitud está vacío
+    if (Object.values(req.body).includes("")) {
+      return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    }
+
+    // Busca en la base de datos un técnico con el email proporcionado
+    const verificarEmailBDD = await Tecnico.findOne({ email });
+
+    // Verifica si ya existe un técnico registrado con el mismo email
+    if (verificarEmailBDD) {
+      return res.status(400).json({ msg: "Lo sentimos, el correo ya se encuentra registrado" });
+    }
+
+    // Crea una instancia de Tecnico con los datos proporcionados en la solicitud
+    const nuevoTecnico = new Tecnico(req.body);
+
+    // Encripta el password del nuevo técnico
+    nuevoTecnico.password = await nuevoTecnico.encrypPassword(password);
+
+    // Crea un token para el nuevo técnico
+    const token = nuevoTecnico.crearToken();
+    console.log("Token creado exitosamente");
+
+    // Guarda el nuevo técnico en la base de datos
+    await nuevoTecnico.save();
+
+    // Envía un correo electrónico al nuevo técnico para confirmar su cuenta
+    try {
+      await sendMailToUser(email, token);
+      console.log("Correo de confirmación enviado correctamente");
+    } catch (error) {
+      console.error("Error al enviar el correo de confirmación:", error);
+      return res.status(500).json({ msg: "Error al enviar el correo de confirmación" });
+    }
+
+    // Responde con un mensaje indicando que revise su correo electrónico para confirmar la cuenta
+    res.status(200).json({ msg: "Mensaje de confirmación enviado correctamente al nuevo técnico" });
+    console.log("Controller de registro terminada");
+  } catch (error) {
+    console.error("Error en el proceso de registro:", error);
+    res.status(500).json({ msg: "Error en el proceso de registro" });
+  }
+};
+
 
 
 // Método para confirmar el token
