@@ -18,8 +18,6 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-
-
 // Función para enviar correo electrónico
 const enviarCorreo = async (destinatario, asunto, mensaje) => {
     try {
