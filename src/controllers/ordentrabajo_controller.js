@@ -3,6 +3,8 @@ import mongoose from "mongoose"; // Importa mongoose para trabajar con la base d
 import Ordentrabajo from "../models/ordentrabajo.js";
 import Cliente from "../models/Cliente.js"; // Asegúrate de tener el modelo Cliente importado
 import ordentrabajo from "../models/ordentrabajo.js";
+import moment from "moment-timezone"; // Importa moment-timezone para trabajar con fechas y zonas horarias
+
 import { 
   sendOrderFinalizadoToCliente,
   sendOrderEnProcesoToCliente,
@@ -15,6 +17,8 @@ const registrarOrdenTrabajo = async (req, res) => {
   try {
     // Extraer los datos necesarios del cuerpo de la solicitud
     const { cedula, ingreso, clienteId, equipo, razon } = req.body;
+    
+    
     // Validar que todos los campos estén llenos
     if (Object.values(req.body).includes("")) {
       return res
@@ -34,18 +38,13 @@ const registrarOrdenTrabajo = async (req, res) => {
     if (!clienteExistente) {
       return res.status(400).json({ msg: "Cliente no encontrado" });
     }
-    // Obtener la fecha actual en la zona horaria deseada (UTC-5)
-    const offset = new Date().getTimezoneOffset() * 60 * 1000;
-    const currentDate = new Date(new Date().getTime() - offset);
-    // Restar un día a la fecha actual
-    const fechaAnterior = new Date(currentDate);
-    fechaAnterior.setDate(currentDate.getDate() - 1);
-    // Comparar las fechas
-    if (fechaAnterior >= new Date(ingreso)) {
+     // Validar la fecha de ingreso
+     if (!moment(ingreso).isAfter(fechaActual)) {
       return res.status(400).json({
-        msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
+        msg: "La fecha de ingreso debe ser posterior a la fecha actual",
       });
     }
+
     // Obtener el último número de orden registrado
     const ultimaOrden = await Ordentrabajo.findOne()
       .sort({ numOrden: -1 })
@@ -56,10 +55,11 @@ const registrarOrdenTrabajo = async (req, res) => {
       const ultimoNumero = parseInt(ultimaOrden.numOrden, 10);
       nuevoNumOrden = (ultimoNumero + 1).toString().padStart(4, "0");
     }
+
     // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
     const nuevaOrden = new Ordentrabajo({
       ...req.body, // Usar los valores proporcionados en req.body
-      ingreso: ingreso, // Fecha de ingreso formateada
+      ingreso: moment(ingreso).tz("America/Bogota").toDate(), // Fecha de ingreso formateada
       salida: null,
       numOrden: nuevoNumOrden, // Número de orden calculado
       cliente: clienteId,
