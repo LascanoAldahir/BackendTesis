@@ -261,7 +261,7 @@ const recuperarPasswordCli = async (req, res) => {
     // Reutilizar el token existente
     const token = jwt.sign({ id: clienteBDD._id }, secret, { expiresIn: '1h' });
     clienteBDD.resetPasswordToken = token;
-    clienteBDD.resetPasswordExpires = Date.now() + 3600000; // 1 hora
+    clienteBDD.resetPasswordExpires = Date.now() + 300000; // 5 minutos
     await clienteBDD.save();
     await sendMailToRecoveryPasswordCli(correo, token);  
     // Responder al cliente con un mensaje de éxito
