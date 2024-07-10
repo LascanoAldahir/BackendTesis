@@ -316,7 +316,7 @@ const nuevoPasswordCli = async (req, res) => {
       resetPasswordExpires: { $gt: Date.now() },
     });
 
-    // Mensaje de cliente no recgistrado, responder con un mensaje de error
+    // Mensaje de cliente no registrado, responder con un mensaje de error
     if (!clienteBDD) {
       return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
     }
@@ -329,7 +329,8 @@ const nuevoPasswordCli = async (req, res) => {
       });
     }
 
-    clienteBDD.password = await clienteBDD.encrypPassword(nuevaPassword);
+    // Encriptar la nueva contraseña antes de guardarla
+    clienteBDD.password = await bcrypt.hash(nuevaPassword, 10);
     clienteBDD.resetPasswordToken = undefined;
     clienteBDD.resetPasswordExpires = undefined;
     await clienteBDD.save();
