@@ -49,6 +49,11 @@ const clienteSchema = new Schema({
 }, 
 );
 
+clienteSchema.methods.crearToken = function() {
+    const tokenGenerado = this.token = Math.random().toString(36).slice(2);
+    return tokenGenerado;
+};
+
 // Método para cifrar el password del cliente
 clienteSchema.methods.encryptPassword = async function (password) {
     const salt = await bcrypt.genSalt(10);
@@ -61,5 +66,4 @@ clienteSchema.methods.matchPassword = async function (password) {
 };
 
   
-
 export default model('Cliente', clienteSchema); // Exporta el modelo de datos del paciente

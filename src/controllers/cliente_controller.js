@@ -253,12 +253,12 @@ const recuperarPasswordCli = async (req, res) => {
       return res.status(404).json({ msg: "El usuario no se encuentra registrado" });
     }
     // Reutilizar el token existente
-    const token = jwt.sign({ id: clienteBDD._id }, secret, { expiresIn: '1h' });
-    clienteBDD.resetPasswordToken = token;
-    clienteBDD.resetPasswordExpires = Date.now() + 300000; // 5 minutos
+    const token = clienteBDD.crearToken();
+    clienteBDD.token = token;
+    await clienteBDD.save();
+    await sendMailToRecoveryPasswordCli(correo, token);
 
     await clienteBDD.save();
-    await sendMailToRecoveryPasswordCli(correo, token);  
 
     // Responder al cliente con un mensaje de éxito
     res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" });
@@ -278,12 +278,8 @@ const comprobarTokenPasswordCli = async (req, res) => {
     if (!token) {
       return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" });
     }
-       // Buscar al cliente utilizando el token
-       const clienteBDD = await Cliente.findOne({
-        resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() },
-      });
-
+    // Buscar al cliente utilizando el token
+    const clienteBDD = await Cliente.findOne({ token: req.params.token });
     // Si no se encuentra ningún cliente con el token proporcionado, responder con un mensaje de error
     if (!clienteBDD) {
       return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
@@ -293,7 +289,9 @@ const comprobarTokenPasswordCli = async (req, res) => {
   } catch (error) {
     // Capturar y manejar cualquier error que ocurra durante el proceso
     console.error("Error en comprobarToken:", error);
-    res.status(500).json({ msg: "Ocurrió un error al intentar validar el token de recuperación" });
+    res.status(500).json({
+        msg: "Ocurrió un error al intentar validar el token de recuperación",
+      });
   }
 };
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -312,10 +310,7 @@ const nuevoPasswordCli = async (req, res) => {
     }
 
     // Buscar al cliente utilizando el token
-    const clienteBDD = await Cliente.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() },
-    });
+    const clienteBDD = await Cliente.findOne({ token: req.params.token });
 
     console.log("Cliente encontrado en la base de datos:", clienteBDD);
 
@@ -335,11 +330,11 @@ const nuevoPasswordCli = async (req, res) => {
     }
 
     // Encriptar la nueva contraseña antes de guardarla
-    clienteBDD.password = await bcrypt.hash(nuevaPassword, 10);
-    clienteBDD.resetPasswordToken = undefined;
-    clienteBDD.resetPasswordExpires = undefined;
+    clienteBDD.token = null;
+    clienteBDD.password = await clienteBDD.encrypPassword(nuevaPassword);
     
     await clienteBDD.save();
+
     console.log("Contraseña actualizada correctamente");
     res.status(200).json({ msg: "Contraseña actualizada correctamente" });
   } catch (error) {
