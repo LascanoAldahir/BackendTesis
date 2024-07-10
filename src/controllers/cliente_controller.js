@@ -307,7 +307,7 @@ const nuevoPasswordCli = async (req, res) => {
 
     // Verificar si el token no está presente en la solicitud
     if (!token) {
-      console.log("Token no encontrado en la solicitud");
+      console.log("El Token no encontrado en la solicitud");
       return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" });
     }
 
