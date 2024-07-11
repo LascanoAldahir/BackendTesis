@@ -298,48 +298,45 @@ const comprobarTokenPasswordCli = async (req, res) => {
 const nuevoPasswordCli = async (req, res) => {
   try {
     const { token } = req.params;
-    const { nuevaPassword } = req.body;
-
-    console.log("Token recibido:", token);
-    console.log("Nueva contraseña recibida:", nuevaPassword);
+    const { password } = req.body;
+    console.log(req.body)
 
     // Verificar si el token no está presente en la solicitud
     if (!token) {
-      console.log("El Token no encontrado en la solicitud");
-      return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" });
+      return res
+        .status(404)
+        .json({ msg: "Lo sentimos, no se puede validar la cuenta" });
     }
 
     // Buscar al cliente utilizando el token
     const clienteBDD = await Cliente.findOne({ token: req.params.token });
 
-    console.log("Cliente encontrado en la base de datos:", clienteBDD);
-
-    // Mensaje de cliente no registrado, responder con un mensaje de error
+    // Mensaje de cliente no recgistrado, responder con un mensaje de error
     if (!clienteBDD) {
-      console.log("Cliente no encontrado con el token proporcionado");
-      return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
+      return res
+        .status(400)
+        .json({ msg: "El token de recuperación es inválido o ha expirado" });
     }
 
     // Validar que la nueva contraseña cumpla con los requisitos
-    const validarPassword = /^[a-zA-Z0-9]+$/;
-    if (!validarPassword.test(nuevaPassword)) {
-      console.log("La nueva contraseña no cumple con los requisitos");
+    const validarPassword =
+      /^(?=.[0-9])(?=.[!@#$%^&()_+\-=\[\]{};':"\\|,.<>\/?])(?=.[a-zA-Z])[^ ]+$/;
+    if (!validarPassword.test(password)) {
       return res.status(400).json({
-        msg: "La nueva contraseña debe contener solo letras y números, y no debe contener espacios ni caracteres especiales",
+        msg: "La nueva contraseña debe contener letras, números y caracteres especiales, y no debe contener espacios",
       });
     }
-
-    // Encriptar la nueva contraseña antes de guardarla
     clienteBDD.token = null;
-    clienteBDD.password = await clienteBDD.encryptPassword(nuevaPassword);
-    
+    clienteBDD.password = await clienteBDD.encrypPassword(password);
+
     await clienteBDD.save();
 
-    console.log("Contraseña actualizada correctamente");
     res.status(200).json({ msg: "Contraseña actualizada correctamente" });
   } catch (error) {
-    console.error("Error en la nueva contraseña:", error);
-    res.status(500).json({ msg: "Ocurrió un error al intentar actualizar la contraseña" });
+    console.error("Error en nuevoPasswordCli:", error);
+    res
+      .status(500)
+      .json({ msg: "Ocurrió un error al intentar actualizar la contraseña" });
   }
 };
 
