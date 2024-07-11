@@ -228,7 +228,7 @@ const actualizarPasswordCli = async (req, res) => {
       });
     }
 
-    clienteBDD.password = await clienteBDD.encrypPassword(passwordNuevo);
+    clienteBDD.password = await clienteBDD.encrytpPassword(passwordNuevo);
     await clienteBDD.save();
     res.status(200).json({ msg: "Contraseña actualizada correctamente" });
   } catch (error) {
@@ -331,7 +331,7 @@ const nuevoPasswordCli = async (req, res) => {
 
     // Encriptar la nueva contraseña antes de guardarla
     clienteBDD.token = null;
-    clienteBDD.password = await clienteBDD.encrypPassword(nuevaPassword);
+    clienteBDD.password = await clienteBDD.encryptPassword(nuevaPassword);
     
     await clienteBDD.save();
 
