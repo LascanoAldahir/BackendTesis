@@ -174,7 +174,7 @@ const actualizarPassword = async (req,res)=>{
     if(!tecnicoBDD) return res.status(404).json({msg:`Lo sentimos, no existe el tecnico ${id}`})
     // Verifica si el password actual proporcionado coincide con el almacenado en la base de datos
     const verificarPassword = await tecnicoBDD.matchPassword(req.body.passwordactual)
-    if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password actual no es el correcto"})
+    if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, la contrseña actual no es el correcto"})
     // Encripta y actualiza el nuevo password del tecnico
     tecnicoBDD.password = await tecnicoBDD.encrypPassword(req.body.passwordnuevo)
     await tecnicoBDD.save()
@@ -232,7 +232,7 @@ const nuevoPassword = async (req,res)=>{
     tecnicoBDD.password = await tecnicoBDD.encrypPassword(password)
     await tecnicoBDD.save()
     // Responde con un mensaje indicando que el nuevo password ha sido creado correctamente
-    res.status(200).json({msg:"Felicitaciones, ya puedes iniciar sesión con tu nuevo password"}) 
+    res.status(200).json({msg:"Felicitaciones, ya puedes iniciar sesión con tu nueva contraseña"}) 
 }
 
 ////////////////////////////////////////////////////////////////////////

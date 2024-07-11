@@ -338,7 +338,7 @@ const nuevoPasswordCli = async (req, res) => {
     console.log("Contraseña actualizada correctamente");
     res.status(200).json({ msg: "Contraseña actualizada correctamente" });
   } catch (error) {
-    console.error("Error en nuevoPasswordCli:", error);
+    console.error("Error en la nueva contraseña:", error);
     res.status(500).json({ msg: "Ocurrió un error al intentar actualizar la contraseña" });
   }
 };
