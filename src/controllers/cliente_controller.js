@@ -321,7 +321,7 @@ const nuevoPasswordCli = async (req, res) => {
     }
 
     // Validar que la nueva contraseña cumpla con los requisitos
-    const validarPassword = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*[a-zA-Z])[^ ]+$/;
+    const validarPassword = /^[a-zA-Z0-9]+$/;
     if (!validarPassword.test(nuevaPassword)) {
       console.log("La nueva contraseña no cumple con los requisitos");
       return res.status(400).json({
