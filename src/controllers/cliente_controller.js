@@ -211,34 +211,6 @@ const eliminarCliente = async (req, res) => {
 };
 
 ////////////////////////////////////////////////////////////////////////
-const actualizarPasswordCli = async (req, res) => {
-  try {
-    const clienteBDD = await Cliente.findById(req.clienteBDD._id);
-    if (!clienteBDD) return res.status(404).json({ msg: `Lo sentimos, no existe el cliente ${id}` });
-
-    const verificarPassword = await clienteBDD.matchPassword(req.body.passwordactual);
-    if (!verificarPassword) return res.status(404).json({ msg: "Lo sentimos, la contraseña actual no es correcta" });
-
-    // Validar que la nueva contraseña con caracteres especiales.
-    const passwordNuevo = req.body.passwordnuevo;
-    const validarPassword = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*[a-zA-Z])[^ ]+$/;
-    if (!validarPassword.test(passwordNuevo)) {
-      return res.status(400).json({
-        msg: "La nueva contraseña debe contener letras, números y caracteres especiales, y no debe contener espacios",
-      });
-    }
-
-    clienteBDD.password = await clienteBDD.encrytpPassword(passwordNuevo);
-    await clienteBDD.save();
-    res.status(200).json({ msg: "Contraseña actualizada correctamente" });
-  } catch (error) {
-    console.error("Error actualizando la contraseña:", error);
-    res.status(500).json({ msg: "Ocurrió un error al intentar actualizar la contraseña" });
-  }
-};
-
-
-//////////////////////////////////////////////////////////////////////////////
 const recuperarPasswordCli = async (req, res) => {
   try {
     const { correo } = req.body;
@@ -345,7 +317,6 @@ export {
   registrarCliente,
   actualizarCliente,
   eliminarCliente,
-  actualizarPasswordCli,
   recuperarPasswordCli,
   comprobarTokenPasswordCli,
   nuevoPasswordCli
