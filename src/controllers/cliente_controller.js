@@ -270,41 +270,50 @@ const comprobarTokenPasswordCli = async (req, res) => {
 const nuevoPasswordCli = async (req, res) => {
   try {
     const { token } = req.params;
-    const { password } = req.body;
-    console.log(req.body)
+    const { nuevaPassword } = req.body;
+
+    console.log("Token recibido:", token);
+    console.log("Nueva contraseña recibida:", nuevaPassword);
 
     // Verificar si el token no está presente en la solicitud
     if (!token) {
+      console.log("El Token no encontrado en la solicitud");
       return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" });
     }
 
     // Buscar al cliente utilizando el token
     const clienteBDD = await Cliente.findOne({ token });
 
+    console.log("Cliente encontrado en la base de datos:", clienteBDD);
+
     // Mensaje de cliente no registrado, responder con un mensaje de error
     if (!clienteBDD) {
+      console.log("Cliente no encontrado con el token proporcionado");
       return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
     }
 
-    // Validar que la nueva contraseña solo contenga letras y números, sin caracteres especiales ni espacios
-    const validarPassword = /^[a-zA-Z0-9]+$/;
-    if (!validarPassword.test(password)) {
+    // Validar que la nueva contraseña cumpla con los requisitos
+    if (!nuevaPassword || typeof nuevaPassword !== 'string') {
+      console.log("La nueva contraseña no cumple con los requisitos");
       return res.status(400).json({
-        msg: "La nueva contraseña solo debe contener letras y números, sin caracteres especiales ni espacios",
+        msg: "La nueva contraseña debe ser una cadena de texto válida",
       });
     }
 
+    // Encriptar la nueva contraseña antes de guardarla
     clienteBDD.token = null;
-    clienteBDD.password = await clienteBDD.encrytpPassword(password);
+    clienteBDD.password = await clienteBDD.encryptPassword(nuevaPassword);
 
     await clienteBDD.save();
 
+    console.log("Contraseña actualizada correctamente");
     res.status(200).json({ msg: "Contraseña actualizada correctamente" });
   } catch (error) {
-    console.error("Error en nuevoPasswordCli:", error);
+    console.error("Error en la nueva contraseña:", error);
     res.status(500).json({ msg: "Ocurrió un error al intentar actualizar la contraseña" });
   }
 };
+
 
 
 // Exporta los métodos de la API relacionados con la gestión de pacientes

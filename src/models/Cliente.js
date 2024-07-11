@@ -56,9 +56,13 @@ clienteSchema.methods.crearToken = function() {
 
 // Método para cifrar el password del cliente
 clienteSchema.methods.encryptPassword = async function (password) {
+    if (!password || typeof password !== 'string') {
+      throw new Error("Invalid password argument");
+    }
     const salt = await bcrypt.genSalt(10);
     return await bcrypt.hash(password, salt);
-};
+  };
+  
 
 // Método para verificar si el password ingresado es el mismo de la BDD
 clienteSchema.methods.matchPassword = async function (password) {
