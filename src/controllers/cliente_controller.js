@@ -325,8 +325,8 @@ const nuevoPasswordCli = async (req, res) => {
     if (!validarPassword.test(nuevaPassword)) {
       console.log("La nueva contraseña no cumple con los requisitos");
       return res.status(400).json({
-        msg: "La nueva contraseña debe contener letras, números y caracteres especiales, y no debe contener espacios",
-      }); 
+        msg: "La nueva contraseña debe contener solo letras y números, y no debe contener espacios ni caracteres especiales",
+      });
     }
 
     // Encriptar la nueva contraseña antes de guardarla
