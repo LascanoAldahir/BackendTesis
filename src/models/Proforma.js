@@ -14,6 +14,7 @@ const proformaSchema = new Schema(
       required: true,
       default: false,
     },
+    
     piezas: [
       {
         pieza: {

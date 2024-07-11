@@ -34,7 +34,7 @@ const ordentrabajoSchema = new Schema(
       required: true, // Campo obligatorio
       trim: true,
     },
-    // Campo para referenciar el paciente al que se aplica el tratamiento
+    // Campo para referenciar el paciente al que se aplica el tratamiento 
     color: {
       type: String,
       required: true, // Campo obligatorio

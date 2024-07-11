@@ -10,7 +10,7 @@ import jwt from 'jsonwebtoken';
 
 const secret = 'SDFGSJDF7246782CFBKJSDF'; // Reemplaza esto con tu clave secreta real
 
-
+//holi
 // Buscar cliente por cedula
 const buscarClientePorCedula = async (req, res) => {
   const { cedula } = req.params;
