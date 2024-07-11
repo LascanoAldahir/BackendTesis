@@ -303,40 +303,34 @@ const nuevoPasswordCli = async (req, res) => {
 
     // Verificar si el token no está presente en la solicitud
     if (!token) {
-      return res
-        .status(404)
-        .json({ msg: "Lo sentimos, no se puede validar la cuenta" });
+      return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" });
     }
 
     // Buscar al cliente utilizando el token
-    const clienteBDD = await Cliente.findOne({ token: req.params.token });
+    const clienteBDD = await Cliente.findOne({ token });
 
-    // Mensaje de cliente no recgistrado, responder con un mensaje de error
+    // Mensaje de cliente no registrado, responder con un mensaje de error
     if (!clienteBDD) {
-      return res
-        .status(400)
-        .json({ msg: "El token de recuperación es inválido o ha expirado" });
+      return res.status(400).json({ msg: "El token de recuperación es inválido o ha expirado" });
     }
 
-    // Validar que la nueva contraseña cumpla con los requisitos
-    const validarPassword =
-      /^(?=.[0-9])(?=.[!@#$%^&()_+\-=\[\]{};':"\\|,.<>\/?])(?=.[a-zA-Z])[^ ]+$/;
+    // Validar que la nueva contraseña solo contenga letras y números, sin caracteres especiales ni espacios
+    const validarPassword = /^[a-zA-Z0-9]+$/;
     if (!validarPassword.test(password)) {
       return res.status(400).json({
-        msg: "La nueva contraseña debe contener letras, números y caracteres especiales, y no debe contener espacios",
+        msg: "La nueva contraseña solo debe contener letras y números, sin caracteres especiales ni espacios",
       });
     }
+
     clienteBDD.token = null;
-    clienteBDD.password = await clienteBDD.encrypPassword(password);
+    clienteBDD.password = await clienteBDD.encrytpPassword(password);
 
     await clienteBDD.save();
 
     res.status(200).json({ msg: "Contraseña actualizada correctamente" });
   } catch (error) {
     console.error("Error en nuevoPasswordCli:", error);
-    res
-      .status(500)
-      .json({ msg: "Ocurrió un error al intentar actualizar la contraseña" });
+    res.status(500).json({ msg: "Ocurrió un error al intentar actualizar la contraseña" });
   }
 };
 
