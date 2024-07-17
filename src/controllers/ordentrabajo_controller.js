@@ -38,15 +38,7 @@ const registrarOrdenTrabajo = async (req, res) => {
     if (!clienteExistente) {
       return res.status(400).json({ msg: "Cliente no encontrado" });
     }
-    // Obtener la fecha actual en la zona horaria de Bogotá
-    const fechaActual = moment().tz("America/Bogota");
-
-     // Validar la fecha de ingreso
-     if (!moment(ingreso).isAfter(fechaActual)) {
-      return res.status(400).json({
-        msg: "La fecha de ingreso debe ser posterior a la fecha actual",
-      });
-    }
+   
 
 // Obtener las fechas actuales zona horaria (UTC-5)
 const fechaIngreso = moment(ingreso).tz("America/Bogota").toDate();
