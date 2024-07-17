@@ -17,7 +17,6 @@ const registrarOrdenTrabajo = async (req, res) => {
   try {
     // Extraer los datos necesarios del cuerpo de la solicitud
     const { cedula, ingreso, clienteId, equipo, razon } = req.body;
-    
 
     // Validar que todos los campos estén llenos
     if (Object.values(req.body).includes("")) {
@@ -25,6 +24,7 @@ const registrarOrdenTrabajo = async (req, res) => {
         .status(400)
         .json({ msg: "Lo sentimos, debes llenar todos los campos" });
     }
+
     // Validar la longitud del campo 'razon'
     const minLength = 10;
     const maxLength = 500;
@@ -33,24 +33,22 @@ const registrarOrdenTrabajo = async (req, res) => {
         msg: `La razón debe tener entre ${minLength} y ${maxLength} caracteres`,
       });
     }
+
     // Buscar al cliente por su cédula
     const clienteExistente = await Cliente.findOne({ cedula });
     if (!clienteExistente) {
       return res.status(400).json({ msg: "Cliente no encontrado" });
     }
-   
 
-// Obtener las fechas actuales zona horaria (UTC-5)
-const fechaIngreso = moment(ingreso).tz("America/Bogota").toDate();
-const fechaAnterior = moment(new Date()).tz("America/Bogota").toDate();
-// Formatear tiempo a 0 horas 0 minutos 0 segundos
-fechaAnterior.setHours(0, 0, 0, 0);
-// Comparar las fechas por milisegundos y no por fechas directamente
-if (fechaAnterior.getTime() > fechaIngreso.getTime()) {
-  return res.status(400).json({
-    msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
-  });
-}
+    // Obtener las fechas actuales zona horaria (UTC-5)
+    const fechaIngreso = moment(ingreso).tz("America/Bogota").toDate();
+    const fechaActual = moment().tz("America/Bogota").toDate();
+    // Comparar las fechas directamente incluyendo la hora actual
+    if (fechaActual > fechaIngreso) {
+      return res.status(400).json({
+        msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
+      });
+    }
 
     // Obtener el último número de orden registrado
     const ultimaOrden = await Ordentrabajo.findOne()
@@ -66,7 +64,7 @@ if (fechaAnterior.getTime() > fechaIngreso.getTime()) {
     // Crear una nueva instancia de OrdenTrabajo con los datos proporcionados
     const nuevaOrden = new Ordentrabajo({
       ...req.body, // Usar los valores proporcionados en req.body
-      ingreso: moment(ingreso).tz("America/Bogota").toDate(), // Fecha de ingreso formateada
+      ingreso: fechaIngreso, // Fecha de ingreso formateada
       salida: null,
       numOrden: nuevoNumOrden, // Número de orden calculado
       cliente: clienteId,
@@ -88,6 +86,7 @@ if (fechaAnterior.getTime() > fechaIngreso.getTime()) {
     res.status(500).json({ msg: "Error al registrar orden de trabajo" });
   }
 };
+
 
 /////////////////////////////////////////////////////////////////////////////////
 //Metodo para listar ordenes de trabajo
