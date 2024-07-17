@@ -12,9 +12,6 @@ import {
   sendOrderToCliente,
   enviarCorreo  } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
 
-  // Importar moment y moment-timezone
-  const moment = require('moment-timezone');
-
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
   try {
