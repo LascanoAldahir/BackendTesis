@@ -12,13 +12,16 @@ import {
   sendOrderToCliente,
   enviarCorreo  } from "../config/nodemailer.js"; // Importa la función sendMailToCliente desde el archivo nodemailer.js para enviar correos electrónicos
 
+  // Importar moment y moment-timezone
+  const moment = require('moment-timezone');
+
 // Método para registro de orden de trabajo
 const registrarOrdenTrabajo = async (req, res) => {
   try {
     // Extraer los datos necesarios del cuerpo de la solicitud
     const { cedula, ingreso, clienteId, equipo, razon } = req.body;
     
-    
+
     // Validar que todos los campos estén llenos
     if (Object.values(req.body).includes("")) {
       return res
@@ -38,6 +41,9 @@ const registrarOrdenTrabajo = async (req, res) => {
     if (!clienteExistente) {
       return res.status(400).json({ msg: "Cliente no encontrado" });
     }
+    // Obtener la fecha actual en la zona horaria de Bogotá
+    const fechaActual = moment().tz("America/Bogota");
+
      // Validar la fecha de ingreso
      if (!moment(ingreso).isAfter(fechaActual)) {
       return res.status(400).json({
