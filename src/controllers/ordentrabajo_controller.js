@@ -46,16 +46,16 @@ const registrarOrdenTrabajo = async (req, res) => {
     }
 
 // Obtener las fechas actuales zona horaria (UTC-5)
-    const fechaIngreso = moment(ingreso).tz("America/Bogota").toDate();
-    const fechaAnterior = moment(new Date()).tz("America/Bogota").toDate();
-    // Formatear tiempo a 0 horas 0 minutos 0 segundos
-    fechaAnterior.setHours(0, 0, 0, 0);
-    // Comparar las fechas por milisegundos y no por fechas directamente
-    if (fechaAnterior.getTime() > fechaIngreso.getTime()) {
-      return res.status(400).json({
-        msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
-      });
-    }
+const fechaIngreso = moment(ingreso).tz("America/Bogota").toDate();
+const fechaAnterior = moment(new Date()).tz("America/Bogota").toDate();
+// Formatear tiempo a 0 horas 0 minutos 0 segundos
+fechaAnterior.setHours(0, 0, 0, 0);
+// Comparar las fechas por milisegundos y no por fechas directamente
+if (fechaAnterior.getTime() > fechaIngreso.getTime()) {
+  return res.status(400).json({
+    msg: "La fecha de ingreso debe ser igual o posterior a la fecha actual",
+  });
+}
 
     // Obtener el último número de orden registrado
     const ultimaOrden = await Ordentrabajo.findOne()
