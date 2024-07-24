@@ -168,27 +168,31 @@ const tipoServicio = async (req, res) => {
 // Método para cambiar el estado de la orden de trabajo a "finalizado"
 const finalizarOrdenTrabajo = async (req, res) => {
   try {
-    const { id } = req.body; // Recibir el ID desde el cuerpo de la solicitud
-    console.log(req.body);
-    // Buscar la orden de trabajo por su número
-    const orden = await Ordentrabajo.findOne({ _id: id });
+    const { id } = req.params; // Usar el ID desde los parámetros de la URL
+    console.log(req.params);
+    const orden = await Ordentrabajo.findById(id); // Buscar usando findById
+
     if (!orden) {
       return res.status(404).json({ msg: "Orden de trabajo no encontrada" });
     }
+
     // Cambiar el estado a 'finalizado'
     orden.estado = "Finalizado";
     orden.salida = new Date(); // <-- Aquí se agrega la fecha de salida
     await orden.save();
+
     // Obtener el correo del cliente asociado a la orden de trabajo
     const cliente = await Cliente.findById(orden.cliente);
     const destinatario = cliente.correo; // Asegúrate de que el modelo Cliente tiene una propiedad correo
     if (!destinatario) {
       return res.status(400).json({ msg: "No se ha definido el correo del cliente" });
     }
+
     // Enviar correo electrónico al cliente
     const asunto = "Orden de trabajo finalizada";
     const mensaje = `Su orden de trabajo con número ${orden.numOrden} ha sido finalizada.`;
     await enviarCorreo(destinatario, asunto, mensaje);
+
     res.status(200).json({
       msg: "Estado de la orden de trabajo actualizado a 'Finalizado' y correo enviado",
     });
@@ -197,6 +201,7 @@ const finalizarOrdenTrabajo = async (req, res) => {
     res.status(500).json({ msg: "Error al finalizar la orden de trabajo" });
   }
 };
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 
