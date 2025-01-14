@@ -7,6 +7,10 @@ Este proyecto consiste en el desarrollo del backend para un sistema que facilita
 
 El backend está construido utilizando tecnologías modernas como **Node.js**, **Express.js** y **MongoDB**, y está alojado en **Render**, garantizando su disponibilidad y escalabilidad.
 
+## 🎥 **Manual de Usuario**
+Puedes consultar el video tutorial en YouTube para más detalles:
+[Ver Manual de Usuario](https://www.youtube.com/watch?v=eVpX2ITcXCg&t=15s)
+
 ---
 
 ## 🚀 **Características Principales**
@@ -42,7 +46,7 @@ JWT_SECRET=<clave_secreta_para_tokens>
 ```
 
 ## 📂 **Estructura del Proyecto**
-bash
+```bash
 /src
   ├── controllers/       # Controladores de las operaciones del sistema
   ├── models/            # Modelos de datos para MongoDB
@@ -51,3 +55,6 @@ bash
   ├── app.js             # Configuración principal del servidor
 .env                     # Variables de entorno
 README.md                # Este archivo
+
+```
+
