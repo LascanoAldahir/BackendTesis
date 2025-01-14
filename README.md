@@ -11,6 +11,9 @@ El backend está construido utilizando tecnologías modernas como **Node.js**, *
 Puedes consultar el video tutorial en YouTube para más detalles:
 [Ver Manual de Usuario](https://www.youtube.com/watch?v=eVpX2ITcXCg&t=15s)
 
+![image](https://github.com/user-attachments/assets/3afa36dc-8bb8-493c-887b-ea1f038d3646)
+
+
 ---
 
 ## 🚀 **Características Principales**
