@@ -28,6 +28,18 @@ El backend está construido utilizando tecnologías modernas como **Node.js**, *
 
 ---
 
+# 📋 Requisitos Previos
+
+1. Tener **Node.js** instalado en tu máquina.
+2. Configurar una instancia de **MongoDB** local o en la nube (por ejemplo, MongoDB Atlas).
+3. Crear un archivo `.env` con las siguientes variables:
+
+```env
+PORT=3000
+MONGO_URI=<tu_conexión_a_mongodb>
+JWT_SECRET=<clave_secreta_para_tokens>
+
+
 ## 📂 **Estructura del Proyecto**
 ```bash
 /src
