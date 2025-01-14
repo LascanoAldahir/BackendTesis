@@ -39,9 +39,10 @@ PORT=3000
 MONGO_URI=<tu_conexión_a_mongodb>
 JWT_SECRET=<clave_secreta_para_tokens>
 
+```
 
 ## 📂 **Estructura del Proyecto**
-```bash
+bash
 /src
   ├── controllers/       # Controladores de las operaciones del sistema
   ├── models/            # Modelos de datos para MongoDB
